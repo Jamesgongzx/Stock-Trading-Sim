@@ -4,12 +4,16 @@
   "main": "app.js",
   "dependencies": {
     "bcrypt": "^4.0.0",
+    "concurrently": "^5.1.0",
     "express": "^4.17.1",
     "morgan": "^1.9.1",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.2"
   },
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "client": "npm run start --prefix ../frontend",
+    "dev": "concurrently \"npm run start\" \"npm run client\""
   },
   "devDependencies": {
     "eslint": "^6.8.0",
