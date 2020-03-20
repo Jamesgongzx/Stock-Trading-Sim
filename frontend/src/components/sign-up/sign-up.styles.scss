@@ -35,6 +35,44 @@
       }
     }
 
+    .test {
+      //padding: 1px 10px;
+      font-weight: 500;
+      width: 21.2rem;
+      height: 26px;
+      margin: 0.7rem;
+      text-decoration: none;
+      outline: none;
+      font-size: 0.895rem;
+      min-height: 26px;
+    }
+
+    .select__control {
+      height: 26px;
+      .select__placeholder {
+        line-height: 26px;
+      }
+      .select__value-container {
+        line-height: 10px;
+      }
+      .select__value {
+        line-height: 26px !important;
+
+        .select__value-label {
+          line-height: 26px;
+        }
+        .select__value-container {
+          line-height: 26px;
+        }
+      }
+      .select__input {
+        height: 26px;
+      }
+      .select__indicators, .select__indicator-separator {
+        height: 30px;
+      }
+    }
+
     button {
       border-radius: 45px;
       border: none;

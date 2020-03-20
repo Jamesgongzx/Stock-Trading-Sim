@@ -6,8 +6,8 @@ import Select from "react-select";
 import "./sign-up.styles.scss";
 
 const options = [
-  { value: 'None', label: 'None' },
-  { value: 'Premium', label: 'Premium' }
+  { value: "None", label: "None" },
+  { value: "Premium", label: "Premium" }
 ];
 
 class SignUp extends React.Component {
@@ -19,7 +19,7 @@ class SignUp extends React.Component {
       email: "",
       password: "",
       password_confirmation: "",
-      subscriptionType: ""
+      subscriptionType: "None"
     };
   }
   handleChange = event => {
@@ -71,6 +71,7 @@ class SignUp extends React.Component {
   };
 
   render() {
+    console.log(this.state)
     const { username, email, password, password_confirmation, subscriptionType } = this.state;
     return (
       <div className="signup">
@@ -116,9 +117,11 @@ class SignUp extends React.Component {
           <Select
             name="subscriptionType"
             placeholder="Type"
-            value={subscriptionType}
-            onChange={(val)=> {this.handleChange({target: { name:"subscriptionType", value: val.value }})}}
+            value={this.state.subscriptionType}
+            onChange={(val)=> this.setState({ subscriptionType: val })}
             options={options}
+            classNamePrefix="select"
+            className="test"
           />
 
           <button type="submit">Register</button>
