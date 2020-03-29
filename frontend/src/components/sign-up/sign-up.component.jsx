@@ -60,7 +60,7 @@ class SignUp extends React.Component {
       .then(res => {
         console.log("registration result: ", res);
         alert("You have successfully registered!");
-        this.props.history.push("/signin");
+        //this.props.history.push("/signin");
       })
       .catch(error => {
         console.log("registration result: ", error.response);
@@ -117,8 +117,8 @@ class SignUp extends React.Component {
           <Select
             name="subscriptionType"
             placeholder="Type"
-            value={this.state.subscriptionType}
-            onChange={(val)=> this.setState({ subscriptionType: val })}
+            value={subscriptionType}
+            onChange={(val)=> {this.handleChange({target: { name:"subscriptionType", value: val.value }})}}
             options={options}
             classNamePrefix="select"
             className="test"
