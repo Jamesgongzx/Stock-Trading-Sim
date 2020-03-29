@@ -24,7 +24,7 @@ class SignIn extends React.Component {
     const { username, password } = this.state;
     axios
       .post(
-        "http://localhost:4000/api/users/signin",
+        "http://localhost:4000/accounts/signin",
         {
           username,
           password
@@ -41,7 +41,7 @@ class SignIn extends React.Component {
       })
       .catch(error => {
         console.log("register result: ", error.response);
-        alert(error.response.data.error);
+        alert(error.response.data);
       });
     event.preventDefault();
   };

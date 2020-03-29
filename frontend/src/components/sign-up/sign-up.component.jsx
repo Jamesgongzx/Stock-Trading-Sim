@@ -47,7 +47,7 @@ class SignUp extends React.Component {
 
     axios
       .post(
-        "http://localhost:4000/api/users/signup",
+        "http://localhost:4000/accounts/signup",
         {
           username,
           email,
@@ -60,18 +60,18 @@ class SignUp extends React.Component {
       .then(res => {
         console.log("registration result: ", res);
         alert("You have successfully registered!");
-        //this.props.history.push("/signin");
+        this.props.history.push("/signin");
       })
       .catch(error => {
         console.log("registration result: ", error.response);
-        alert(error.response.data.error);
+        alert(error.response.data);
         this.setState({ username: "", email: "", password: "", password_confirmation: "", subscriptionType: "" });
       });
     event.preventDefault();
   };
 
   render() {
-    console.log(this.state)
+    // console.log(this.state)
     const { username, email, password, password_confirmation, subscriptionType } = this.state;
     return (
       <div className="signup">
