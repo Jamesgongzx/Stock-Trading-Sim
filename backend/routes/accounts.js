@@ -79,10 +79,12 @@ router.get("/players", (req, res) => {
 
 router.get("/players/:playerId", (req, res) => {
   var accountId = req.session.accountId;
-  connection.query('SELECT * FROM playerOwnership where accountId = ?', [accountId], (error, results) => {
+  var playerId = req.params.playerId;
+  connection.query('SELECT * FROM playerOwnership where accountId = ? AND playerId = ?', [accountId, playerId], (error, results) => {
     if (error) {
       res.sendStatus(500);
     } else {
+      req.session.playerId = playerId;
       res.status(200).send(results);
     }
   });
