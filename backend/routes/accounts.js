@@ -55,13 +55,6 @@ router.post("/signin", (req, res) => {
       res.status(200).send("User signed in successfully");
       req.session.loggedin = true;
       req.session.accountId = accountId;
-      connection.query("SELECT * FROM playerOwnership WHERE accountId = ?", [accountId], function (error, results) {
-        if (results.length > 0) {
-          req.session.playerId = results[0].playerId;
-        } else {
-          res.status(401).send("No players found within the account!");
-        }
-      });
     } else {
       res.status(401).send("Incorrect Username and/or Password!");
     }
@@ -74,6 +67,17 @@ router.get("/signout", (req, res) => {
 });
 
 router.get("/players", (req, res) => {
+  var accountId = req.session.accountId;
+  connection.query('SELECT * FROM playerOwnership where accountId = ?', [accountId], (error, results) => {
+    if (error) {
+      res.sendStatus(500);
+    } else {
+      res.status(200).send(results);
+    }
+  });
+});
+
+router.get("/players/:playerId", (req, res) => {
   var accountId = req.session.accountId;
   connection.query('SELECT * FROM playerOwnership where accountId = ?', [accountId], (error, results) => {
     if (error) {
