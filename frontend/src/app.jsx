@@ -40,7 +40,9 @@ class App extends React.Component {
         } else {
             return (
                 <div className="App">
-                    <Route path="/user" component={Admin}/>
+                    <Route path="/user" component={Admin} render={routerProps => {
+                        return <Admin history={this.props.history}/>
+                    }}/>
                     <Redirect from="/" to="/user"/>
                 </div>
             )

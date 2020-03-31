@@ -17,7 +17,7 @@ import styles from "../../assets/jss/material-dashboard-react/components/headerS
 
 const useStyles = makeStyles(styles);
 
-export default function Header(props) {
+export default function Header(props, {...rest}) {
   const classes = useStyles();
 //   function makeBrand() {
 // //     var name;
@@ -33,6 +33,7 @@ export default function Header(props) {
   const appBarClasses = classNames({
     [" " + classes[color]]: color
   });
+  console.log(props);
   return (
     <AppBar className={classes.appBar + appBarClasses}>
       <Toolbar className={classes.container}>
@@ -43,7 +44,7 @@ export default function Header(props) {
           </Button>
         </div>
         <Hidden smDown implementation="css">
-         <AdminNavbarLinks />
+         <AdminNavbarLinks {...props}/>
         </Hidden>
         <Hidden mdUp implementation="css">
           <IconButton
