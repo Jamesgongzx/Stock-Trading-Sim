@@ -10,7 +10,7 @@ class SignIn extends React.Component {
 
     this.state = {
       username: "",
-      password: ""
+      password: "",
     };
   }
 
@@ -36,11 +36,13 @@ class SignIn extends React.Component {
         alert("User has logged in successfully");
         this.setState({
           username: "",
-          password: ""
+          password: "",
         });
+        this.props.handleSignIn(true);
       })
       .catch(error => {
         console.log("register result: ", error.response);
+        this.props.handleSignIn(false);
         alert(error.response.data);
       });
     event.preventDefault();

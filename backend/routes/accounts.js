@@ -59,7 +59,7 @@ router.post("/signin", (req, res) => {
         if (results.length > 0) {
           req.session.playerId = results[0].playerId;
         } else {
-          res.status(401).send("No players found within the account!");
+          // res.status(401).send("No players found within the account!"); <---
         }
       });
     } else {

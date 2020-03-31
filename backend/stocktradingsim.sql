@@ -32,13 +32,18 @@ CREATE TABLE playerOwnership (
     FOREIGN KEY (accountId) REFERENCES account(accountId) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO account VALUES (1, 'testAdmin1@testAdmin.com', 'testAdmin1', 'testAdmin1', DEFAULT),
+INSERT INTO account VALUES
+(1, 'testAdmin1@testAdmin.com', 'testAdmin1', 'testAdmin1', DEFAULT),
 (2, 'testAdmin2@testAdmin.com', 'testAdmin2', 'testAdmin2', DEFAULT),
 (10, 'testUser1@testAdmin.com', 'testUser1', 'testUser1', DEFAULT),
-(11, 'testUser2@testAdmin.com', 'testUser2', 'testUser2', DEFAULT);
+(11, 'testUser2@testAdmin.com', 'testUser2', 'testUser2', DEFAULT),
+(3, 'admin', 'admin', 'admin', DEFAULT),
+(4, 'user', 'user', 'user', DEFAULT);
 
-INSERT INTO admin VALUES (1, NULL),
-(2, NULL);
+INSERT INTO admin VALUES
+(1, NULL),
+(2, NULL),
+(3, NULL);
 
 INSERT INTO user VALUES (10, 'None'),
 (11, 'Premium');
