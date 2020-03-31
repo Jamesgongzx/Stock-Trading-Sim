@@ -14,26 +14,56 @@ import AdminNavbarLinks from "./AdminNavbarLinks.js";
 import Button from "../../components/CustomButtons/Button.js";
 
 import styles from "../../assets/jss/material-dashboard-react/components/headerStyle.js";
+import DashboardPage from "../../views/Dashboard/Dashboard";
+import UserProfile from "../../views/UserProfile/UserProfile";
+import TableList from "../../views/TableList/TableList";
 
 const useStyles = makeStyles(styles);
 
+const topBarArray = [
+  {
+    path: "/stocks",
+    name: "My Stocks",
+    component: DashboardPage,
+    layout: "/user"
+  },
+  {
+    path: "/items",
+    name: "My Items",
+    component: UserProfile,
+    layout: "/user"
+  },
+  {
+    path: "/history",
+    name: "History",
+    component: TableList,
+    layout: "/user"
+  },
+];
+
 export default function Header(props, {...rest}) {
   const classes = useStyles();
-//   function makeBrand() {
-// //     var name;
-// // //     props.routes.map(prop => {
-// // //       if (window.location.href.indexOf(prop.layout + prop.path) !== -1) {
-// // // : prop.name;
-// // //       }
-// //       return null;
-// //     });
-//     return name;
-//   }
+  const topBarComponents = (
+      <React.Fragment>
+        {topBarArray.map((item, key) => {
+          return (
+              <div className={classes.padded}>
+                <Button variant="contained" color="primary" onClick={
+                  () => {props.history.push(item.layout+item.path)}
+                }>
+                  {item.name}
+                </Button>
+              </div>
+          )
+        })}
+      </React.Fragment>
+  )
+
   const { color } = props;
   const appBarClasses = classNames({
     [" " + classes[color]]: color
   });
-  console.log(props);
+  // console.log(props);
   return (
     <AppBar className={classes.appBar + appBarClasses}>
       <Toolbar className={classes.container}>
@@ -43,6 +73,32 @@ export default function Header(props, {...rest}) {
             {/*{makeBrand()}*/}
           </Button>
         </div>
+        {topBarComponents}
+        {/*<div className={classes.padded}>*/}
+        {/*  <Button variant="contained" color="primary">*/}
+        {/*    My Stocks*/}
+        {/*  </Button>*/}
+        {/*</div>*/}
+        {/*<div className={classes.padded}>*/}
+        {/*  <Button variant="contained" color="primary">*/}
+        {/*    My Items*/}
+        {/*  </Button>*/}
+        {/*</div>*/}
+        {/*<div className={classes.padded}>*/}
+        {/*  <Button variant="contained" color="primary">*/}
+        {/*    History*/}
+        {/*  </Button>*/}
+        {/*</div>*/}
+        {/*<div className={classes.padded}>*/}
+        {/*  <Button variant="contained" color="primary">*/}
+        {/*    Current Money*/}
+        {/*  </Button>*/}
+        {/*</div>*/}
+        {/*<div className={classes.padded}>*/}
+        {/*  <Button variant="contained" color="primary">*/}
+        {/*    Change Player (TBD)*/}
+        {/*  </Button>*/}
+        {/*</div>*/}
         <Hidden smDown implementation="css">
          <AdminNavbarLinks {...props}/>
         </Hidden>

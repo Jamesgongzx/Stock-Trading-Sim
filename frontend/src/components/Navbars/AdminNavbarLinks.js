@@ -100,6 +100,12 @@ export default function AdminNavbarLinks({...props}) {
                     <Paper>
                       <ClickAwayListener onClickAway={handleClose}>
                         <MenuList role="menu">
+                            <MenuItem
+                                className={classes.dropdownItem}
+                                color="green"
+                            >
+                                User Money: $
+                            </MenuItem>
                           <MenuItem
                               onClick={handleCloseProfile}
                               className={classes.dropdownItem}
@@ -112,6 +118,12 @@ export default function AdminNavbarLinks({...props}) {
                             {/*</Switch>*/}
                             Profile
                           </MenuItem>
+                        <MenuItem
+                            onClick={handleClose}
+                            className={classes.dropdownItem}
+                        >
+                            Change User
+                        </MenuItem>
                           <MenuItem
                               onClick={handleClose}
                               className={classes.dropdownItem}

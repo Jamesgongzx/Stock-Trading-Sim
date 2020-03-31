@@ -29,6 +29,9 @@ const headerStyle = () => ({
     minHeight: "50px",
     display: "block"
   },
+  padded: {
+    padding: "0.5rem"
+  },
   container: {
     ...container,
     minHeight: "50px"
