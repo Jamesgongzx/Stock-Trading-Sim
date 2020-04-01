@@ -46,6 +46,8 @@ router.get("/:name/records", (req, res) => {
     });
 });
 
+// TODO: Add transitionRecord
+
 // Requires amount field in req.body
 router.post("/:name/purchase", (req, res) => {
     var name = req.params.name;
