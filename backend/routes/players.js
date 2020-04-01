@@ -13,6 +13,28 @@ router.get("/", async (req, res) => {
     });
 });
 
+router.post("/create", async (req, res) => {
+    var money = 999999999999.99;
+    var accountId = req.session.accountId;
+    var subscriptionType = req.session.subscriptionType;
+    if (subscriptionType){
+        if (subscriptionType == "None"){
+            money = 10000;
+        } else if (subscriptionType == "Premium"){
+            money = 100000;
+        }
+    }
+    
+    connection.query('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId], function (error, results) {
+        if (error) {
+          res.status(500).send("playerOwnership insertion failed.")
+          return;
+        } else {
+          res.status(200).send("Account added successfully!");
+        }
+      });
+});
+
 router.get("/:playerId/stocks", (req, res) => {
     var playerId = req.params.playerId;
     if (playerId == req.session.playerId) {

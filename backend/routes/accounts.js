@@ -50,15 +50,30 @@ router.post("/signin", (req, res) => {
   var password = req.body.password;
   var accountId = req.body.accountId;
 
-  connection.query("SELECT * FROM account WHERE username = ? AND password = ?", [username, password], function (error, results, fields) {
-    if (results.length > 0) {
-      res.status(200).send("User signed in successfully");
+  connection.query("SELECT * FROM account WHERE username = ? AND password = ?", [username, password], function (error, results) {
+    if (error) {
+      res.sendStatus(500);
+      return;
+    } else if (results.length > 0) {
       req.session.loggedin = true;
       req.session.accountId = accountId;
     } else {
       res.status(401).send("Incorrect Username and/or Password!");
+      return;
     }
   });
+
+  // Save subscriptionType if account is type user
+  connection.query("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId], function (error, results) {
+    if (error) {
+      res.sendStatus(500);
+      return;
+    } else if (results.length > 0) {
+      req.session.subscriptionType = results[0].subscriptionType;
+    }
+  });
+
+  res.status(200).send("Account signed in successfully");
 });
 
 router.get("/signout", (req, res) => {

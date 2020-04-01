@@ -76,12 +76,10 @@ CREATE EVENT updateStockEvent
 			AND MINUTE(stockRecordOwnership.dateTime) = MINUTE(utc_time()));
 
 INSERT INTO account VALUES
-(1, 'testAdmin1@testAdmin.com', 'testAdmin1', 'testAdmin1', DEFAULT),
-(2, 'testAdmin2@testAdmin.com', 'testAdmin2', 'testAdmin2', DEFAULT),
-(10, 'testUser1@testAdmin.com', 'testUser1', 'testUser1', DEFAULT),
-(11, 'testUser2@testAdmin.com', 'testUser2', 'testUser2', DEFAULT),
-(3, 'admin', 'admin', 'admin', DEFAULT),
-(4, 'user', 'user', 'user', DEFAULT);
+(1, 'admin@admin.com', 'admin', 'admin', DEFAULT),
+(2, 'admin2@admin2.com', 'admin2', 'admin2', DEFAULT),
+(10, 'user@user.com', 'user', 'user', DEFAULT),
+(11, 'user2@user2.com', 'user2', 'user2', DEFAULT);
 
 INSERT INTO admin VALUES
 (1, NULL),
