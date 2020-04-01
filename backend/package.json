@@ -5,11 +5,13 @@
   "dependencies": {
     "bcrypt": "^4.0.0",
     "concurrently": "^5.1.0",
+    "connect-redis": "^4.0.4",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "morgan": "^1.9.1",
     "mysql": "^2.18.1",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "redis": "^3.0.2"
   },
   "scripts": {
     "start": "nodemon app.js",
