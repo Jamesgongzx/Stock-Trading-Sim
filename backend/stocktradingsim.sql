@@ -83,8 +83,7 @@ INSERT INTO account VALUES
 
 INSERT INTO admin VALUES
 (1, NULL),
-(2, NULL),
-(3, NULL);
+(2, NULL);
 
 INSERT INTO user VALUES (10, 'None'),
 (11, 'Premium');
