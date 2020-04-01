@@ -12,38 +12,83 @@ router.post("/signup", async (req, res) => {
   var password = req.body.password;
   var subscriptionType = req.body.subscriptionType;
 
-  connection.query('SELECT * FROM account WHERE username = ?', [username], (error, results) => {
-    if (error) {
-      res.status(500).send("Unable to add account! SELECT failed.");
-    } else if (results.length > 0) {
-      res.status(409).send("Account already exists with that username!");
-    } else {
-      connection.query('INSERT INTO account VALUES (NULL, ?, ?, ?, DEFAULT)', [email, username, password], function (error, results) {
-        if (error) {
-          res.status(500).send("Account insertion failed.");
-        } else {
-          var accountId = results.insertId;
-          connection.query('INSERT INTO user VALUES (?, ?)', [accountId, subscriptionType], function (error, result) {
-            if (error) {
-              res.status(500).send("User insertion failed.");
-            } else {
-              var money = 10000;
-              if (subscriptionType == 'Premium') {
-                money = 100000;
-              }
-              connection.query('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId], function (error, results) {
-                if (error) {
-                  res.status(500).send("playerOwnership insertion failed.")
-                } else {
-                  res.status(200).send("Account added successfully!");
-                }
-              });
-            }
-          })
-        }
-      });
-    }
-  });
+  let allAccounts = [];
+
+  try {
+    allAccounts = await app.connectionQueryPromise('SELECT * FROM account WHERE username = ?', [username])
+  } catch (e) {
+    res.status(500).send("Unable to add account! SELECT failed.");
+    return;
+  }
+
+  if (allAccounts.length > 0) {
+    res.status(409).send("Account already exists with that username!");
+    return;
+  }
+
+  let insertAccount = {};
+  try {
+    insertAccount = await app.connectionQueryPromise('INSERT INTO account VALUES (NULL, ?, ?, ?, DEFAULT)', [email, username, password])
+  } catch (e) {
+    res.status(500).send("Account insertion failed.");
+    return;
+  }
+
+  let accountId = insertAccount.insertId;
+  let insertUser = {};
+  try {
+    insertUser = await app.connectionQueryPromise('INSERT INTO user VALUES (?, ?)', [accountId, subscriptionType])
+  } catch (e) {
+    res.status(500).send("User insertion failed.");
+    return;
+  }
+
+  let money = 10000;
+  if (subscriptionType === 'Premium') {
+    money = 100000;
+  }
+
+  let insertPlayOwnership = {};
+  try {
+    insertPlayOwnership = app.connectionQueryPromise('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId])
+  } catch (e) {
+    res.status(500).send("playerOwnership insertion failed.")
+    return;
+  }
+
+  res.status(200).send("Account added successfully!");
+  // connection.query('SELECT * FROM account WHERE username = ?', [username], (error, results) => {
+  //   if (error) {
+  //     res.status(500).send("Unable to add account! SELECT failed.");
+  //   } else if (results.length > 0) {
+  //     res.status(409).send("Account already exists with that username!");
+  //   } else {
+  //     connection.query('INSERT INTO account VALUES (NULL, ?, ?, ?, DEFAULT)', [email, username, password], function (error, results) {
+  //       if (error) {
+  //         res.status(500).send("Account insertion failed.");
+  //       } else {
+  //         var accountId = results.insertId;
+  //         connection.query('INSERT INTO user VALUES (?, ?)', [accountId, subscriptionType], function (error, result) {
+  //           if (error) {
+  //             res.status(500).send("User insertion failed.");
+  //           } else {
+  //             var money = 10000;
+  //             if (subscriptionType == 'Premium') {
+  //               money = 100000;
+  //             }
+  //             connection.query('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId], function (error, results) {
+  //               if (error) {
+  //                 res.status(500).send("playerOwnership insertion failed.")
+  //               } else {
+  //                 res.status(200).send("Account added successfully!");
+  //               }
+  //             });
+  //           }
+  //         })
+  //       }
+  //     });
+  //   }
+  // });
 });
 
 router.post("/signin", (req, res) => {
