@@ -59,29 +59,34 @@ CREATE TABLE stockRecordOwnership (
 
 CREATE EVENT updateStockEvent
     ON SCHEDULE EVERY 1 MINUTE DO
-		UPDATE stock 
+		UPDATE stock
 		SET currentPrice = (
-			SELECT price 
-			FROM stockRecordOwnership 
-			WHERE stockRecordOwnership.name = stock.name 
+			SELECT price
+			FROM stockRecordOwnership
+			WHERE stockRecordOwnership.name = stock.name
 			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time())
 			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time())
 			AND MINUTE(stockRecordOwnership.dateTime) = MINUTE(utc_time())),
 			24hChange = currentPrice - (
-			SELECT price 
-			FROM stockRecordOwnership 
-			WHERE stockRecordOwnership.name = stock.name 
+			SELECT price
+			FROM stockRecordOwnership
+			WHERE stockRecordOwnership.name = stock.name
 			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time()) - 1
 			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time())
 			AND MINUTE(stockRecordOwnership.dateTime) = MINUTE(utc_time()));
 
-INSERT INTO account VALUES (1, 'testAdmin1@testAdmin.com', 'testAdmin1', 'testAdmin1', DEFAULT),
+INSERT INTO account VALUES
+(1, 'testAdmin1@testAdmin.com', 'testAdmin1', 'testAdmin1', DEFAULT),
 (2, 'testAdmin2@testAdmin.com', 'testAdmin2', 'testAdmin2', DEFAULT),
 (10, 'testUser1@testAdmin.com', 'testUser1', 'testUser1', DEFAULT),
-(11, 'testUser2@testAdmin.com', 'testUser2', 'testUser2', DEFAULT);
+(11, 'testUser2@testAdmin.com', 'testUser2', 'testUser2', DEFAULT),
+(3, 'admin', 'admin', 'admin', DEFAULT),
+(4, 'user', 'user', 'user', DEFAULT);
 
-INSERT INTO admin VALUES (1, NULL),
-(2, NULL);
+INSERT INTO admin VALUES
+(1, NULL),
+(2, NULL),
+(3, NULL);
 
 INSERT INTO user VALUES (10, 'None'),
 (11, 'Premium');
@@ -92,7 +97,7 @@ INSERT INTO playerOwnership VALUES (1, 999999999999.99, 1),
 (4, 100000, 11);
 
 INSERT INTO stock VALUES ('AMZN', NULL, NULL);
-INSERT INTO stockRecordOwnership VALUES 
+INSERT INTO stockRecordOwnership VALUES
 ('AMZN', '2020-01-31 00:33:00', 4000),
 ('AMZN', '2020-01-31 00:34:00', 5000),
 ('AMZN', '2020-01-31 00:35:00', 6000),

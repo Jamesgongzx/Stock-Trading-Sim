@@ -10,7 +10,7 @@ class SignIn extends React.Component {
 
     this.state = {
       username: "",
-      password: ""
+      password: "",
     };
   }
 
@@ -33,14 +33,17 @@ class SignIn extends React.Component {
       )
       .then(result => {
         console.log("register result: ", result);
-        alert("User has logged in successfully");
+        // alert("User has logged in successfully");
         this.setState({
           username: "",
-          password: ""
+          password: "",
         });
+        this.props.handleSignIn(true);
+        this.props.history.push("/user/dashboard");
       })
       .catch(error => {
-        console.log("register result: ", error.response);
+        console.log("register result: ", error);
+        this.props.handleSignIn(false);
         alert(error.response.data);
       });
     event.preventDefault();

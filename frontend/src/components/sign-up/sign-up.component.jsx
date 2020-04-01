@@ -1,9 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Select from "react-select";
+import Select from '@material-ui/core/Select';
 
 import "./sign-up.styles.scss";
+import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const options = [
   { value: "None", label: "None" },
@@ -19,7 +22,7 @@ class SignUp extends React.Component {
       email: "",
       password: "",
       password_confirmation: "",
-      subscriptionType: "None"
+      subscriptionType: "Subscription Type",
     };
   }
   handleChange = event => {
@@ -28,7 +31,13 @@ class SignUp extends React.Component {
   };
 
   handleSubmit = event => {
+    event.preventDefault();
     const { username, email, password, password_confirmation, subscriptionType } = this.state;
+
+    if ("None" !== subscriptionType && "Premium" !== subscriptionType) {
+      alert("Subscription type must be selected!");
+      return;
+    }
 
     if (!/[A-Za-z0-9]+/.test(username)) {
       alert("Username must contain only characters and numbers!");
@@ -113,16 +122,28 @@ class SignUp extends React.Component {
             onChange={this.handleChange}
             required
           />
-
+          <FormControl className="test">
+          {/*<InputLabel htmlFor="age-native-required">Subscription Type</InputLabel>*/}
           <Select
             name="subscriptionType"
-            placeholder="Type"
-            value={subscriptionType}
-            onChange={(val)=> {this.handleChange({target: { name:"subscriptionType", value: val.value }})}}
-            options={options}
-            classNamePrefix="select"
-            className="test"
-          />
+            // placeholder="Type"
+            value={this.state.subscriptionType}
+            onChange={(e, i, val)=> {
+              console.log(e);
+              this.setState({subscriptionType: e.target.value})
+            }}
+            // options={options}
+            // classNamePrefix="select"
+              displayEmpty
+            // defaultValue="Subscription Type"
+            className="test2"
+          >
+            <option value="Subscription Type" disabled selected>Subscription Type</option>
+            <option value={"None"}>None</option>
+            <option value={"Premium"}>Premium</option>
+          </Select>
+            {/*<FormHelperText>Placeholder</FormHelperText>*/}
+          </FormControl>
 
           <button type="submit">Register</button>
           <p>
