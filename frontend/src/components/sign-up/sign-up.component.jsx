@@ -7,6 +7,7 @@ import "./sign-up.styles.scss";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import {requestPOST} from "../../requests";
 
 const options = [
   { value: "None", label: "None" },
@@ -54,18 +55,7 @@ class SignUp extends React.Component {
       return;
     }
 
-    axios
-      .post(
-        "http://localhost:4000/accounts/signup",
-        {
-          username,
-          email,
-          password,
-          password_confirmation,
-          subscriptionType
-        },
-        { withCreditential: true }
-      )
+    requestPOST("/accounts/signup", {username, email, password, password_confirmation, subscriptionType})
       .then(res => {
         console.log("registration result: ", res);
         alert("You have successfully registered!");

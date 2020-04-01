@@ -19,6 +19,7 @@ import Button from "components/CustomButtons/Button.js";
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 import { Switch, Route, Redirect, Link } from "react-router-dom";
 import UserProfile from "../../views/UserProfile/UserProfile";
+import {requestGET} from "../../requests";
 
 const useStyles = makeStyles(styles);
 
@@ -27,6 +28,7 @@ export default function AdminNavbarLinks({...props}) {
   const classes = useStyles();
   // const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+  const [money, setMoney] = React.useState(null);
   // const handleClickNotification = event => {
   //   if (openNotification && openNotification.contains(event.target)) {
   //     setOpenNotification(null);
@@ -37,6 +39,10 @@ export default function AdminNavbarLinks({...props}) {
   // const handleCloseNotification = () => {
   //   setOpenNotification(null);
   // };
+    requestGET("/accounts/players")
+        .then((res) => {
+            console.log(res);
+        })
    const handleClickProfile = event => {
     if (openProfile && openProfile.contains(event.target)) {
       setOpenProfile(null);
@@ -104,7 +110,7 @@ export default function AdminNavbarLinks({...props}) {
                                 className={classes.dropdownItem}
                                 color="green"
                             >
-                                User Money: $
+                                {`Current Money: ${money}`}
                             </MenuItem>
                           <MenuItem
                               onClick={handleCloseProfile}
