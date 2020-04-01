@@ -1,5 +1,7 @@
+
 const express = require("express");
 const connection = require("../connection");
+const app = require("../app");
 
 const router = express.Router();
 
@@ -50,33 +52,33 @@ router.post("/signin", (req, res) => {
   var password = req.body.password;
 
   var accountId = null;
-  connection.query("SELECT accountId FROM account WHERE username = ? AND password = ?", [username, password], function (error, results) {
-    if (error) {
-      res.sendStatus(500);
-      return;
-    } else if (results.length > 0) {
-      req.session.loggedin = true;
-      req.session.accountId = results[0].accountId;
-      accountId = req.session.accountId;
-      req.session.save();
-    } else {
-      res.status(401).send("Incorrect Username and/or Password!");
-      return;
-    }
-  });
+  let errcode = 500;
 
-  // Save subscriptionType if account is type user
-  connection.query("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId], function (error, results) {
-    if (error) {
-      res.sendStatus(500);
-      return;
-    } else if (results.length > 0) {
-      req.session.subscriptionType = results[0].subscriptionType;
-    }
-  });
-
-
-  res.status(200).send("Account signed in successfully");
+  return app.connectionQueryPromise("SELECT accountId FROM account WHERE username = ? AND password = ?", [username, password])
+      .then((results) => {
+        if (results.length > 0) {
+          req.session.loggedin = true;
+          req.session.accountId = results[0].accountId;
+          accountId = req.session.accountId;
+        } else {
+          errcode = 401;
+          // res.status(401).send("Incorrect Username and/or Password!");
+          return Promise.reject();
+        }
+      })
+      .then(() => {
+        return app.connectionQueryPromise("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId])
+      })
+      .then((results) => {
+        if (results.length > 0) {
+          req.session.subscriptionType = results[0].subscriptionType;
+        }
+        //Done
+        res.status(200).send("Account signed in successfully");
+      })
+      .catch((err) => {
+        res.sendStatus(errcode);
+      })
 });
 
 router.get("/signout", (req, res) => {

@@ -2,7 +2,6 @@ const express = require("express");
 const morgan = require("morgan");
 const session = require('express-session');
 const fs = require('fs');
-const fsp = require('fs').promises;
 const connection = require("./connection");
 
 const indexRoutes = require("./routes/index");
@@ -14,6 +13,15 @@ const shopsRoutes = require("./routes/shops");
 const port = process.env.PORT || 4000;
 
 const app = express();
+
+let connectionQueryPromise = function(query, paramsArray) {
+    return new Promise((resolve, reject) => {
+        connection.query(query, paramsArray, function(err, results) {
+            if (err) reject(err);
+            resolve(results);
+        });
+    })
+}
 
 function executeSQL(filename) {
     let readfilepromise = new Promise((resolve, reject) => {
@@ -29,12 +37,7 @@ function executeSQL(filename) {
     return readfilepromise
         .then((data) => {
             // console.log(data.toString());
-            return new Promise((resolve, reject) => {
-                connection.query(data.toString(), function(err, results) {
-                    if (err) reject(err);
-                    resolve();
-                });
-            })
+            return connectionQueryPromise(data.toString(), [])
         })
         .then(() => {
             console.log(`Successfully executed: ${filename}`);
@@ -50,7 +53,7 @@ app.use(morgan("short"));
 app.use(session({
 	secret: 'random secret',
 	resave: true,
-	saveUninitialized: true
+	saveUninitialized: true,
 }));
 
 //CORS
@@ -83,3 +86,5 @@ app.listen(port, () => {
         .catch((err) => {});
   console.log(`Server is running on ${port}`);
 });
+
+exports.connectionQueryPromise = connectionQueryPromise;
