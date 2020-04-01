@@ -87,7 +87,6 @@ router.post("/:name/purchase", (req, res) => {
     });
 
     var canPurchase = (currentPrice * amount) >= money;
-
     if (!canPurchase) {
         res.sendStatus(403);
         return;
