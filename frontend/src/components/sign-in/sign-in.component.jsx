@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 import "./sign-in.styles.scss";
+import {requestPOST} from "../../requests";
 
 class SignIn extends React.Component {
   constructor() {
@@ -22,15 +23,7 @@ class SignIn extends React.Component {
 
   handleSubmit = event => {
     const { username, password } = this.state;
-    axios
-      .post(
-        "http://localhost:4000/accounts/signin",
-        {
-          username,
-          password
-        },
-        { withCreditential: true }
-      )
+    requestPOST("/accounts/signin", {username, password})
       .then(result => {
         console.log("register result: ", result);
         // alert("User has logged in successfully");

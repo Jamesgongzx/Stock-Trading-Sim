@@ -84,6 +84,7 @@ router.get("/signout", (req, res) => {
 
 router.get("/players", (req, res) => {
   var accountId = req.session.accountId;
+  console.log(accountId);
   connection.query('SELECT * FROM playerOwnership where accountId = ?', [accountId], (error, results) => {
     if (error) {
       res.sendStatus(500);

@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const session = require('express-session');
 const fs = require('fs');
+const fsp = require('fs').promises;
 const connection = require("./connection");
 
 const indexRoutes = require("./routes/index");
@@ -15,18 +16,30 @@ const port = process.env.PORT || 4000;
 const app = express();
 
 function executeSQL(filename) {
-    fs.readFile(filename, function read(err, data) {
-        if (err) {
-            throw err;
-        }
-        // Invoke the next step here however you like
-        // console.log(content.toString());   // Put all of the code here (not the best solution)
-        connection.query(data.toString(), function(err, results) {
-            if (err) throw err;
-            console.log(`Successfully executed: ${filename}`);
-        });
+    let readfilepromise = new Promise((resolve, reject) => {
+        fs.readFile(filename, function read(err, data) {
+            if (err) {
+                return reject(err)
+            }
 
-    });
+            resolve(data)
+        })
+    })
+
+    return readfilepromise
+        .then((data) => {
+            // console.log(data.toString());
+            return new Promise((resolve, reject) => {
+                connection.query(data.toString(), function(err, results) {
+                    if (err) reject(err);
+                    resolve();
+                });
+            })
+        })
+        .then(() => {
+            console.log(`Successfully executed: ${filename}`);
+        })
+        .catch((err) => {console.log(`Error with file: ${filename}\n${err}`)})
 }
 //Body-Parser
 app.use(express.json());
@@ -63,6 +76,10 @@ app.use((req, res, next) => {
 });
 
 app.listen(port, () => {
-    executeSQL("stocktradingsim.sql");
+    executeSQL("stocktradingsim.sql")
+        .then(() => {
+            return executeSQL("temp_ckoo.sql");
+        })
+        .catch((err) => {});
   console.log(`Server is running on ${port}`);
 });
