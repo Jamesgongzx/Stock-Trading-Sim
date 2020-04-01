@@ -58,6 +58,7 @@ router.post("/signin", (req, res) => {
       req.session.loggedin = true;
       req.session.accountId = results[0].accountId;
       accountId = req.session.accountId;
+      req.session.save();
     } else {
       res.status(401).send("Incorrect Username and/or Password!");
       return;
@@ -74,6 +75,7 @@ router.post("/signin", (req, res) => {
     }
   });
 
+
   res.status(200).send("Account signed in successfully");
 });
 
@@ -84,7 +86,7 @@ router.get("/signout", (req, res) => {
 
 router.get("/players", (req, res) => {
   var accountId = req.session.accountId;
-  console.log(accountId);
+  console.log(req.session);
   connection.query('SELECT * FROM playerOwnership where accountId = ?', [accountId], (error, results) => {
     if (error) {
       res.sendStatus(500);
