@@ -3,7 +3,7 @@ SET default_storage_engine=InnoDB;
 USE stocktradingsim;
 
 INSERT INTO playerOwnership VALUES
-(5, 10.0, 3),
-(6, 999999999999.99, 3),
-(7, 10000, 4),
-(8, 100000, 4);
+(5, 10.0, 1),
+(6, 999999999999.99, 1),
+(7, 10000, 10),
+(8, 100000, 10);
