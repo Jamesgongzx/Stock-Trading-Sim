@@ -59,7 +59,6 @@ export default function AdminNavbarLinks({...props}) {
     // window.location.pathname = "/user/profile";
     setOpenProfile(null);
   };
-  console.log(props);
 
     const handleCloseProfile = ()  => {
         props.history.push("/user/profile");
@@ -116,8 +115,8 @@ export default function AdminNavbarLinks({...props}) {
                                 color="green"
                             >
                                 Current Money: $
-                                {props.currentAccount != null
-                                ? props.currentAccount.money
+                                {props.currentPlayer != null
+                                ? props.currentPlayer.money
                                 : 0}
                             </MenuItem>
                           <MenuItem

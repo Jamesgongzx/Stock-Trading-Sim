@@ -21,24 +21,24 @@ import {requestGET} from "../requests";
 import TableList from "../views/TableList/TableList";
 import PropTypes from "prop-types";
 
-const switchRoutes = (
-    <Switch>
-        {routes.map((prop, key) => {
-            console.log(prop);
-            if (prop.layout === "/user") {
-                return (
-                    <Route
-                        path={prop.layout + prop.path}
-                        component={prop.component}
-                        key={key}
-                    />
-                );
-            }
-            return null;
-        })}
-        <Redirect from="/user" to="/user/dashboard" />
-    </Switch>
-);
+// const switchRoutes = (
+//     <Switch>
+//         {routes.map((prop, key) => {
+//             console.log(prop);
+//             if (prop.layout === "/user") {
+//                 return (
+//                     <Route
+//                         path={prop.layout + prop.path}
+//                         component={prop.component}
+//                         key={key}
+//                     />
+//                 );
+//             }
+//             return null;
+//         })}
+//         <Redirect from="/user" to="/user/dashboard" />
+//     </Switch>
+// );
 
 const useStyles = makeStyles(styles);
 
@@ -53,9 +53,33 @@ class Admin extends React.Component {
         this.color = "blue";
         this.state = {
             mobileOpen: false,
-            accounts: [],
-            currentAccount: null,
+            players: [],
+            currentPlayer: null,
         }
+
+        this.switchRoutes = (
+            <Switch>
+                {routes.map((prop, key) => {
+                    console.log(prop);
+                    if (prop.layout === "/user") {
+                        return (
+                            <Route
+                                path={prop.layout + prop.path}
+                                // component={prop.component}
+                                render={() => {
+                                    let Element = prop.component;
+                                    return <Element {...this.props} {...this.state}/>;
+                                }}
+                                key={key}
+                            />
+                        );
+                    }
+                    return null;
+                })}
+                <Redirect from="/user" to="/user/dashboard" />
+            </Switch>
+        );
+
     }
 
     getRoute = () => {
@@ -83,10 +107,18 @@ class Admin extends React.Component {
                 console.log(res.data);
                 if(res.data.length > 0)   {
                     this.setState({
-                        accounts: res.data,
-                        currentAccount: res.data[0]
+                        players: res.data,
+                        currentPlayer: res.data[0]
                     })
+                    return res.data[0]
                 }
+                return null;
+            })
+            .then((player) => {
+                if (player) {
+                    return requestGET(`/accounts/players/${player.playerId}` )
+                }
+                return Promise.resolve();
             })
     };
 
@@ -135,10 +167,10 @@ class Admin extends React.Component {
                     {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
                     {this.getRoute() ? (
                         <div className={classes.content}>
-                            <div className={classes.container}>{switchRoutes}</div>
+                            <div className={classes.container}>{this.switchRoutes}</div>
                         </div>
                     ) : (
-                        <div className={classes.map}>{switchRoutes}</div>
+                        <div className={classes.map}>{this.switchRoutes}</div>
                     )}
                 </div>
             </div>

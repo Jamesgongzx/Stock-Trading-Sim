@@ -120,13 +120,14 @@ router.get("/players", (req, res) => {
 });
 
 router.get("/players/:playerId", (req, res) => {
-    var accountId = req.session.accountId;
-    var playerId = req.params.playerId;
+    let accountId = req.session.accountId;
+    console.log(req.params)
+    let playerId = req.params.playerId;
     database.query('SELECT * FROM playerOwnership where accountId = ? AND playerId = ?', [accountId, playerId])
         .then(
             results => {
-                req.session.playerId = playerId;
-                req.session.save();
+                req.session.playerId = parseInt(playerId);
+                // req.session.save();
                 res.status(200).send(results);
             },
             error => {
