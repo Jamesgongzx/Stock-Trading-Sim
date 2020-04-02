@@ -21,6 +21,7 @@ import Person from "@material-ui/icons/Person";
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
+import MyStocks from "views/TableList/MyStocks";
 
 const dashboardRoutes = [
   {
@@ -42,6 +43,13 @@ const dashboardRoutes = [
     name: "Table List",
     icon: "content_paste",
     component: TableList,
+    layout: "/user"
+  },
+  {
+    path: "/stocks",
+    name: "My Stocks",
+    icon: null,
+    component: MyStocks,
     layout: "/user"
   },
   // {

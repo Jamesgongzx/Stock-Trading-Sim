@@ -39,10 +39,15 @@ export default function AdminNavbarLinks({...props}) {
   // const handleCloseNotification = () => {
   //   setOpenNotification(null);
   // };
-    requestGET("/accounts/players")
-        .then((res) => {
-            console.log(res);
-        })
+  //   requestGET("/accounts/players")
+  //       .then((res) => {
+  //           console.log(res.data);
+  //           if(res.data.length > 0)   {
+  //               setMoney(res.data[0].money)
+  //           } else {
+  //               setMoney(0);
+  //           }
+  //       })
    const handleClickProfile = event => {
     if (openProfile && openProfile.contains(event.target)) {
       setOpenProfile(null);
@@ -54,7 +59,7 @@ export default function AdminNavbarLinks({...props}) {
     // window.location.pathname = "/user/profile";
     setOpenProfile(null);
   };
-  // console.log(props);
+  console.log(props);
 
     const handleCloseProfile = ()  => {
         props.history.push("/user/profile");
@@ -110,7 +115,10 @@ export default function AdminNavbarLinks({...props}) {
                                 className={classes.dropdownItem}
                                 color="green"
                             >
-                                {`Current Money: ${money}`}
+                                Current Money: $
+                                {props.currentAccount != null
+                                ? props.currentAccount.money
+                                : 0}
                             </MenuItem>
                           <MenuItem
                               onClick={handleCloseProfile}
