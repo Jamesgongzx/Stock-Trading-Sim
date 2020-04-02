@@ -1,49 +1,58 @@
 const express = require("express");
-const connection = require("../connection");
+const database = require("../database");
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    connection.query('SELECT * FROM stock', (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-        } else if (results.length > 0) {
-            res.status(200).send(results);
-        }
-    });
+    database.query('SELECT * FROM stock', [])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendstatus(200);
+                }
+            }
+        )
 });
 
 router.get("/:name", (req, res) => {
     var name = req.params.name;
-    connection.query('SELECT * FROM stock where name = ?', [name], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-        } else {
-            res.status(200).send(results);
-        }
-    });
+    database.query('SELECT * FROM stock where name = ?', [name])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
 });
 
 router.get("/:name/company", (req, res) => {
     var stockName = req.params.name;
-    connection.query('SELECT * FROM company where stockName = ?', [stockName], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-        } else {
-            res.status(200).send(results);
-        }
-    });
+    database.query('SELECT * FROM company where stockName = ?', [stockName])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
 });
 
 router.get("/:name/records", (req, res) => {
     var name = req.params.name;
-    connection.query('SELECT * FROM stockRecordOwnership where name = ?', [name], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-        } else {
-            res.status(200).send(results);
-        }
-    });
+    database.query('SELECT * FROM stockRecordOwnership where name = ?', [name])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
 });
 
 // TODO: Add transitionRecord
@@ -61,67 +70,61 @@ router.post("/:name/purchase", (req, res) => {
     }
 
     var currentPrice = null;
-    connection.query('SELECT currentPrice FROM stock where name = ?', [name], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            currentPrice = results[0].currentPrice;
-        } else {
-            res.sendStatus(400);
-            return;
-        }
-    });
-
     var money = null;
-    connection.query('SELECT money FROM playerOwnership where playerId = ?', [playerId], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            money = results[0].money;
-        } else {
-            res.sendStatus(400);
-            return;
-        }
-    });
-
-    var canPurchase = (currentPrice * amount) >= money;
-    if (!canPurchase) {
-        res.sendStatus(403);
-        return;
-    }
-
-    // Check if player already owns stock
-    var alreadyOwned = null;
-    connection.query('SELECT * FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            alreadyOwned = true;
-        }
-    });
-
-    if (alreadyOwned) {
-        connection.query('UPDATE playerStockR SET amount = amount + ? WHERE playerId = ? AND stockName = ?', [amount, playerId, name], (error, results) => {
-            if (error) {
-                res.sendStatus(500);
-                return;
-            } else {
+    var response = { code: null, message: null };
+    database.query('SELECT currentPrice FROM stock where name = ?', [name])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    currentPrice = results[0].currentPrice;
+                    return database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
+                } else {
+                    response.code = 400;
+                    throw new Error();
+                }
+            }
+        ).then(
+            results => {
+                if (results.length > 0) {
+                    money = results[0].money;
+                    var canPurchase = (currentPrice * amount) >= money;
+                    if (!canPurchase) {
+                        response.code = 403;
+                        response.message = "Not enough money to purchase"
+                        throw new Error("Not enough money to purchase");
+                    }
+                    return database.query('SELECT * FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
+                } else {
+                    response.code = 400;
+                    throw new Error();
+                }
+            }
+        ).then(
+            results => {
+                // already Owned
+                if (results.length > 0) {
+                    return database.query('UPDATE playerStockR SET amount = amount + ? WHERE playerId = ? AND stockName = ?', [amount, playerId, name]);
+                } else {
+                    return database.query('INSERT INTO playerStockR VALUES (?, ?, ?)', [playerId, name, amount]);
+                }
+            }
+        ).then(
+            results => {
                 res.sendStatus(200);
             }
-        });
-    } else {
-        connection.query('INSERT INTO playerStockR VALUES (?, ?, ?)', [playerId, name, amount], (error, results) => {
-            if (error) {
-                res.sendStatus(500);
-                return;
-            } else {
-                res.sendStatus(200);
+        ).catch(
+            error => {
+                if (!response.code) {
+                    response.code = 500;
+                }
+                console.log(error);
+                if (response.message) {
+                    return res.status(response.code).send(response.message);
+                } else {
+                    return res.status(response.code);
+                }
             }
-        });
-    }
+        )
 });
 
 // Requires amount field in req.body
@@ -137,60 +140,62 @@ router.post("/:name/sell", (req, res) => {
     }
 
     var currentPrice = null;
-    connection.query('SELECT currentPrice FROM stock where name = ?', [name], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            currentPrice = results[0].currentPrice;
-        } else {
-            res.sendStatus(400);
-            return;
-        }
-    });
-
     var amountOwned = null;
-    connection.query('SELECT amount FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            amountOwned = results[0].amount;
-        }
-    });
-
-    var canSell = amountOwned >= amount;
-    if (!canSell) {
-        res.sendStatus(403);
-        return;
-    }
-
-    var amountAfterSell = amountOwned - amount;
-    if (amountAfterSell == 0) {
-        connection.query('DELETE FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name], (error, results) => {
-            if (error) {
-                res.sendStatus(500);
-                return;
+    var response = { code: null, message: null };
+    database.query('SELECT currentPrice FROM stock where name = ?', [name])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    currentPrice = results[0].currentPrice;
+                    return database.query('SELECT amount FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
+                } else {
+                    response.code = 400;
+                    throw new Error();
+                }
             }
-        });
-    } else {
-        connection.query('UPDATE playerStockR SET amount = amount - ? WHERE playerId = ? AND stockName = ?', [amount, playerId, name], (error, results) => {
-            if (error) {
-                res.sendStatus(500);
-                return;
+        ).then(
+            results => {
+                if (results.length > 0) {
+                    amountOwned = results[0].amount;
+                    var canSell = amountOwned >= amount;
+                    if (!canSell) {
+                        response.code = 403;
+                        response.message = "Not enough amount owned to sell"
+                        throw new Error("Not enough amount owned to sell");
+                    }
+                    var amountAfterSell = amountOwned - amount;
+                    if (amountAfterSell == 0) {
+                        return database.query('DELETE FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
+                    } else {
+                        return database.query('UPDATE playerStockR SET amount = amount - ? WHERE playerId = ? AND stockName = ?', [amount, playerId, name]);
+                    }
+                } else {
+                    response.code = 400;
+                    throw new Error();
+                }
             }
-        });
-    }
-
-    var moneyEarned = currentPrice * amount;
-    connection.query('UPDATE playerOwnership SET money = money + ? WHERE playerId = ?', [moneyEarned, playerId], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else {
-            res.sendStatus(200);
-        }
-    });
+        ).then(
+            results => {
+                var moneyEarned = currentPrice * amount;
+                return database.query('UPDATE playerOwnership SET money = money + ? WHERE playerId = ?', [moneyEarned, playerId]);
+            }
+        ).then(
+            results => {
+                res.sendStatus(200);
+            }
+        ).catch(
+            error => {
+                if (!response.code) {
+                    response.code = 500;
+                }
+                console.log(error);
+                if (response.message) {
+                    return res.status(response.code).send(response.message);
+                } else {
+                    return res.status(response.code);
+                }
+            }
+        )
 });
 
 module.exports = router;
