@@ -1,159 +1,138 @@
-
 const express = require("express");
-const connection = require("../connection");
-const app = require("../app");
+const database = require("../database");
 
 const router = express.Router();
 
 router.post("/signup", async (req, res) => {
+    var email = req.body.email.toLowerCase();
+    var username = req.body.username;
+    var password = req.body.password;
+    var subscriptionType = req.body.subscriptionType;
+    var accountId;
 
-  var email = req.body.email.toLowerCase();
-  var username = req.body.username;
-  var password = req.body.password;
-  var subscriptionType = req.body.subscriptionType;
-
-  let allAccounts = [];
-
-  try {
-    allAccounts = await app.connectionQueryPromise('SELECT * FROM account WHERE username = ?', [username])
-  } catch (e) {
-    res.status(500).send("Unable to add account! SELECT failed.");
-    return;
-  }
-
-  if (allAccounts.length > 0) {
-    res.status(409).send("Account already exists with that username!");
-    return;
-  }
-
-  let insertAccount = {};
-  try {
-    insertAccount = await app.connectionQueryPromise('INSERT INTO account VALUES (NULL, ?, ?, ?, DEFAULT)', [email, username, password])
-  } catch (e) {
-    res.status(500).send("Account insertion failed.");
-    return;
-  }
-
-  let accountId = insertAccount.insertId;
-  let insertUser = {};
-  try {
-    insertUser = await app.connectionQueryPromise('INSERT INTO user VALUES (?, ?)', [accountId, subscriptionType])
-  } catch (e) {
-    res.status(500).send("User insertion failed.");
-    return;
-  }
-
-  let money = 10000;
-  if (subscriptionType === 'Premium') {
-    money = 100000;
-  }
-
-  let insertPlayOwnership = {};
-  try {
-    insertPlayOwnership = app.connectionQueryPromise('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId])
-  } catch (e) {
-    res.status(500).send("playerOwnership insertion failed.")
-    return;
-  }
-
-  res.status(200).send("Account added successfully!");
-  // connection.query('SELECT * FROM account WHERE username = ?', [username], (error, results) => {
-  //   if (error) {
-  //     res.status(500).send("Unable to add account! SELECT failed.");
-  //   } else if (results.length > 0) {
-  //     res.status(409).send("Account already exists with that username!");
-  //   } else {
-  //     connection.query('INSERT INTO account VALUES (NULL, ?, ?, ?, DEFAULT)', [email, username, password], function (error, results) {
-  //       if (error) {
-  //         res.status(500).send("Account insertion failed.");
-  //       } else {
-  //         var accountId = results.insertId;
-  //         connection.query('INSERT INTO user VALUES (?, ?)', [accountId, subscriptionType], function (error, result) {
-  //           if (error) {
-  //             res.status(500).send("User insertion failed.");
-  //           } else {
-  //             var money = 10000;
-  //             if (subscriptionType == 'Premium') {
-  //               money = 100000;
-  //             }
-  //             connection.query('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId], function (error, results) {
-  //               if (error) {
-  //                 res.status(500).send("playerOwnership insertion failed.")
-  //               } else {
-  //                 res.status(200).send("Account added successfully!");
-  //               }
-  //             });
-  //           }
-  //         })
-  //       }
-  //     });
-  //   }
-  // });
+    var response = { code: null, message: null };
+    database.query('SELECT * FROM account WHERE username = ?', [username])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    response.code = 409;
+                    response.message = "Account already exists with that username!";
+                    throw new Error(response.message);
+                } else {
+                    return database.query('INSERT INTO account VALUES (NULL, ?, ?, ?, DEFAULT)', [email, username, password])
+                }
+            })
+        .then(
+            results => {
+                accountId = results.insertId;
+                return database.query('INSERT INTO user VALUES (?, ?)', [accountId, subscriptionType]);
+            },
+            error => {
+                database.queryError(error, response)
+            })
+        .then(
+            results => {
+                var money = 10000;
+                if (subscriptionType == 'Premium') {
+                    money = 100000;
+                }
+                return database.query('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId]);
+            })
+        .then(
+            results => {
+                return res.status(200).send("Account added successfully!");
+            })
+        .catch(
+            error => {
+                if (!response.code) {
+                    response.code = 500;
+                }
+                console.log(error);
+                if (response.message) {
+                    return res.status(response.code).send(response.message);
+                } else {
+                    return res.status(response.code);
+                }
+            }
+        )
 });
 
 router.post("/signin", (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
 
-  var username = req.body.username;
-  var password = req.body.password;
-
-  var accountId = null;
-  let errcode = 500;
-
-  return app.connectionQueryPromise("SELECT accountId FROM account WHERE username = ? AND password = ?", [username, password])
-      .then((results) => {
-        if (results.length > 0) {
-          req.session.loggedin = true;
-          req.session.accountId = results[0].accountId;
-          accountId = req.session.accountId;
-        } else {
-          errcode = 401;
-          // res.status(401).send("Incorrect Username and/or Password!");
-          return Promise.reject();
-        }
-      })
-      .then(() => {
-        return app.connectionQueryPromise("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId])
-      })
-      .then((results) => {
-        if (results.length > 0) {
-          req.session.subscriptionType = results[0].subscriptionType;
-        }
-        //Done
-        res.status(200).send("Account signed in successfully");
-      })
-      .catch((err) => {
-        res.sendStatus(errcode);
-      })
+    var accountId = null;
+    var response = { code: null, message: null };
+    database.query("SELECT accountId FROM account WHERE username = ? AND password = ?", [username, password])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    req.session.loggedin = true;
+                    req.session.accountId = results[0].accountId;
+                    accountId = req.session.accountId;
+                    return database.query("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId]);
+                } else {
+                    response.code = 401;
+                    response.message = "Incorrect Username and/or Password!";
+                    throw new Error('Incorrect Username and/or Password!');
+                }
+            })
+        .then(
+            results => {
+                if (results.length > 0) {
+                    req.session.subscriptionType = results[0].subscriptionType;
+                }
+                req.session.save();
+                return res.status(200).send("Account signed in successfully");
+            })
+        .catch(
+            error => {
+                if (!response.code) {
+                    response.code = 500;
+                }
+                console.log(error);
+                if (response.message) {
+                    return res.status(response.code).send(response.message);
+                } else {
+                    return res.status(response.code);
+                }
+            }
+        )
 });
 
 router.get("/signout", (req, res) => {
-  req.session.destroy();
-  res.status(200).send("User signed out successfully");
+    req.session.destroy();
+    res.status(200).send("User signed out successfully");
 });
 
 router.get("/players", (req, res) => {
-  var accountId = req.session.accountId;
-  console.log(req.session);
-  connection.query('SELECT * FROM playerOwnership where accountId = ?', [accountId], (error, results) => {
-    if (error) {
-      res.sendStatus(500);
-    } else {
-      res.status(200).send(results);
-    }
-  });
+    var accountId = req.session.accountId;
+    database.query('SELECT * FROM playerOwnership where accountId = ?', [accountId])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
 });
 
 router.get("/players/:playerId", (req, res) => {
-  var accountId = req.session.accountId;
-  var playerId = req.params.playerId;
-  connection.query('SELECT * FROM playerOwnership where accountId = ? AND playerId = ?', [accountId, playerId], (error, results) => {
-    if (error) {
-      res.sendStatus(500);
-    } else {
-      req.session.playerId = playerId;
-      res.status(200).send(results);
-    }
-  });
+    var accountId = req.session.accountId;
+    var playerId = req.params.playerId;
+    database.query('SELECT * FROM playerOwnership where accountId = ? AND playerId = ?', [accountId, playerId])
+        .then(
+            results => {
+                req.session.playerId = playerId;
+                req.session.save();
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
 });
 
 module.exports = router;

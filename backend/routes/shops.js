@@ -1,5 +1,5 @@
 const express = require("express");
-const connection = require("../connection");
+const database = require("../database");
 
 const router = express.Router();
 
@@ -7,26 +7,38 @@ router.get("/:dayOfWeek/:category", async (req, res) => {
     var dayOfWeek = req.params.dayOfWeek;
     var category = req.params.category;
 
-    connection.query('SELECT * FROM shop WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-        } else if (results.length > 0) {
-            res.status(200).send(results);
-        }
-    });
+    database.query('SELECT * FROM shop WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
 });
 
 router.get("/:dayOfWeek/:category/items", async (req, res) => {
     var dayOfWeek = req.params.dayOfWeek;
     var category = req.params.category;
 
-    connection.query('SELECT itemName, cost, amount, description FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-        } else if (results.length > 0) {
-            res.status(200).send(results);
-        }
-    });
+    database.query('SELECT itemName, cost, amount, description FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
 });
 
 // TODO: Add transitionRecord
@@ -53,20 +65,6 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
         }
     }
 
-    var serverDayOfWeek = null
-    connection.query('SELECT DAYOFWEEK(utc_time())', (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            serverDayOfWeek = results[0]['DAYOFWEEK(utc_time())'];
-            if (serverDayOfWeek != dayOfWeek) {
-                res.sendStatus(403);
-                return;
-            }
-        }
-    });
-
     var itemCost = null;
     var amountAvailable = null;
 
@@ -75,66 +73,77 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
         return;
     }
 
-    connection.query('SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            itemCost = results[0].cost;
-            amountAvailable = results[0].amount;
-        }
-    });
-
+    var serverDayOfWeek = null
     var money = null;
-    connection.query('SELECT money FROM playerOwnership where playerId = ?', [playerId], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            money = results[0].money;
-        } else {
-            res.sendStatus(400);
-            return;
-        }
-    });
-
-    var canPurchase = (itemCost * amount) >= money;
-
-    if (!canPurchase) {
-        res.sendStatus(403);
-        return;
-    }
-
-    // Check if player already owns item
-    var alreadyOwned = null;
-    connection.query('SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, name], (error, results) => {
-        if (error) {
-            res.sendStatus(500);
-            return;
-        } else if (results.length > 0) {
-            alreadyOwned = true;
-        }
-    });
-
-    if (alreadyOwned) {
-        connection.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, name], (error, results) => {
-            if (error) {
-                res.sendStatus(500);
-                return;
-            } else {
+    var response = { code: null, message: null };
+    database.query('SELECT DAYOFWEEK(utc_time())', [])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    serverDayOfWeek = results[0]['DAYOFWEEK(utc_time())'];
+                    if (serverDayOfWeek != dayOfWeek) {
+                        response.code = 403;
+                        response.message = "Shop not available today";
+                        throw new Error("Shop not available today");
+                    }
+                    database.query('SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category]);
+                } else {
+                    response.code = 400;
+                    throw new Error();
+                }
+            }
+        ).then(
+            results => {
+                if (results.length > 0) {
+                    itemCost = results[0].cost;
+                    amountAvailable = results[0].amount;
+                    database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
+                } else {
+                    response.code = 400;
+                    throw new Error();
+                }
+            }
+        ).then(
+            results => {
+                if (results.length > 0) {
+                    money = results[0].money;
+                    var canPurchase = (itemCost * amount) >= money;
+                    if (!canPurchase) {
+                        response.code = 403;
+                        throw new Error();
+                    }
+                    database.query('SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, name]);
+                } else {
+                    response.code = 400;
+                    throw new Error();
+                }
+            }
+        ).then(
+            results => {
+                // Item already owned
+                if (results.length > 0) {
+                    database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, name]);
+                } else {
+                    database.query('INSERT INTO playerItemR VALUES (?, ?, ?)', [playerId, name, amount]);
+                }
+            }
+        ).then(
+            results => {
                 res.sendStatus(200);
             }
-        });
-    } else {
-        connection.query('INSERT INTO playerItemR VALUES (?, ?, ?)', [playerId, name, amount], (error, results) => {
-            if (error) {
-                res.sendStatus(500);
-                return;
-            } else {
-                res.sendStatus(200);
+        ).catch(
+            error => {
+                if (!response.code) {
+                    response.code = 500;
+                }
+                console.log(error);
+                if (response.message) {
+                    return res.status(response.code).send(response.message);
+                } else {
+                    return res.status(response.code);
+                }
             }
-        });
-    }
+        )
 });
 
 module.exports = router;
