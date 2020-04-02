@@ -24,36 +24,15 @@ class Admin extends React.Component {
     constructor(props) {
         super(props)
         this.mainPanel = React.createRef();
-        this.filteredRoutes = routes.filter((x) => x.icon != null);
         this.ps = null;
         this.image = bgImage;
-        this.filteredRoutes = routes.filter((x) => x.icon != null);
         this.color = "blue";
         this.state = {
             mobileOpen: false,
             players: [],
             currentPlayer: null,
+            admin: false,
         }
-
-        this.switchRoutes = (
-            <Switch>
-                {routes.map((prop, key) => {
-                    console.log(prop);
-                        return (
-                            <Route
-                                path={prop.layout + prop.path}
-                                // component={prop.component}
-                                render={() => {
-                                    let Element = prop.component;
-                                    return <Element {...this.props} {...this.state}/>;
-                                }}
-                                key={key}
-                            />
-                        );
-                })}
-                <Redirect from="/user" to="/user/dashboard" />
-            </Switch>
-        );
 
     }
 
@@ -93,7 +72,20 @@ class Admin extends React.Component {
                 if (player) {
                     return requestGET(`/accounts/players/${player.playerId}` )
                 }
-                return Promise.resolve();
+                return Promise.resolve(null);
+            })
+            .then((player) => {
+                if (player) {
+                    return requestGET(`/accounts/admin`)
+                }
+                return Promise.resolve(null);
+            })
+            .then((res) => {
+                if (res && res.data.length > 0) {
+                    this.setState({
+                        admin: true
+                    })
+                }
             })
     };
 
@@ -122,6 +114,37 @@ class Admin extends React.Component {
 
     render() {
         const {classes} = this.props;
+        this.filteredRoutes = routes.filter((x) => {
+            if (x.icon == null) return false;
+
+            if (x.type === "admin" && this.state.admin === false) return false;
+            if (x.type === "admin" && this.state.admin === true) return true;
+
+            return true;
+        });
+        this.switchRoutes = (
+            <Switch>
+                {routes.map((prop, key) => {
+                    // console.log(prop);
+                    if ((prop.type === "admin" && this.state.admin === true) || prop.type === "user") {
+                        console.log(`rendering: ${prop.path}`);
+                        return (
+                            <Route
+                                path={prop.layout + prop.path}
+                                // component={prop.component}
+                                render={() => {
+                                    let Element = prop.component;
+                                    return <Element {...this.props} {...this.state}/>;
+                                }}
+                                key={key}
+                            />
+                        );
+                    }
+                    return null;
+                })}
+                <Redirect from="/user" to="/user/dashboard" />
+            </Switch>
+        );
         return (
             <div className={classes.wrapper}>
                 <Sidebar

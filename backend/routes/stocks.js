@@ -29,6 +29,20 @@ router.get("/:name", (req, res) => {
         )
 });
 
+// delete route
+router.post("/:name", (req, res) => {
+    var name = req.params.name;
+    database.query('DELETE FROM stock where name = ?', [name])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
+});
+
 router.get("/:name/company", (req, res) => {
     var stockName = req.params.name;
     database.query('SELECT * FROM company where stockName = ?', [stockName])

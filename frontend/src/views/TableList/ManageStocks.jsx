@@ -62,7 +62,7 @@ const styles = {
     }
 };
 
-class TradeStocks extends React.Component{
+class ManageStocks extends React.Component{
     constructor(props) {
         super(props)
         this.state = {
@@ -134,12 +134,12 @@ class TradeStocks extends React.Component{
     handleTransactionSubmit = (event) => {
         console.log(event);
         event.preventDefault();
-        if (this.state.transactionType === "buy") {
-            return requestPOST(`/stocks/${this.state.selectedStock}/purchase`, {amount: this.state.qtyShares})
+        if (this.state.transactionType === "delete") {
+            return requestPOST(`/stocks/${this.state.selectedStock}`)
                 .then(() => {
                     helpers.Toast.fire({
                         icon: 'success',
-                        title: `Successfully purchased ${this.state.qtyShares} shares of ${this.state.selectedStock}`
+                        title: `Deleted this stock: ${this.state.selectedStock}`
                     })
                 })
                 .catch((err) => {
@@ -148,24 +148,13 @@ class TradeStocks extends React.Component{
                         title: `Uh oh, something went wrong: ${err}`
                     })
                 })
-        } else if (this.state.transactionType === "sell") {
-            return requestPOST(`/stocks/${this.state.selectedStock}/sell`, {amount: this.state.qtyShares})
                 .then(() => {
-                    helpers.Toast.fire({
-                        icon: 'success',
-                        title: `Successfully sold ${this.state.qtyShares} shares of ${this.state.selectedStock}`
+                    this.setState({
+                        selectedStock: null,
                     })
-                })
-                .catch((err) => {
-                    helpers.Toast.fire({
-                        icon: 'error',
-                        title: `Uh oh, something went wrong: ${err}`
-                    })
+                    return this.getAllStocks()
                 })
         }
-        this.setState({
-            qtyShares: 0
-        })
     }
 
     render() {
@@ -182,76 +171,64 @@ class TradeStocks extends React.Component{
                             Stock Name: {this.state.selectedStock}
                         </DialogTitle>
                         <form onSubmit={this.handleTransactionSubmit}>
-                        <DialogContent dividers>
-                            <div>
-                                Please enter the number of stocks to trade:
-                            </div>
-                            <OutlinedInput type="number" size="small"
-                                           endAdornment={<InputAdornment position="end">Shares</InputAdornment>}
-                                           InputProps={{ inputProps: { min: 0} }}
-                                           required
-                                           defaultValue={0}
-                                           value={this.state.qtyShares}
-                                           onChange={(e) => {this.setState({qtyShares: e.target.value})}}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                        <Button  type="submit" color="success" className={classes.green}
-                                 onClick={() => {this.setState({transactionType: "buy"})}}>
-                            Buy
-                        </Button>
-                        <Button type="submit" color="danger" className={classes.red}
-                                onClick={() => {this.setState({transactionType: "sell"})}}>
-                            Sell
-                        </Button>
-                        </DialogActions>
+                            <DialogContent dividers>
+                                <div>
+                                    Are you sure you want to delete this stock?
+                                </div>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button  type="submit" color="success" className={classes.green}
+                                         onClick={() => {this.setState({transactionType: "delete"})}}>
+                                    Confirm
+                                </Button>
+                            </DialogActions>
                         </form>
                     </Dialog>
                     :
                     <React.Fragment></React.Fragment>
                 }
                 <GridContainer>
-                <GridItem xs={12} sm={12} md={12}>
-                    <Card>
-                        <CardHeader color="primary">
-                            <h4 className={classes.cardTitleWhite}>Trade Stocks</h4>
-                            <p className={classes.cardCategoryWhite}>
-                                Search for a stock to trade:
-                            </p>
-                        </CardHeader>
-                        <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
-                            <OutlinedInput
-                                type="stock"
-                                name="stock"
-                                placeholder="Search for a stock..."
-                                value={this.state.stock}
-                                onChange={this.handleStockBarChange}
-                            />
-                            <Button className="submit" type="submit" size="md">
-                                Submit
-                            </Button>
-                        </form>
-                        <CardBody>
-                            {this.state.values.length <= 0 ?
-                                "No Stocks Found :("
-                                :
-                                <Table
-                                    tableHeaderColor="primary"
-                                    tableHead={this.state.columnNames}
-                                    tableData={this.state.values}
+                    <GridItem xs={12} sm={12} md={12}>
+                        <Card>
+                            <CardHeader color="primary">
+                                <h4 className={classes.cardTitleWhite}>Manage Stocks</h4>
+                                <p className={classes.cardCategoryWhite}>
+                                    Search for a stock to manage:
+                                </p>
+                            </CardHeader>
+                            <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
+                                <OutlinedInput
+                                    type="stock"
+                                    name="stock"
+                                    placeholder="Search for a stock..."
+                                    value={this.state.stock}
+                                    onChange={this.handleStockBarChange}
                                 />
-                            }
-                        </CardBody>
-                    </Card>
-                </GridItem>
-            </GridContainer>
+                                <Button className="submit" type="submit" size="md">
+                                    Submit
+                                </Button>
+                            </form>
+                            <CardBody>
+                                {this.state.values.length <= 0 ?
+                                    "No Stocks Found :("
+                                    :
+                                    <Table
+                                        tableHeaderColor="primary"
+                                        tableHead={this.state.columnNames}
+                                        tableData={this.state.values}
+                                    />
+                                }
+                            </CardBody>
+                        </Card>
+                    </GridItem>
+                </GridContainer>
             </React.Fragment>
         );
     }
 }
 
-TradeStocks.propTypes = {
+ManageStocks.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(TradeStocks);
+export default withStyles(styles)(ManageStocks);

@@ -100,6 +100,20 @@ router.post("/signin", (req, res) => {
         )
 });
 
+router.get("/admin", (req, res) => {
+    let accountId = req.session.accountId;
+    return database.query('SELECT * FROM admin where accountId = ? ', [accountId])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
+})
+
 router.get("/signout", (req, res) => {
     req.session.destroy();
     res.status(200).send("User signed out successfully");
