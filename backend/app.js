@@ -64,6 +64,7 @@ app.use("/accounts", accountsRoutes);
 app.use("/players", playersRoutes);
 app.use("/stocks", stocksRoutes);
 app.use("/shops", shopsRoutes);
+app.disable('etag');
 
 app.use((req, res, next) => {
   res.status(404).send("error");
