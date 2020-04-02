@@ -18,29 +18,7 @@ import styles from "../assets/jss/material-dashboard-react/layouts/adminStyle.js
 import bgImage from "../assets/img/sidebar-2.jpg";
 import logo from "../assets/img/reactlogo.png";
 import {requestGET} from "../requests";
-import TableList from "../views/TableList/TableList";
 import PropTypes from "prop-types";
-
-// const switchRoutes = (
-//     <Switch>
-//         {routes.map((prop, key) => {
-//             console.log(prop);
-//             if (prop.layout === "/user") {
-//                 return (
-//                     <Route
-//                         path={prop.layout + prop.path}
-//                         component={prop.component}
-//                         key={key}
-//                     />
-//                 );
-//             }
-//             return null;
-//         })}
-//         <Redirect from="/user" to="/user/dashboard" />
-//     </Switch>
-// );
-
-const useStyles = makeStyles(styles);
 
 class Admin extends React.Component {
     constructor(props) {
@@ -61,7 +39,6 @@ class Admin extends React.Component {
             <Switch>
                 {routes.map((prop, key) => {
                     console.log(prop);
-                    if (prop.layout === "/user") {
                         return (
                             <Route
                                 path={prop.layout + prop.path}
@@ -73,8 +50,6 @@ class Admin extends React.Component {
                                 key={key}
                             />
                         );
-                    }
-                    return null;
                 })}
                 <Redirect from="/user" to="/user/dashboard" />
             </Switch>

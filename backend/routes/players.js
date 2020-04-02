@@ -41,8 +41,8 @@ router.post("/create", async (req, res) => {
 
 router.get("/:playerId/stocks", (req, res) => {
     var playerId = req.params.playerId;
-    // console.log(playerId);
-    // console.log(req.session);
+    console.log(req.params);
+    console.log(req.session);
     if (playerId == req.session.playerId) {
         database.query('SELECT * FROM playerStockR WHERE playerId = ?', [playerId])
             .then(
@@ -54,7 +54,7 @@ router.get("/:playerId/stocks", (req, res) => {
                     }
                 },
                 error => {
-                    // console.log(error);
+                    console.log(error);
                     res.sendStatus(500);
                 }
             )

@@ -7,3 +7,23 @@ INSERT INTO playerOwnership VALUES
 (6, 999999999999.99, 1),
 (7, 10000, 10),
 (8, 100000, 10);
+
+INSERT INTO stock VALUES
+('GOOGL', 50.49, 2.4),
+('HELLOWORLD', 100, -2.5);
+
+
+CREATE TABLE playerStockR (
+    playerId INT,
+    stockname CHAR(20),
+    amount INT,
+    PRIMARY KEY (playerId , stockname),
+    FOREIGN KEY (stockname)
+        REFERENCES stock (name)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO playerStockR VALUES
+(3, 'GOOGL', 5),
+(3, 'AMZN', 20),
+(3, 'HELLOWORLD', 30);

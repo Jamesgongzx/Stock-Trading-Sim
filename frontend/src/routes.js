@@ -18,10 +18,12 @@
 // @material-ui/icons
 import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
+import ShowChart from "@material-ui/icons/ShowChart"
 import DashboardPage from "views/Dashboard/Dashboard.js";
 import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
 import MyStocks from "views/TableList/MyStocks";
+import TradeStocks from "./views/TableList/TradeStocks";
 
 const dashboardRoutes = [
   {
@@ -39,12 +41,19 @@ const dashboardRoutes = [
     layout: "/user"
   },
   {
-    path: "/table",
-    name: "Table List",
-    icon: "content_paste",
-    component: TableList,
+    path: "/trade",
+    name: "Trade Stocks",
+    icon: ShowChart,
+    component: TradeStocks,
     layout: "/user"
   },
+  // {
+  //   path: "/table",
+  //   name: "Table List",
+  //   icon: "content_paste",
+  //   component: TableList,
+  //   layout: "/user"
+  // },
   {
     path: "/stocks",
     name: "My Stocks",
@@ -52,6 +61,7 @@ const dashboardRoutes = [
     component: MyStocks,
     layout: "/user"
   },
+
   // {
   //   path: "/typography",
   //   name: "Typography",
