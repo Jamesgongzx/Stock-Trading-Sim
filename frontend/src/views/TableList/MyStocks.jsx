@@ -45,6 +45,10 @@ const styles = {
 class MyStocks extends React.Component{
     constructor(props) {
         super(props)
+        this.state = {
+            columnNames : [],
+            values: [],
+        }
     }
 
     componentDidMount() {
@@ -52,6 +56,13 @@ class MyStocks extends React.Component{
         requestGET(`/players/${this.props.currentPlayer.playerId}/stocks`, )
             .then((res) => {
                 console.log(res);
+                if (res.data.length > 0) {
+                    let data = res.data;
+                    this.setState({
+                        columnNames: Object.keys(data[0]),
+                        values: data.map((x) => Object.values(x))
+                    })
+                }
             })
     }
 
@@ -70,15 +81,8 @@ class MyStocks extends React.Component{
                         <CardBody>
                             <Table
                                 tableHeaderColor="primary"
-                                tableHead={["Name", "Country", "City", "Salary"]}
-                                tableData={[
-                                    ["Dakota Rice", "Niger", "Oud-Turnhout", "$36,738"],
-                                    ["Minerva Hooper", "Curaçao", "Sinaai-Waas", "$23,789"],
-                                    ["Sage Rodriguez", "Netherlands", "Baileux", "$56,142"],
-                                    ["Philip Chaney", "Korea, South", "Overland Park", "$38,735"],
-                                    ["Doris Greene", "Malawi", "Feldkirchen in Kärnten", "$63,542"],
-                                    ["Mason Porter", "Chile", "Gloucester", "$78,615"]
-                                ]}
+                                tableHead={this.state.columnNames}
+                                tableData={this.state.values}
                             />
                         </CardBody>
                     </Card>

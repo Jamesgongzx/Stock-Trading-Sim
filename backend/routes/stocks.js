@@ -87,7 +87,9 @@ router.post("/:name/purchase", (req, res) => {
             results => {
                 if (results.length > 0) {
                     money = results[0].money;
-                    var canPurchase = (currentPrice * amount) >= money;
+                    var canPurchase = money >= (currentPrice * amount) ;
+                    console.log(money)
+                    console.log(currentPrice);
                     if (!canPurchase) {
                         response.code = 403;
                         response.message = "Not enough money to purchase"
