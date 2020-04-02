@@ -41,6 +41,8 @@ router.post("/create", async (req, res) => {
 
 router.get("/:playerId/stocks", (req, res) => {
     var playerId = req.params.playerId;
+    // console.log(playerId);
+    // console.log(req.session);
     if (playerId == req.session.playerId) {
         database.query('SELECT * FROM playerStockR WHERE playerId = ?', [playerId])
             .then(
@@ -48,10 +50,11 @@ router.get("/:playerId/stocks", (req, res) => {
                     if (results.length > 0) {
                         res.status(200).send(results);
                     } else {
-                        res.sendstatus(204);
+                        res.sendStatus(204);
                     }
                 },
                 error => {
+                    // console.log(error);
                     res.sendStatus(500);
                 }
             )
@@ -69,7 +72,7 @@ router.get("/:playerId/items", (req, res) => {
                     if (results.length > 0) {
                         res.status(200).send(results);
                     } else {
-                        res.sendstatus(204);
+                        res.sendStatus(204);
                     }
                 },
                 error => {
@@ -90,7 +93,7 @@ router.get("/:playerId/records", (req, res) => {
                     if (results.length > 0) {
                         res.status(200).send(results);
                     } else {
-                        res.sendstatus(204);
+                        res.sendStatus(204);
                     }
                 },
                 error => {
@@ -109,7 +112,7 @@ router.get("/leaderBoards", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendstatus(204);
+                    res.sendStatus(204);
                 }
             },
             error => {
@@ -125,7 +128,7 @@ router.get("/leaderboards", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendstatus(204);
+                    res.sendStatus(204);
                 }
             },
             error => {
@@ -143,7 +146,7 @@ router.get("/leaderboards/:leaderboardId", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendstatus(204);
+                    res.sendStatus(204);
                 }
             },
             error => {
@@ -161,7 +164,7 @@ router.get("/leaderboards/:leaderboardId/players", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendstatus(204);
+                    res.sendStatus(204);
                 }
             },
             error => {
@@ -180,7 +183,7 @@ router.get("/:playerId/:leaderboardId/division", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendstatus(204);
+                    res.sendStatus(204);
                 }
             },
             error => {

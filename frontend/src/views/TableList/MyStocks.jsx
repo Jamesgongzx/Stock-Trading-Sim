@@ -9,6 +9,7 @@ import Card from "../../components/Card/Card.js";
 import CardHeader from "../../components/Card/CardHeader.js";
 import CardBody from "../../components/Card/CardBody.js";
 import PropTypes from 'prop-types';
+import {requestGET} from "../../requests";
 // import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = {
@@ -47,7 +48,11 @@ class MyStocks extends React.Component{
     }
 
     componentDidMount() {
-
+        console.log(this.props)
+        requestGET(`/players/${this.props.currentPlayer.playerId}/stocks`, )
+            .then((res) => {
+                console.log(res);
+            })
     }
 
     render() {
