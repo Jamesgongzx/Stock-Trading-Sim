@@ -26,4 +26,6 @@ CREATE TABLE playerStockR (
 INSERT INTO playerStockR VALUES
 (3, 'GOOGL', 5),
 (3, 'AMZN', 20),
-(3, 'HELLOWORLD', 30);
+(3, 'HELLOWORLD', 30),
+(1, 'GOOGL', 5),
+(1, 'AMZN', 20);
