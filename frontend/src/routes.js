@@ -20,7 +20,7 @@ import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
 import ShowChart from "@material-ui/icons/ShowChart"
 import Business from "@material-ui/icons/Business"
-import DashboardPage from "views/Dashboard/Dashboard.js";
+import DashboardPage from "views/Dashboard/dashboard.jsx";
 import UserProfile from "views/UserProfile/UserProfile.js";
 import TableList from "views/TableList/TableList.js";
 import MyStocks from "views/TableList/MyStocks";
