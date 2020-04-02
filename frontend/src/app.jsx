@@ -5,7 +5,7 @@ import {Redirect, Route, Switch} from "react-router-dom";
 import SignIn from "./components/sign-in/sign-in.component";
 import SignUp from "./components/sign-up/sign-up.component";
 // core components
-import Admin from "./layouts/Admin";
+import Admin from "./layouts/admin.jsx";
 import "./assets/css/material-dashboard-react.css?v=1.8.0";
 
 class App extends React.Component {

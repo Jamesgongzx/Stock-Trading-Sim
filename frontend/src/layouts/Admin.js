@@ -17,6 +17,8 @@ import styles from "../assets/jss/material-dashboard-react/layouts/adminStyle.js
 
 import bgImage from "../assets/img/sidebar-2.jpg";
 import logo from "../assets/img/reactlogo.png";
+import {requestGET} from "../requests";
+import TableList from "../views/TableList/TableList";
 
 let ps;
 
@@ -50,6 +52,7 @@ export default function Admin({ ...rest }) {
   const [image ] = React.useState(bgImage);
   const [color ] = React.useState("blue");
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -62,6 +65,10 @@ export default function Admin({ ...rest }) {
       setMobileOpen(false);
     }
   };
+
+  const filteredRoutes = routes.filter((x) => x.icon != null);
+
+
   // initialize and destroy the PerfectScrollbar plugin
   React.useEffect(() => {
     if (navigator.platform.indexOf("Win") > -1) {
@@ -83,7 +90,7 @@ export default function Admin({ ...rest }) {
   return (
     <div className={classes.wrapper}>
       <Sidebar
-        routes={routes}
+        routes={filteredRoutes}
         logoText={"Creative Tim"}
         logo={logo}
         image={image}
@@ -94,7 +101,7 @@ export default function Admin({ ...rest }) {
       />
       <div className={classes.mainPanel} ref={mainPanel}>
         <Navbar
-          routes={routes}
+          routes={filteredRoutes}
           handleDrawerToggle={handleDrawerToggle}
           {...rest}
         />
