@@ -98,12 +98,12 @@ router.get("/:name", (req, res) => {
 });
 
 // delete stock (admin only)
-router.post("/:name", (req, res) => {
+router.delete("/:name", (req, res) => {
     var name = req.params.name;
-    database.query('DELETE FROM stock where name = ?', [name])
+    database.query('DELETE FROM stock WHERE name = ?', [name])
         .then(
             results => {
-                res.status(200).send(results);
+                res.sendStatus(200);
             },
             error => {
                 res.sendStatus(500);
