@@ -57,24 +57,6 @@ CREATE TABLE stockRecordOwnership (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE EVENT updateStockEvent
-    ON SCHEDULE EVERY 1 MINUTE DO
-		UPDATE stock
-		SET currentPrice = (
-			SELECT price
-			FROM stockRecordOwnership
-			WHERE stockRecordOwnership.name = stock.name
-			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time())
-			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time())
-			AND MINUTE(stockRecordOwnership.dateTime) = MINUTE(utc_time())),
-			24hChange = currentPrice - (
-			SELECT price
-			FROM stockRecordOwnership
-			WHERE stockRecordOwnership.name = stock.name
-			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time()) - 1
-			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time())
-			AND MINUTE(stockRecordOwnership.dateTime) = MINUTE(utc_time()));
-
 INSERT INTO account VALUES
 (1, 'admin@admin.com', 'admin', 'admin', DEFAULT),
 (2, 'admin2@admin2.com', 'admin2', 'admin2', DEFAULT),
@@ -93,7 +75,7 @@ INSERT INTO playerOwnership VALUES (1, 999999999999.99, 1),
 (3, 10000, 10),
 (4, 100000, 11);
 
-INSERT INTO stock VALUES ('AMZN', NULL, NULL);
+INSERT INTO stock VALUES ('AMZN', 80, 80);
 INSERT INTO stockRecordOwnership VALUES
 ('AMZN', '2020-01-31 00:33:00', 4000),
 ('AMZN', '2020-01-31 00:34:00', 5000),

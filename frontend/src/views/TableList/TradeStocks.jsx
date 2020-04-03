@@ -21,6 +21,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 // import withStyles from "@material-ui/core/styles/withStyles";
 import Swal from 'sweetalert2'
 import helpers from "../../utils.js"
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const styles = {
     cardCategoryWhite: {
@@ -231,7 +233,35 @@ class TradeStocks extends React.Component{
                                 Submit
                             </Button>
                         </form>
+
+                        {/*This section is for projection query*/}
                         <CardBody>
+                            <div>
+                                <FormControlLabel
+                                    value="start"
+                                    control={
+                                        <Checkbox
+                                            defaultChecked
+                                            // onChange={handleChange}
+                                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                                        />
+                                    }
+                                    label="Start"
+                                    labelPlacement="start"
+                                />
+                                <FormControlLabel
+                                    value="start"
+                                    control={
+                                        <Checkbox
+                                            defaultChecked
+                                            // onChange={handleChange}
+                                            inputProps={{ 'aria-label': 'primary checkbox' }}
+                                        />
+                                    }
+                                    label="Start"
+                                    labelPlacement="start"
+                                />
+                            </div>
                             {this.state.values.length <= 0 ?
                                 "No Stocks Found :("
                                 :
