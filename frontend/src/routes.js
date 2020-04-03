@@ -22,6 +22,9 @@ import ShowChart from "@material-ui/icons/ShowChart"
 import Business from "@material-ui/icons/Business"
 import Group from "@material-ui/icons/Group"
 import TableChart from "@material-ui/icons/TableChart"
+import Store from "@material-ui/icons/Store"
+
+
 import DashboardPage from "views/Dashboard/dashboard.jsx";
 import UserProfile from "views/UserProfile/userprofile.jsx";
 import TableList from "views/TableList/TableList.js";
@@ -30,6 +33,7 @@ import TradeStocks from "./views/TableList/TradeStocks";
 import ManagePlayers from "./views/TableList/ManagePlayers";
 import ManageStocks from "./views/TableList/ManageStocks";
 import ManageTables from "./views/TableList/ManageTables";
+import MarketPlace from "./views/TableList/MarketPlace";
 
 
 const dashboardRoutes = [
@@ -46,6 +50,14 @@ const dashboardRoutes = [
     name: "User Profile",
     icon: Person,
     component: UserProfile,
+    layout: "/user",
+    type: "user"
+  },
+  {
+    path: "/marketplace",
+    name: "Marketplace",
+    icon: Store,
+    component: MarketPlace,
     layout: "/user",
     type: "user"
   },
