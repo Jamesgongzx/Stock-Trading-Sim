@@ -56,8 +56,8 @@ class Admin extends React.Component {
         })
     };
 
-    getStockCount = () => {
-        requestGET("/stocks/stock-count")
+    getStockCount = (playerId) => {
+        return requestGET(`/players/${playerId}/stocks/count`)
             .then((results) => {
                 console.log(results)
                 if (results.data.length > 0) {
@@ -84,12 +84,14 @@ class Admin extends React.Component {
             .then((player) => {
                 if (player) {
                     return requestGET(`/accounts/players/${player.playerId}` )
+                        .then(() => Promise.resolve(player))
+                        .catch((err) => console.log(err))
                 }
                 return Promise.resolve(null);
             })
             .then((player) => {
                 if (player) {
-                    return this.getStockCount()
+                    return this.getStockCount(player.playerId)
                         .then(() => Promise.resolve(player))
                 }
                 return Promise.resolve(null)
