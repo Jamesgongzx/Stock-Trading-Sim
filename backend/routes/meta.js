@@ -41,4 +41,24 @@ router.get("/tables/:tableName", (req, res) => {
         )
 });
 
+router.get("/tables/:tableName/columns", (req, res) => {
+    let tableName = req.params.tableName;
+    let adminId = req.session.adminId;
+    if (!adminId) {
+        res.sendStatus(401);
+        return;
+    }
+    database.query(`select column_name from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME= ? `, [tableName])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                console.log(error)
+                res.sendStatus(500);
+
+            }
+        )
+});
+
 module.exports = router;

@@ -21,6 +21,8 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 // import withStyles from "@material-ui/core/styles/withStyles";
 import Swal from 'sweetalert2'
 import helpers from "../../utils.js"
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 
 const styles = {
     cardCategoryWhite: {
@@ -68,11 +70,32 @@ class ManagePlayers extends React.Component{
         this.state = {
             columnNames : [],
             values: [],
+            projectionColumns : {},
+            route: "/players/"
         }
     }
 
-    getAllUsersValuation = () => {
-        requestGET(`/players/overview`, )
+    getManageUsersRoute = (route) => {
+        // request.GET(`/tables/${}/columns`)
+        requestGET(route, )
+            .then((res) => {
+                console.log(res);
+                if (res.data.length > 0) {
+                    let data = res.data;
+                    this.setState({
+                        projectionColumns: Object.keys(data[0]).reduce((obj, key) => { obj[key] = true; return obj; }, {}),
+                        route: route,
+                        columnNames: Object.keys(data[0]),
+                        values: data.map((x) => Object.values(x))
+                    })
+                }
+            })
+    }
+
+    getManageUsersRouteProjection = (route) => {
+        let tempCols = Object.entries(this.state.projectionColumns).filter((pair) => pair[1]);
+        tempCols = tempCols.map((x) => x[0]);
+        requestGET(this.state.route, {projections: tempCols})
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -86,12 +109,44 @@ class ManagePlayers extends React.Component{
     }
 
     componentDidMount() {
-        this.getAllUsersValuation();
+        this.getManageUsersRoute(this.state.route);
     }
 
+    handleColumnChange = (event) => {
+        let tempPC = this.state.projectionColumns;
+        tempPC[event.target.value] = !tempPC[event.target.value];
+        this.setState({
+            projectionColumns: tempPC
+        });
+        this.getManageUsersRouteProjection();
+    };
 
     render() {
         const {classes} = this.props;
+
+        this.tableColumns = (
+            <React.Fragment>
+                {Object.keys(this.state.projectionColumns).map((prop, key) => {
+                    return (
+                        <FormControlLabel
+                            value={prop}
+                            control={
+                                <Checkbox
+                                    defaultChecked
+                                    onChange={(e) => {this.handleColumnChange(e)}}
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                />
+                            }
+                            label={prop}
+                            labelPlacement="start"
+                        />
+
+                    );
+
+                })}
+            </React.Fragment>
+        );
+
         return (
             <React.Fragment>
                 <GridContainer>
@@ -103,6 +158,21 @@ class ManagePlayers extends React.Component{
                                 </p>
                             </CardHeader>
                             <CardBody>
+                                <Button variant="contained" color="primary" style={{margin: "2px"}}
+                                        onClick={() => {
+                                            this.setState({route: "/players/"});
+                                            this.getManageUsersRoute("/players/");
+                                        }}
+                                >
+                                    View all Player Ownership</Button>
+                                <Button variant="contained" color="secondary" style={{margin: "2px"}}
+                                        onClick={() => {
+                                            this.setState({route: "/players/overview"})
+                                            this.getManageUsersRoute("/players/overview");
+                                        }}
+                                >
+                                    View all Player Net Worth</Button>
+                                {this.tableColumns}
                                 <Table
                                     tableHeaderColor="primary"
                                     tableHead={this.state.columnNames}

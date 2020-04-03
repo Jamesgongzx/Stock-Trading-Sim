@@ -104,19 +104,25 @@ router.get("/:playerId/stocks", (req, res) => {
 
 router.get("/overview", (req, res) => {
     var adminId = req.session.adminId;
+    var projections = req.query.projections;
     if (!adminId) {
         res.sendStatus(401);
         return;
     }
-    database.query("select po.playerId, money, case when StockValuation is null then 0 else StockValuation end as StockValuation " +
-        "from stocktradingsim.playerOwnership po " +
-        "left outer join " +
-        "(SELECT ps.playerId, sum(amount*currentprice) as StockValuation " +
-        "FROM stocktradingsim.playerStockR ps, stocktradingsim.stock s " +
-        "WHERE s.name = ps.stockName " +
-        "group by ps.playerId) p " +
-        "on p.playerId = po.playerId " +
-        "order by po.playerId", [])
+
+    var projectionString = "";
+    if (projections) {
+        projectionString = projections.join();
+    } else {
+        projectionString = "*";
+    }
+
+    database.query(`select ${projectionString} ` +
+        "from (select playerid, money, StockValuation, money + StockValuation as NetWorth " +
+        "from (select po.playerId as playerId, money, case when StockValuation is null then 0 else StockValuation end as StockValuation  " +
+        "from stocktradingsim.playerOwnership po left outer join (SELECT ps.playerId, sum(amount*currentprice) as StockValuation FROM stocktradingsim.playerStockR ps, stocktradingsim.stock s WHERE s.name = ps.stockName  " +
+        "group by ps.playerId) p on p.playerId = po.playerId  " +
+        "order by po.playerId) p) as p", [])
         .then(
             results => {
                 if (results.length > 0) {
