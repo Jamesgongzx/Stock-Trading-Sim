@@ -17,9 +17,6 @@ import Person from "@material-ui/icons/Person";
 import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
-import { Switch, Route, Redirect, Link } from "react-router-dom";
-import UserProfile from "../../views/UserProfile/UserProfile";
-import {requestGET} from "../../requests";
 
 const useStyles = makeStyles(styles);
 

@@ -14,8 +14,8 @@ import AdminNavbarLinks from "./AdminNavbarLinks.js";
 import Button from "../../components/CustomButtons/Button.js";
 
 import styles from "../../assets/jss/material-dashboard-react/components/headerStyle.js";
-import DashboardPage from "../../views/Dashboard/Dashboard";
-import UserProfile from "../../views/UserProfile/UserProfile";
+import DashboardPage from "../../views/Dashboard/dashboard";
+import UserProfile from "../../views/UserProfile/userprofile";
 import TableList from "../../views/TableList/TableList";
 
 const useStyles = makeStyles(styles);
