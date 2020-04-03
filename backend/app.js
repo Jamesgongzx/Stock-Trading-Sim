@@ -9,6 +9,7 @@ const accountsRoutes = require("./routes/accounts");
 const playersRoutes = require("./routes/players");
 const stocksRoutes = require("./routes/stocks");
 const shopsRoutes = require("./routes/shops");
+const meta = require("./routes/meta");
 
 const port = process.env.PORT || 4000;
 
@@ -64,6 +65,7 @@ app.use("/accounts", accountsRoutes);
 app.use("/players", playersRoutes);
 app.use("/stocks", stocksRoutes);
 app.use("/shops", shopsRoutes);
+app.use("/meta", meta);
 app.disable('etag');
 
 app.use((req, res, next) => {

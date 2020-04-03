@@ -91,7 +91,15 @@ router.get("/overview", (req, res) => {
         res.sendStatus(401);
         return;
     }
-    database.query('SELECT playerId, SUM(amount * currentPrice) + money AS liquidAssetWorth FROM playerStockR, playerOwnership, stock WHERE stock.name = playerStockR.stockName GROUP BY playerId', [])
+    database.query("select po.playerId, money, case when StockValuation is null then 0 else StockValuation end as StockValuation " +
+        "from stocktradingsim.playerOwnership po " +
+        "left outer join " +
+        "(SELECT ps.playerId, sum(amount*currentprice) as StockValuation " +
+        "FROM stocktradingsim.playerStockR ps, stocktradingsim.stock s " +
+        "WHERE s.name = ps.stockName " +
+        "group by ps.playerId) p " +
+        "on p.playerId = po.playerId " +
+        "order by po.playerId", [])
         .then(
             results => {
                 if (results.length > 0) {

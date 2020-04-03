@@ -91,7 +91,7 @@ INSERT INTO playerRanking VALUES
 (3,10000,0),
 (4,100000,0);
 
-INSERT INTO stock VALUES ('AMZN', 80, 80);
+INSERT INTO stock VALUES ('AMZN', 10, 10);
 
 INSERT INTO stockRecordOwnership VALUES
 ('AMZN', '2020-01-31 00:33:00', 4000),
