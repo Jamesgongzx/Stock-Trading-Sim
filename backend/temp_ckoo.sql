@@ -9,8 +9,8 @@ INSERT INTO playerOwnership VALUES
 (8, 100000, 10);
 
 INSERT INTO stock VALUES
-('GOOGL', 50.49, 2.4),
-('HELLOWORLD', 100, -2.5);
+('GOOGL', 50.24, 2.4),
+('HELLOWORLD', 60.50, -2.5);
 
 
 CREATE TABLE playerStockR (
