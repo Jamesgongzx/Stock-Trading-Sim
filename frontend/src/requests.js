@@ -23,3 +23,10 @@ export const requestPOST = (route, data) => {
         { withCredentials: true }
     )
 };
+
+export const requestDEL = (route, data) => {
+    return axios.delete(
+        URL+route,
+        {data: data, withCredentials: true}
+    )
+}
