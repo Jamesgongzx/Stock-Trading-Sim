@@ -122,11 +122,11 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             }
         ).then(
             results => {
-            // Update item amount or insert item
-            if (results.length > 0) {
+                // Update item amount or insert item
+                if (results.length > 0) {
                     database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, itemName]);
                 } else {
-                    database.query('INSERT INTO playerItemR VALUES (?, ?, ?)', [playerId, itemName, amount]);
+                    database.query('INSERT INTO playerItemR VALUES (?, ?, ?, false)', [playerId, itemName, amount]);
                 }
             }
         ).then(

@@ -57,7 +57,7 @@ router.patch("/:itemName/use", async (req, res) => {
                     }
 
                     // Check if usedToday
-                    return database.query("SELECT * FROM item WHERE itemName = ?", [itemName]);
+                    return database.query("SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?", [playerId, itemName]);
                 } else {
                     response.code = 403;
                     response.message = "Item not owned"
@@ -107,7 +107,7 @@ router.patch("/:itemName/use", async (req, res) => {
                 if (amountAfterUse <= 0) {
                     return database.query('DELETE FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
                 } else {
-                    return database.query('UPDATE playerItemR SET amount = ? WHERE playerId = ? AND itemName = ?', [amountAfterUse, playerId, itemName]);
+                    return database.query('UPDATE playerItemR SET amount = ?, usedToday = true WHERE playerId = ? AND itemName = ?', [amountAfterUse, playerId, itemName]);
                 }
             }
         ).then(
