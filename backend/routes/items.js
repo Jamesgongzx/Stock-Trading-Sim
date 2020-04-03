@@ -16,32 +16,48 @@ router.patch("/:itemName/use", async (req, res) => {
         return;
     }
 
-    if (!["Infinity Gauntlet"].includes(itemName)) {
-        return res.status(200).send("This item does not do anything!");
+    if (!["Infinity Gauntlet", "Apple", "GPU", "Potato Farm"].includes(itemName)) {
+        return res.status(200).send("Nothing happened!");
     }
-    
+
     var amountOwned = 0;
+    var amountToUse = 0;
+    var moneyToEarn = 0;
     var response = { code: null, message: null };
+    // Get item amountOwned by player
     database.query('SELECT * FROM playerItemR where playerId = ? AND itemName = ?', [playerId, itemName])
         .then(
             // Use item
             results => {
-                if (results.length > 0 && results[0].amount >= 1) {
+                if (results.length > 0) {
+
                     amountOwned = results[0].amount;
-                    if (itemName == "Infinity Gauntlet") {
-                        return database.query(
-                            "UPDATE playerOwnership " +
-                            "SET money = money + 10000 " +
-                            "WHERE playerId IN " +
-                            "(SELECT p.playerId AS FROM playerItemR as p " +
-                            "WHERE NOT EXISTS ( " +
-                            "( SELECT i.itemName FROM item as i " +
-                            "WHERE i.itemName LIKE '%Gem') " +
-                            "EXCEPT " +
-                            "(SELECT pi.itemName FROM playerItemR as pi " +
-                            "WHERE pi.playerid = p.playerid AND pi.amount >= 1 AND pi.itemName LIKE '%Gem')))"
-                        );
+                    amountToUse = 1;
+                    if (itemName == "Apple") {
+                        amountToUse = 100;
+                    } else if (itemName == "GPU" || itemName == "Potato Farm") {
+                        amountToUse = amountOwned;
                     }
+
+                    if (amountOwned < amountToUse) {
+                        response.code = 403;
+                        response.message = "Not enough amount owned to activate item!"
+                        throw new Error("Not enough amount owned to activate item!");
+                    }
+
+                    moneyToEarn = 0;
+                    if (itemName == "Infinity Gauntlet") {
+                        moneyToEarn = 10000;
+                    } else if (itemName == "Apple") {
+                        moneyToEarn = 10000;
+                    } else if (itemName == "GPU") {
+                        moneyToEarn = 75 * amountToUse;
+                    } else if (itemName == "Potato Farm") {
+                        moneyToEarn = 5 * amountToUse;
+                    }
+
+                    // Check if usedToday
+                    return database.query("SELECT * FROM item WHERE itemName = ?", [itemName]);
                 } else {
                     response.code = 403;
                     response.message = "Item not owned"
@@ -49,13 +65,49 @@ router.patch("/:itemName/use", async (req, res) => {
                 }
             }
         ).then(
+            results => {
+                var usedToday = results[0].usedToday;
+                if (usedToday) {
+                    response.code = 403;
+                    response.message = "Item already used today"
+                    throw new Error("Item already used today");
+                }
+
+                if (itemName == "Infinity Gauntlet") {
+                    return database.query(
+                        "UPDATE playerOwnership " +
+                        "SET money = money + ? " +
+                        "WHERE playerId IN " +
+                        "(SELECT p.playerId AS FROM playerItemR as p " +
+                        "WHERE NOT EXISTS ( " +
+                        "( SELECT i.itemName FROM item as i " +
+                        "WHERE i.itemName LIKE '%Gem') " +
+                        "EXCEPT " +
+                        "(SELECT pi.itemName FROM playerItemR as pi " +
+                        "WHERE pi.playerid = p.playerid AND pi.amount >= 1 AND pi.itemName LIKE '%Gem')))", [moneyToEarn]
+                    );
+                } else if (itemName == "Apple") {
+                    return database.query("UPDATE playerOwnership SET money = money + ? WHERE playerId = ?", [moneyToEarn, playerId]);
+                } else if (itemName == "GPU") {
+                    return database.query("UPDATE playerOwnership SET money = money + ? WHERE playerId = ?", [moneyToEarn, playerId]);
+                } else if (itemName == "Potato Farm") {
+                    return database.query("UPDATE playerOwnership SET money = money + ? WHERE playerId = ?", [moneyToEarn, playerId]);
+                } else {
+                    throw new Error("Error should not have been thrown");
+                }
+            }
+        ).then(
             // Update item count or delete item after use
             results => {
-                var amountAfterUse = amountOwned - 1;
+                var amountAfterUse = amountOwned;
+                if (itemName != "GPU" && itemName != "Potato Farm") {
+                    amountAfterUse = amountOwned - amountToUse;
+                }
+
                 if (amountAfterUse <= 0) {
                     return database.query('DELETE FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
                 } else {
-                    return database.query('UPDATE playerItemR SET amount = amount - 1 WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
+                    return database.query('UPDATE playerItemR SET amount = ? WHERE playerId = ? AND itemName = ?', [amountAfterUse, playerId, itemName]);
                 }
             }
         ).then(
