@@ -41,6 +41,15 @@ CREATE TABLE playerOwnership (
         ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+CREATE TABLE playerRanking(
+	playerId INT AUTO_INCREMENT PRIMARY KEY,
+    money REAL NOT NULL,
+    ranking INT NOT NULL,
+    FOREIGN KEY (playerId, money)
+        REFERENCES playerOwnership (playerId, money)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 CREATE TABLE stock (
     name CHAR(20) PRIMARY KEY,
     currentPrice REAL,
@@ -85,3 +94,9 @@ INSERT INTO stockRecordOwnership VALUES
 ('AMZN', '2020-01-30 00:34:00', 2000),
 ('AMZN', '2020-01-30 00:35:00', 1000),
 ('AMZN', '2020-01-30 00:36:00', 0);
+
+INSERT INTO playerRanking VALUES
+(1,999999999999.99,1),
+(2,999999999999.99,2),
+(3,10000,4),
+(4,100000,3);
