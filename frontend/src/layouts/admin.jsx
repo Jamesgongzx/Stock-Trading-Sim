@@ -32,6 +32,7 @@ class Admin extends React.Component {
             players: [],
             currentPlayer: null,
             admin: false,
+            stocks: 0,
         }
 
     }
@@ -55,6 +56,18 @@ class Admin extends React.Component {
         })
     };
 
+    getStockCount = () => {
+        requestGET("/stocks/stock-count")
+            .then((results) => {
+                console.log(results)
+                if (results.data.length > 0) {
+                    this.setState({
+                        stocks: results.data[0].total
+                    })
+                }
+            })
+    };
+
     handleGetAccountsInfo = () => {
         requestGET("/accounts/players")
             .then((res) => {
@@ -73,6 +86,13 @@ class Admin extends React.Component {
                     return requestGET(`/accounts/players/${player.playerId}` )
                 }
                 return Promise.resolve(null);
+            })
+            .then((player) => {
+                if (player) {
+                    return this.getStockCount()
+                        .then(() => Promise.resolve(player))
+                }
+                return Promise.resolve(null)
             })
             .then((player) => {
                 if (player) {
@@ -127,7 +147,7 @@ class Admin extends React.Component {
                 {routes.map((prop, key) => {
                     // console.log(prop);
                     if ((prop.type === "admin" && this.state.admin === true) || prop.type === "user") {
-                        console.log(`rendering: ${prop.path}`);
+                        // console.log(`rendering: ${prop.path}`);
                         return (
                             <Route
                                 path={prop.layout + prop.path}

@@ -84,6 +84,28 @@ router.get("/", async (req, res) => {
         )
 });
 
+// returns a aggregate of how many stocks an account has
+router.get("/stock-count", (req, res) => {
+    let playerId = req.session.playerId;
+    console.log(playerId);
+    let loggedin = req.session.loggedin;
+    if (!loggedin) {
+        res.sendStatus(401);
+        return;
+    }
+
+    return database.query("SELECT sum(amount) as total FROM playerStockR where playerId = ?", [playerId])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
+});
+
+
 router.get("/:name", (req, res) => {
     var name = req.params.name;
     database.query('SELECT * FROM stock where name = ?', [name])
@@ -97,7 +119,7 @@ router.get("/:name", (req, res) => {
         )
 });
 
-// delete route
+// delete stock (admin only)
 router.post("/:name", (req, res) => {
     var name = req.params.name;
     database.query('DELETE FROM stock where name = ?', [name])
