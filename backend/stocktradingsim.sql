@@ -33,9 +33,10 @@ CREATE TABLE user (
 );
 
 CREATE TABLE playerOwnership (
-    playerId INT AUTO_INCREMENT PRIMARY KEY,
+    playerId INT AUTO_INCREMENT,
     money REAL NOT NULL,
     accountId INT NOT NULL,
+    PRIMARY KEY(playerId, money),
     FOREIGN KEY (accountId)
         REFERENCES account (accountId)
         ON UPDATE CASCADE ON DELETE CASCADE
