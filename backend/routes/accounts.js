@@ -64,6 +64,13 @@ router.post("/signin", (req, res) => {
     var accountId = null;
     var response = { code: null, message: null };
     let email;
+    let data = {
+        username: null,
+        email: null,
+        accountId: null,
+        admin: false,
+        subscriptionType: null
+    }
     database.query("SELECT * FROM account WHERE username = ? AND password = ?", [username, password])
         .then(
             results => {
@@ -72,6 +79,10 @@ router.post("/signin", (req, res) => {
                     req.session.accountId = results[0].accountId;
                     email = results[0].email;
                     accountId = req.session.accountId;
+
+                    data.username = username;
+                    data.email = email;
+                    data.accountId = accountId;
                     return database.query("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId]);
                 } else {
                     response.code = 401;
@@ -84,9 +95,11 @@ router.post("/signin", (req, res) => {
                 if (results.length > 0) {
                     req.session.subscriptionType = results[0].subscriptionType;
                     req.session.save();
-                    return res.status(200).send({username: username, email: email});
+
+                    data.subscriptionType = results[0].subscriptionType;
+                    return Promise.resolve([]);
                 } else {
-                    return database.query("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId]);
+                    return database.query('SELECT * FROM admin where accountId = ? ', [accountId])
                 }
             })
         .then(
@@ -94,13 +107,21 @@ router.post("/signin", (req, res) => {
                 if (results.length > 0) {
                     req.session.adminId = results[0].adminId;
                     req.session.save();
-                    return res.status(200).send({username: username, email: email});
+
+                    data.admin = true;
                 } else {
-                    response.code = 401;
-                    response.message = "Account is neither admin nor user!";
-                    throw new Error('Account is neither admin nor user!');
+                    if (data.subscriptionType == null && data.admin === false) {
+                        response.code = 401;
+                        response.message = "Account is neither admin nor user!";
+                        throw new Error('Account is neither admin nor user!');
+                    }
                 }
+                return Promise.resolve();
             })
+        .then(() => {
+            //Everything OKAY, send the 200;
+            return res.status(200).send(data);
+        })
         .catch(
             error => {
                 if (!response.code) {
