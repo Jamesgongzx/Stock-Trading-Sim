@@ -63,12 +63,34 @@ router.get("/:playerId/stocks", (req, res) => {
     }
 });
 
+router.get("/overview", (req, res) => {
+    var adminId = req.session.adminId;
+    if (!adminId) {
+        res.sendStatus(401);
+        return;
+    }
+    database.query('SELECT playerId, SUM(amount * currentPrice) + money AS liquidAssetWorth FROM playerStockR, playerOwnership, stock WHERE stock.name = playerStockR.stockName GROUP BY playerId', [])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
+});
+
 // returns a aggregate of how many stocks an account has
 router.get("/:playerId/stocks/count", (req, res) => {
     let playerId = req.session.playerId;
     console.log(playerId);
     if (playerId == req.session.playerId) {
-        database.query("SELECT SUM(amount) as total FROM playerStockR where playerId = ?", [playerId])
+        database.query("SELECT SUM(amount) AS total FROM playerStockR where playerId = ?", [playerId])
             .then(
                 results => {
                     if (results.length > 0) {
