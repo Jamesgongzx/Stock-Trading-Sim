@@ -4,7 +4,24 @@ const database = require("../database");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    database.query('SELECT * FROM playerOwnership', [])
+    // Schema = playerOwnership (playerId, money, accountId)
+    // Example:
+    // var projections = ["playerId", "money"];
+    var projections = req.query.projections;
+    var adminId = req.session.adminId;
+    if (!adminId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    var projectionString = "";
+    if (projections) {
+        projectionString = projections.join();
+    } else {
+        projectionString = "*";
+    }
+
+    database.query('SELECT ' + projectionString + ' FROM playerOwnership', [])
         .then(
             results => {
                 res.status(200).send(results);
