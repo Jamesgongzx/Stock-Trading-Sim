@@ -63,6 +63,30 @@ router.get("/:playerId/stocks", (req, res) => {
     }
 });
 
+// returns a aggregate of how many stocks an account has
+router.get("/:playerId/stocks/count", (req, res) => {
+    let playerId = req.session.playerId;
+    console.log(playerId);
+    if (playerId == req.session.playerId) {
+        database.query("SELECT SUM(amount) as total FROM playerStockR where playerId = ?", [playerId])
+            .then(
+                results => {
+                    if (results.length > 0) {
+                        res.status(200).send(results);
+                    } else {
+                        res.sendStatus(204);
+                    }
+                },
+                error => {
+                    console.log(error);
+                    res.sendStatus(500);
+                }
+            )
+    } else {
+        res.sendStatus(401);
+    }
+});
+
 router.get("/:playerId/items", (req, res) => {
     var playerId = req.params.playerId;
     if (playerId == req.session.playerId) {
