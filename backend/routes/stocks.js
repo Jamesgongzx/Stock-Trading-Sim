@@ -18,7 +18,8 @@ router.get("/", async (req, res) => {
     //     value: 100
     // }];
 
-    var projections = req.body.projections;
+    var projections = req.query.projections;
+    // console.log(req);
     var nameCondition = req.body.nameCondition;
     var numericalConditions = req.body.numericalConditions;
 

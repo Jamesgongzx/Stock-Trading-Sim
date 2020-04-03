@@ -23,6 +23,8 @@ import Swal from 'sweetalert2'
 import helpers from "../../utils.js"
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import {Redirect, Route, Switch} from "react-router";
+import routes from "../../routes";
 
 const styles = {
     cardCategoryWhite: {
@@ -68,17 +70,25 @@ class TradeStocks extends React.Component{
     constructor(props) {
         super(props)
         this.state = {
-            columnNames : [],
+            columnNames: [],
             values: [],
             stock: null,
             selectedStock: null,
             transactionType: null,
             qtyShares: 0,
+            projectionColumns: {
+                name: true,
+                currentPrice: true,
+                "24hChange": true
+            }
         }
     }
 
     getAllStocks = () => {
-        requestGET(`/stocks`, )
+        let tempCols = Object.entries(this.state.projectionColumns).filter((pair) => pair[1]);
+        tempCols = tempCols.map((x) => x[0]);
+        console.log(tempCols);
+        requestGET(`/stocks`, {projections: tempCols})
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -119,6 +129,15 @@ class TradeStocks extends React.Component{
                 }
             })
     }
+
+    handleColumnChange = (event) => {
+        let tempPC = this.state.projectionColumns;
+        tempPC[event.target.value] = !tempPC[event.target.value];
+        this.setState({
+            projectionColumns: tempPC
+        });
+        this.getAllStocks();
+    };
 
     handleStockBarChange = (event) => {
         const { name, value } = event.target;
@@ -171,8 +190,31 @@ class TradeStocks extends React.Component{
     }
 
     render() {
+        console.log(this.state)
         const {classes} = this.props;
-        console.log(this.state);
+        // this.projectedColumnNames = this.state.projectionColumns.filter((x) => this.state.projectionColumns[x]);
+        this.stockColumns = (
+            <React.Fragment>
+                {Object.keys(this.state.projectionColumns).map((prop, key) => {
+                    return (
+                        <FormControlLabel
+                            value={prop}
+                            control={
+                                <Checkbox
+                                    defaultChecked
+                                    onChange={(e) => {this.handleColumnChange(e)}}
+                                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                                />
+                            }
+                            label={prop}
+                            labelPlacement="start"
+                        />
+
+                    );
+
+                })}
+            </React.Fragment>
+        );
         return (
             <React.Fragment>
                 {this.state.selectedStock != null ?
@@ -236,32 +278,7 @@ class TradeStocks extends React.Component{
 
                         {/*This section is for projection query*/}
                         <CardBody>
-                            <div>
-                                <FormControlLabel
-                                    value="start"
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            // onChange={handleChange}
-                                            inputProps={{ 'aria-label': 'primary checkbox' }}
-                                        />
-                                    }
-                                    label="Start"
-                                    labelPlacement="start"
-                                />
-                                <FormControlLabel
-                                    value="start"
-                                    control={
-                                        <Checkbox
-                                            defaultChecked
-                                            // onChange={handleChange}
-                                            inputProps={{ 'aria-label': 'primary checkbox' }}
-                                        />
-                                    }
-                                    label="Start"
-                                    labelPlacement="start"
-                                />
-                            </div>
+                            {this.stockColumns}
                             {this.state.values.length <= 0 ?
                                 "No Stocks Found :("
                                 :
