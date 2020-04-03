@@ -3,6 +3,18 @@ const database = require("../database");
 
 const router = express.Router();
 
+router.get("/categories", (req, res) => {
+    database.query("SELECT distinct category from shop order by category", [])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
+});
+
 router.get("/:dayOfWeek/:category", async (req, res) => {
     var dayOfWeek = req.params.dayOfWeek;
     var category = req.params.category;
@@ -25,8 +37,11 @@ router.get("/:dayOfWeek/:category", async (req, res) => {
 router.get("/:dayOfWeek/:category/items", async (req, res) => {
     var dayOfWeek = req.params.dayOfWeek;
     var category = req.params.category;
-
-    database.query('SELECT itemName, cost, amount, description FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category])
+    let query = "SELECT i.itemName, cost, amount, description " +
+        "FROM item i, shop s, shopItemR sir " +
+        "WHERE s.dayOfWeek = ? AND s.category = ?  " +
+        "and i.itemname = sir.itemname and sir.dayofweek = s.dayofweek and sir.category = s.category";
+    database.query(query, [dayOfWeek, category])
         .then(
             results => {
                 if (results.length > 0) {
@@ -36,6 +51,7 @@ router.get("/:dayOfWeek/:category/items", async (req, res) => {
                 }
             },
             error => {
+                console.log(error);
                 res.sendStatus(500);
             }
         )

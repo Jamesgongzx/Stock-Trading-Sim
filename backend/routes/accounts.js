@@ -94,6 +94,7 @@ router.post("/signin", (req, res) => {
             results => {
                 if (results.length > 0) {
                     req.session.subscriptionType = results[0].subscriptionType;
+                    req.session.adminId = null;
                     req.session.save();
 
                     data.subscriptionType = results[0].subscriptionType;

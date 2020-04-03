@@ -29,3 +29,62 @@ INSERT INTO playerStockR VALUES
 (3, 'HELLOWORLD', 30),
 (1, 'GOOGL', 5),
 (1, 'AMZN', 20);
+
+
+CREATE TABLE item (
+    itemName CHAR(50) primary key,
+    cost REAL,
+    description TEXT,
+    rarity CHAR(20)
+);
+
+CREATE TABLE shop (
+    dayOfWeek INT,
+  	category CHAR(50),
+  	shopName CHAR(50),
+  	Primary key (dayOfWeek, category)
+);
+
+CREATE TABLE shopItemR (
+    itemName CHAR(50),
+    dayOfWeek INT,
+    category CHAR(50),
+    amount INT,
+    Primary key (itemName, dayOfWeek, category),
+    Foreign key (itemName) references item(itemName) ON UPDATE CASCADE
+    ON DELETE CASCADE,
+    Foreign key (dayOfWeek, category) references shop(dayOfWeek, category)
+    ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO item VALUES
+('Infinity Gauntlet', 5000, 'Add 10000 money to players who owns all gems.', 'legendary'),
+('Time Gem', 2000, '[Not activatable] Total control over all aspects of time including time travel, stopping time, slowing down or speed up the flow of time and to accelerate or slow down ageing.', 'epic'),
+('Space Gem', 2000, '[Not activatable] Limitless manipulation of space, allowing for teleportation, dimensional manipulation, the creation of wormholes, etc.', 'epic'),
+('Soul Gem', 2000, '[Not activatable] Limitless manipulation of souls both alive and dead also has shown to be able to evolve or devolve a beings physical self as well.', 'epic'),
+('Reality Gem', 2000, '[Not activatable] Locally or universally alters the natural laws of the universe to the wielders will.', 'epic'),
+('Power Gem', 2000, '[Not activatable] Controls all of the power in the universe. It can be used to augment or inhibit any force.', 'epic'),
+('Mind Gem', 2000, '[Not activatable] Taps the user into the universal consciousness, allowing for unlimited manipulation of psionic powers including telepathy and telekinesis.', 'epic'),
+('Apple', 1, 'Something happens when you collect 100 apples.', 'Common'),
+('Potato Farm', 100, '[Activatable once per day] Increase money by 5 per amount owned.', 'Uncommon'),
+('GPU', 1000, '[Activatable once per day] Farm bitcoin. Increase money by 75 per amount owned.', 'Rare');
+
+
+INSERT INTO shop VALUES
+(1, 'Weapons:Regular', 'Armory'),
+(1, 'Weapons:Premium', 'Armory(Premium)'),
+(1, 'Supermarket:Regular', 'Supermarket'),
+(1, 'Supermarket:Premium', 'Supermarket'),
+(3, 'Supermarket:Regular', 'Supermarket'),
+(3, 'Supermarket:Premium', 'Supermarket'),
+(5, 'Supermarket:Regular', 'Supermarket'),
+(7, 'Electronics:Regular', 'Electronics'),
+(7, 'Electronics:Premium', 'Electronics(Premium)');
+
+
+INSERT INTO shopItemR VALUES
+('Potato Farm', 1, 'Supermarket:Regular', 10),
+('Potato Farm', 1, 'Supermarket:Premium', 100),
+('Potato Farm', 3, 'Supermarket:Regular', 20),
+('GPU', 7, 'Electronics:Regular', 10),
+('GPU', 7, 'Electronics:Premium', 100);
