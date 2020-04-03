@@ -14,7 +14,15 @@ class App extends React.Component {
 
         this.state = {
             signed_in: false,
+            username: null,
+            email: null,
+            accountId: null,
         };
+    }
+
+    changeProps = (data) => {
+        console.log(data)
+        this.setState(data);
     }
 
     handleSignIn = (state) => {
@@ -24,13 +32,12 @@ class App extends React.Component {
     };
 
     render() {
-        // console.log(this.state)
         if (!this.state.signed_in) {
             return (
                 <div className="App">
                     <Switch>
                         <Route exact path="/signin" render={routeProps => {
-                            return <SignIn handleSignIn={this.handleSignIn} history={this.props.history}/>
+                            return <SignIn handleSignIn={this.handleSignIn} history={this.props.history} changeProps={this.changeProps}/>
                         }}/>
                         <Route exact path="/signup" component={SignUp}/>
                         <Redirect from="/" to="/signin"/>
@@ -40,8 +47,8 @@ class App extends React.Component {
         } else {
             return (
                 <div className="App">
-                    <Route path="/user" component={Admin} render={routerProps => {
-                        return <Admin history={this.props.history}/>
+                    <Route path="/user" render={routerProps => {
+                        return <Admin {...this.state} {...this.props} {...routerProps} history={this.props.history} changeProps={this.changeProps}/>
                     }}/>
                     <Redirect from="/" to="/user"/>
                 </div>
