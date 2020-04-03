@@ -16,6 +16,28 @@ router.get("/", async (req, res) => {
         )
 });
 
+router.patch("/ranking", async (req, res) => {
+    database.query('SET @r=0; UPDATE playerRanking SET ranking= (@r:= @r+1) ORDER BY money DESC;', [])
+        .then(
+            results => {
+                return database.query('SELECT * FROM playerRanking ORDER BY ranking ASC', []);
+            },
+            error => {
+                res.sendStatus(500);
+
+            }
+        )
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+
+            }
+        )
+});
+
 router.post("/create", async (req, res) => {
     var money = 999999999999.99;
     var accountId = req.session.accountId;
