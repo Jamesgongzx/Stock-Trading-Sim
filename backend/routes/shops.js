@@ -75,6 +75,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
 
     var serverDayOfWeek = null
     var money = null;
+    var moneyToSpend = null;
     var response = { code: null, message: null };
     database.query('SELECT DAYOFWEEK(utc_time())', [])
         .then(
@@ -107,7 +108,8 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             results => {
                 if (results.length > 0) {
                     money = results[0].money;
-                    var canPurchase = (itemCost * amount) >= money;
+                    moneyToSpend = itemCost * amount;
+                    var canPurchase = moneyToSpend >= money;
                     if (!canPurchase) {
                         response.code = 403;
                         throw new Error();
@@ -120,12 +122,18 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             }
         ).then(
             results => {
-                // Item already owned
-                if (results.length > 0) {
+            // Update item amount or insert item
+            if (results.length > 0) {
                     database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, name]);
                 } else {
                     database.query('INSERT INTO playerItemR VALUES (?, ?, ?)', [playerId, name, amount]);
                 }
+            }
+        ).then(
+            results => {
+                // Update player money
+                return database.query('UPDATE PlayerOwnership SET money = money - ? WHERE playerId = ?', [moneyToSpend, playerId]);
+                res.sendStatus(200);
             }
         ).then(
             results => {

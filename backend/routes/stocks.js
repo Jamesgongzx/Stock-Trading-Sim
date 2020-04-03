@@ -157,14 +157,18 @@ router.post("/:name/purchase", (req, res) => {
         return;
     }
 
-    var currentPrice = null;
     var money = null;
+    var moneyToSpend = null;
     var response = { code: null, message: null };
+    // Get currentPrice of stock
     database.query('SELECT currentPrice FROM stock where name = ?', [name])
         .then(
             results => {
                 if (results.length > 0) {
-                    currentPrice = results[0].currentPrice;
+                    var currentPrice = results[0].currentPrice;
+                    moneyToSpend = currentPrice * amount;
+                    console.log(moneyToSpend);
+                    // Get money of player
                     return database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
                 } else {
                     response.code = 400;
@@ -175,14 +179,14 @@ router.post("/:name/purchase", (req, res) => {
             results => {
                 if (results.length > 0) {
                     money = results[0].money;
-                    var canPurchase = money >= (currentPrice * amount);
-                    console.log(money)
-                    console.log(currentPrice);
+                    var canPurchase = money >= moneyToSpend;
+                    console.log(money);
                     if (!canPurchase) {
                         response.code = 403;
                         response.message = "Not enough money to purchase"
                         throw new Error("Not enough money to purchase");
                     }
+                    // Check if stock is already owned by player
                     return database.query('SELECT * FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
                 } else {
                     response.code = 400;
@@ -190,13 +194,19 @@ router.post("/:name/purchase", (req, res) => {
                 }
             }
         ).then(
+            // Update stock amount or insert stock
             results => {
-                // already Owned
                 if (results.length > 0) {
                     return database.query('UPDATE playerStockR SET amount = amount + ? WHERE playerId = ? AND stockName = ?', [amount, playerId, name]);
                 } else {
                     return database.query('INSERT INTO playerStockR VALUES (?, ?, ?)', [playerId, name, amount]);
                 }
+            }
+        ).then(
+            results => {
+                // Update player money
+                return database.query('UPDATE PlayerOwnership SET money = money - ? WHERE playerId = ?', [moneyToSpend, playerId]);
+                res.sendStatus(200);
             }
         ).then(
             results => {
@@ -232,11 +242,13 @@ router.post("/:name/sell", (req, res) => {
     var currentPrice = null;
     var amountOwned = null;
     var response = { code: null, message: null };
+    // Get currentPrice of stock
     database.query('SELECT currentPrice FROM stock where name = ?', [name])
         .then(
             results => {
                 if (results.length > 0) {
                     currentPrice = results[0].currentPrice;
+                    // Get amountOwned of stock
                     return database.query('SELECT amount FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
                 } else {
                     response.code = 400;
@@ -254,6 +266,7 @@ router.post("/:name/sell", (req, res) => {
                         throw new Error("Not enough amount owned to sell");
                     }
                     var amountAfterSell = amountOwned - amount;
+                    // Update stock amount or delete stock
                     if (amountAfterSell == 0) {
                         return database.query('DELETE FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
                     } else {
@@ -267,6 +280,7 @@ router.post("/:name/sell", (req, res) => {
         ).then(
             results => {
                 var moneyEarned = currentPrice * amount;
+                // Update player money
                 return database.query('UPDATE playerOwnership SET money = money + ? WHERE playerId = ?', [moneyEarned, playerId]);
             }
         ).then(
