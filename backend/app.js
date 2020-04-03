@@ -65,6 +65,7 @@ app.use("/accounts", accountsRoutes);
 app.use("/players", playersRoutes);
 app.use("/stocks", stocksRoutes);
 app.use("/shops", shopsRoutes);
+app.use("/leaderboards", leaderboardsRoutes);
 app.disable('etag');
 
 app.use((req, res, next) => {
