@@ -4,7 +4,7 @@ const database = require("../database");
 const router = express.Router();
 
 // itemName has to be encoded using encodeURIComponent()
-router.get("/:itemName/use", async (req, res) => {
+router.patch("/:itemName/use", async (req, res) => {
     var itemName = req.params.itemName;
     itemName = decodeURIComponent(itemName);
 
