@@ -10,7 +10,7 @@ import Card from "../../components/Card/Card.js";
 import CardHeader from "../../components/Card/CardHeader.js";
 import CardBody from "../../components/Card/CardBody.js";
 import PropTypes from 'prop-types';
-import {requestGET, requestPOST} from "../../requests";
+import {requestDEL, requestGET, requestPOST} from "../../requests";
 import Dialog from "@material-ui/core/Dialog";
 import {OutlinedInput} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
@@ -135,7 +135,7 @@ class ManageStocks extends React.Component{
         console.log(event);
         event.preventDefault();
         if (this.state.transactionType === "delete") {
-            return requestPOST(`/stocks/${this.state.selectedStock}`)
+            return requestDEL(`/stocks/${this.state.selectedStock}`)
                 .then(() => {
                     helpers.Toast.fire({
                         icon: 'success',
