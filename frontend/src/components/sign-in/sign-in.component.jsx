@@ -34,6 +34,8 @@ class SignIn extends React.Component {
         this.props.changeProps({
           username: result.data.username,
           email: result.data.email,
+          accountId: result.data.accountId,
+          admin: result.data.admin,
           signed_in: true
         });
         this.props.history.push("/user/dashboard");

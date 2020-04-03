@@ -31,7 +31,7 @@ class Admin extends React.Component {
             mobileOpen: false,
             players: [],
             currentPlayer: null,
-            admin: false,
+            admin: this.props.admin,
             stocks: 0,
         }
 
@@ -96,19 +96,19 @@ class Admin extends React.Component {
                 }
                 return Promise.resolve(null)
             })
-            .then((player) => {
-                if (player) {
-                    return requestGET(`/accounts/admin`)
-                }
-                return Promise.resolve(null);
-            })
-            .then((res) => {
-                if (res && res.data.length > 0) {
-                    this.setState({
-                        admin: true
-                    })
-                }
-            })
+            // .then((player) => {
+            //     if (player) {
+            //         return requestGET(`/accounts/admin`)
+            //     }
+            //     return Promise.resolve(null);
+            // })
+            // .then((res) => {
+            //     if (res && res.data.length > 0) {
+            //         this.setState({
+            //             admin: true
+            //         })
+            //     }
+            // })
     };
 
     componentDidUpdate(prevProps, prevState, snapshot) {

@@ -17,6 +17,7 @@ class App extends React.Component {
             username: null,
             email: null,
             accountId: null,
+            admin: false,
         };
     }
 
