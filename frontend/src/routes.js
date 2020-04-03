@@ -20,12 +20,17 @@ import Dashboard from "@material-ui/icons/Dashboard";
 import Person from "@material-ui/icons/Person";
 import ShowChart from "@material-ui/icons/ShowChart"
 import Business from "@material-ui/icons/Business"
+import Group from "@material-ui/icons/Group"
+import TableChart from "@material-ui/icons/TableChart"
 import DashboardPage from "views/Dashboard/dashboard.jsx";
 import UserProfile from "views/UserProfile/userprofile.jsx";
 import TableList from "views/TableList/TableList.js";
 import MyStocks from "views/TableList/MyStocks";
 import TradeStocks from "./views/TableList/TradeStocks";
+import ManagePlayers from "./views/TableList/ManagePlayers";
 import ManageStocks from "./views/TableList/ManageStocks";
+import ManageTables from "./views/TableList/ManageTables";
+
 
 const dashboardRoutes = [
   {
@@ -68,13 +73,29 @@ const dashboardRoutes = [
     type: "user"
   },
   {
+    path: "/players-management",
+    name: "Manage Players (Admin)",
+    icon: Group,
+    component: ManagePlayers,
+    layout: "/user",
+    type: "admin"
+  },
+  {
     path: "/stocks-management",
     name: "Manage Stocks (Admin)",
     icon: Business,
     component: ManageStocks,
     layout: "/user",
     type: "admin"
-  }
+  },
+  {
+    path: "/tables-management",
+    name: "Manage Tables (Admin)",
+    icon: TableChart,
+    component: ManageTables,
+    layout: "/user",
+    type: "admin"
+  },
   // {
   //   path: "/typography",
   //   name: "Typography",
