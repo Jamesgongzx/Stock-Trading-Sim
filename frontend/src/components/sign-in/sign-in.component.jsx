@@ -31,7 +31,11 @@ class SignIn extends React.Component {
           username: "",
           password: "",
         });
-        this.props.handleSignIn(true);
+        this.props.changeProps({
+          username: result.data.username,
+          email: result.data.email,
+          signed_in: true
+        });
         this.props.history.push("/user/dashboard");
       })
       .catch(error => {

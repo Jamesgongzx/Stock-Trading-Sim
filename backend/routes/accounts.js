@@ -63,12 +63,14 @@ router.post("/signin", (req, res) => {
 
     var accountId = null;
     var response = { code: null, message: null };
-    database.query("SELECT accountId FROM account WHERE username = ? AND password = ?", [username, password])
+    let email;
+    database.query("SELECT * FROM account WHERE username = ? AND password = ?", [username, password])
         .then(
             results => {
                 if (results.length > 0) {
                     req.session.loggedin = true;
                     req.session.accountId = results[0].accountId;
+                    email = results[0].email;
                     accountId = req.session.accountId;
                     return database.query("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId]);
                 } else {
@@ -83,7 +85,7 @@ router.post("/signin", (req, res) => {
                     req.session.subscriptionType = results[0].subscriptionType;
                 }
                 req.session.save();
-                return res.status(200).send("Account signed in successfully");
+                return res.status(200).send({username: username, email: email});
             })
         .catch(
             error => {
@@ -132,6 +134,22 @@ router.get("/players", (req, res) => {
             }
         )
 });
+
+router.post("/update-profile", (req, res) => {
+    let accountId = req.session.accountId;
+    let username = req.body.username;
+    let email = req.body.email;
+    database.query("UPDATE account set username = ?, email = ? where accountId = ?", [username, email, accountId])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
+})
 
 router.get("/players/:playerId", (req, res) => {
     let accountId = req.session.accountId;
