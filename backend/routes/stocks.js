@@ -4,7 +4,64 @@ const database = require("../database");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    database.query('SELECT * FROM stock', [])
+    // Schema = Stock (name, currentPrice, 24hChange)
+    // Example:
+    // var selections = ["name", "currentPrice"];
+    // var conditions = [{
+    //     fieldName: "currentPrice",
+    //     isGreater: true,
+    //     value: 100
+    // }, {
+    //     fieldName: "24hChange",
+    //     isGreater: true,
+    //     value: 100
+    // }];
+
+    var selections = req.body.selections;
+    var conditions = req.body.conditions;
+
+    var selectionString = "";
+    if (selections) {
+        selectionString = selections.join();
+    } else {
+        selectionString = "*";
+    }
+
+    var whereStatement = "";
+    if (conditions) {
+        whereStatement.concat(" WHERE ");
+        if (conditions.length > 3) {
+            res.sendStatus(500);
+            return;
+        }
+        for (var i = 0; i < conditions.length; i++) {
+            var condition = conditions[i];
+            if (["name", "currentPrice", "24hChange"].indexOf(condition.fieldName) < 0) {
+                res.sendStatus(500);
+                return;
+            }
+            if (typeof condition.isGreater !== "boolean") {
+                res.sendStatus(500);
+                return;
+            }
+            if (isNaN(condition.value)) {
+                res.sendStatus(500);
+                return;
+            }
+            var conditionString = "";
+            conditionString.concat(" " + condition.fieldName);
+            if (condition.isGreater == true) {
+                conditionString.concat(">" + condition.value);
+            } else {
+                conditionString.concat("<" + condition.value);
+            }
+            if (whereStatement.length > 6) {
+                whereStatement.concat("," + conditionString);
+            }
+        }
+    }
+
+    database.query('SELECT ' + selectionString + ' FROM stock' + whereStatement, [])
         .then(
             results => {
                 if (results.length > 0) {
@@ -101,7 +158,7 @@ router.post("/:name/purchase", (req, res) => {
             results => {
                 if (results.length > 0) {
                     money = results[0].money;
-                    var canPurchase = money >= (currentPrice * amount) ;
+                    var canPurchase = money >= (currentPrice * amount);
                     console.log(money)
                     console.log(currentPrice);
                     if (!canPurchase) {
