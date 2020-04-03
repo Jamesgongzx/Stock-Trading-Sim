@@ -62,12 +62,12 @@ router.get("/", async (req, res) => {
             }
         }
     }
-    if (nameCondition){
-        if (nameCondition.indexOf(' ') >= 0){
+    if (nameCondition) {
+        if (nameCondition.indexOf(' ') >= 0) {
             res.sendStatus(500);
-                return;
+            return;
         }
-        if (whereStatement.length > 0){
+        if (whereStatement.length > 0) {
             whereStatement.concat(", name=" + nameCondition);
         }
     }
@@ -100,6 +100,11 @@ router.get("/:name", (req, res) => {
 // delete stock (admin only)
 router.delete("/:name", (req, res) => {
     var name = req.params.name;
+    var adminId = req.session.adminId;
+    if (!adminId) {
+        res.sendStatus(401);
+        return;
+    }
     database.query('DELETE FROM stock WHERE name = ?', [name])
         .then(
             results => {
