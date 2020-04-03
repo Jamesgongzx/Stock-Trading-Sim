@@ -4,7 +4,75 @@ const database = require("../database");
 const router = express.Router();
 
 router.get("/", async (req, res) => {
-    database.query('SELECT * FROM stock', [])
+    // Schema = Stock (name, currentPrice, 24hChange)
+    // Example:
+    // var projections = ["name", "currentPrice"];
+    // var nameCondition = "AMZN"
+    // var numericalConditions = [{
+    //     fieldName: "currentPrice",
+    //     isGreater: true,
+    //     value: 100
+    // }, {
+    //     fieldName: "24hChange",
+    //     isGreater: true,
+    //     value: 100
+    // }];
+
+    var projections = req.body.projections;
+    var nameCondition = req.body.nameCondition;
+    var numericalConditions = req.body.numericalConditions;
+
+    var projectionString = "";
+    if (projections) {
+        projectionString = projections.join();
+    } else {
+        projectionString = "*";
+    }
+
+    var whereStatement = "";
+    if (numericalConditions) {
+        whereStatement.concat(" WHERE ");
+        if (numericalConditions.length > 2) {
+            res.sendStatus(500);
+            return;
+        }
+        for (var i = 0; i < numericalConditions.length; i++) {
+            var condition = numericalConditions[i];
+            if (["currentPrice", "24hChange"].indexOf(condition.fieldName) < 0) {
+                res.sendStatus(500);
+                return;
+            }
+            if (typeof condition.isGreater !== "boolean") {
+                res.sendStatus(500);
+                return;
+            }
+            if (isNaN(condition.value)) {
+                res.sendStatus(500);
+                return;
+            }
+            var conditionString = "";
+            conditionString.concat(" " + condition.fieldName);
+            if (condition.isGreater == true) {
+                conditionString.concat(">" + condition.value);
+            } else {
+                conditionString.concat("<" + condition.value);
+            }
+            if (whereStatement.length > 6) {
+                whereStatement.concat("," + conditionString);
+            }
+        }
+    }
+    if (nameCondition){
+        if (nameCondition.indexOf(' ') >= 0){
+            res.sendStatus(500);
+                return;
+        }
+        if (whereStatement.length > 0){
+            whereStatement.concat(", name=" + nameCondition);
+        }
+    }
+
+    database.query('SELECT ' + projectionString + ' FROM stock' + whereStatement, [])
         .then(
             results => {
                 if (results.length > 0) {
@@ -15,28 +83,6 @@ router.get("/", async (req, res) => {
             }
         )
 });
-
-// returns a aggregate of how many stocks an account has
-router.get("/stock-count", (req, res) => {
-    let playerId = req.session.playerId;
-    console.log(playerId);
-    let loggedin = req.session.loggedin;
-    if (!loggedin) {
-        res.sendStatus(401);
-        return;
-    }
-
-    return database.query("SELECT sum(amount) as total FROM playerStockR where playerId = ?", [playerId])
-        .then(
-            results => {
-                res.status(200).send(results);
-            },
-            error => {
-                res.sendStatus(500);
-            }
-        )
-});
-
 
 router.get("/:name", (req, res) => {
     var name = req.params.name;
@@ -52,12 +98,12 @@ router.get("/:name", (req, res) => {
 });
 
 // delete stock (admin only)
-router.post("/:name", (req, res) => {
+router.delete("/:name", (req, res) => {
     var name = req.params.name;
-    database.query('DELETE FROM stock where name = ?', [name])
+    database.query('DELETE FROM stock WHERE name = ?', [name])
         .then(
             results => {
-                res.status(200).send(results);
+                res.sendStatus(200);
             },
             error => {
                 res.sendStatus(500);
@@ -123,7 +169,7 @@ router.post("/:name/purchase", (req, res) => {
             results => {
                 if (results.length > 0) {
                     money = results[0].money;
-                    var canPurchase = money >= (currentPrice * amount) ;
+                    var canPurchase = money >= (currentPrice * amount);
                     console.log(money)
                     console.log(currentPrice);
                     if (!canPurchase) {

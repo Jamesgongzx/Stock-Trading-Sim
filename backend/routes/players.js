@@ -63,6 +63,30 @@ router.get("/:playerId/stocks", (req, res) => {
     }
 });
 
+// returns a aggregate of how many stocks an account has
+router.get("/:playerId/stocks/count", (req, res) => {
+    let playerId = req.session.playerId;
+    console.log(playerId);
+    if (playerId == req.session.playerId) {
+        database.query("SELECT SUM(amount) as total FROM playerStockR where playerId = ?", [playerId])
+            .then(
+                results => {
+                    if (results.length > 0) {
+                        res.status(200).send(results);
+                    } else {
+                        res.sendStatus(204);
+                    }
+                },
+                error => {
+                    console.log(error);
+                    res.sendStatus(500);
+                }
+            )
+    } else {
+        res.sendStatus(401);
+    }
+});
+
 router.get("/:playerId/items", (req, res) => {
     var playerId = req.params.playerId;
     if (playerId == req.session.playerId) {
@@ -103,93 +127,6 @@ router.get("/:playerId/records", (req, res) => {
     } else {
         res.sendStatus(401);
     }
-});
-
-router.get("/leaderBoards", (req, res) => {
-    database.query('SELECT * FROM leaderboard', [])
-        .then(
-            results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
-            },
-            error => {
-                res.sendStatus(500);
-            }
-        )
-});
-
-router.get("/leaderboards", (req, res) => {
-    database.query('SELECT * FROM leaderboard', [])
-        .then(
-            results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
-            },
-            error => {
-                res.sendStatus(500);
-            }
-        )
-});
-
-router.get("/leaderboards/:leaderboardId", (req, res) => {
-    var leaderboardId = req.params.leaderboardId;
-
-    database.query('SELECT * FROM leaderboard WHERE leaderboardId = ?', [leaderboardId])
-        .then(
-            results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
-            },
-            error => {
-                res.sendStatus(500);
-            }
-        )
-});
-
-router.get("/leaderboards/:leaderboardId/players", (req, res) => {
-    var leaderboardId = req.params.leaderboardId;
-
-    database.query('SELECT playerId, money, division FROM leaderboard,leaderboardR1,leaderboardR2 WHERE leaderboardId = ? ORDER BY money DESC', [leaderboardId])
-        .then(
-            results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
-            },
-            error => {
-                res.sendStatus(500);
-            }
-        )
-});
-
-router.get("/:playerId/:leaderboardId/division", (req, res) => {
-    var playerId = req.params.playerId;
-    var leaderboardId = req.params.leaderboardId;
-
-    database.query('SELECT division FROM leaderboardR1, leaderboardR2 WHERE playerId = ? AND leaderboardId = ?', [playerId, leaderboardId])
-        .then(
-            results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
-            },
-            error => {
-                res.sendStatus(500);
-            }
-        )
 });
 
 module.exports = router;

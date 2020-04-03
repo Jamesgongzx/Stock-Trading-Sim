@@ -9,6 +9,7 @@ const accountsRoutes = require("./routes/accounts");
 const playersRoutes = require("./routes/players");
 const stocksRoutes = require("./routes/stocks");
 const shopsRoutes = require("./routes/shops");
+const leaderboardsRoutes = require(".routes/leaderboards");
 
 const port = process.env.PORT || 4000;
 
