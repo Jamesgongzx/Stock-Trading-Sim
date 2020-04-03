@@ -41,14 +41,14 @@ router.get("/:dayOfWeek/:category/items", async (req, res) => {
         )
 });
 
-// TODO: Add transitionRecord
-
 // Requires amount field in req.body
 router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
-    var amount = req.body.amount;
+    var itemName = req.params.name;
+    itemName = decodeURIComponent(itemName);
     var dayOfWeek = req.params.dayOfWeek;
     var category = req.params.category;
-    var name = req.params.name;
+
+    var amount = req.body.amount;
     var playerId = req.session.playerId;
     var subscriptionType = req.session.subscriptionType;
     var loggedin = req.session.loggedin;
@@ -114,7 +114,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                         response.code = 403;
                         throw new Error();
                     }
-                    database.query('SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, name]);
+                    database.query('SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
                 } else {
                     response.code = 400;
                     throw new Error();
@@ -124,9 +124,9 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             results => {
             // Update item amount or insert item
             if (results.length > 0) {
-                    database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, name]);
+                    database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, itemName]);
                 } else {
-                    database.query('INSERT INTO playerItemR VALUES (?, ?, ?)', [playerId, name, amount]);
+                    database.query('INSERT INTO playerItemR VALUES (?, ?, ?)', [playerId, itemName, amount]);
                 }
             }
         ).then(
@@ -134,6 +134,11 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                 // Update player money
                 return database.query('UPDATE PlayerOwnership SET money = money - ? WHERE playerId = ?', [moneyToSpend, playerId]);
                 res.sendStatus(200);
+            }
+        ).then(
+            results => {
+                // Insert transition record
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (utc_time(), ?, ?, ?, ?)', [itemName, -moneyToSpend, amount, playerId]);
             }
         ).then(
             results => {

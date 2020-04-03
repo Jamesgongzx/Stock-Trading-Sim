@@ -143,8 +143,6 @@ router.get("/:name/records", (req, res) => {
         )
 });
 
-// TODO: Add transitionRecord
-
 // Requires amount field in req.body
 router.post("/:name/purchase", (req, res) => {
     var name = req.params.name;
@@ -210,6 +208,12 @@ router.post("/:name/purchase", (req, res) => {
             }
         ).then(
             results => {
+                var productName = "Stock " + name;
+                // Insert transition record
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (utc_time(), ?, ?, ?, ?)', [productName, -moneyToSpend, amount, playerId]);
+            }
+        ).then(
+            results => {
                 res.sendStatus(200);
             }
         ).catch(
@@ -239,6 +243,7 @@ router.post("/:name/sell", (req, res) => {
         return;
     }
 
+    var moneyEarned = null;
     var currentPrice = null;
     var amountOwned = null;
     var response = { code: null, message: null };
@@ -279,9 +284,15 @@ router.post("/:name/sell", (req, res) => {
             }
         ).then(
             results => {
-                var moneyEarned = currentPrice * amount;
+                moneyEarned = currentPrice * amount;
                 // Update player money
                 return database.query('UPDATE playerOwnership SET money = money + ? WHERE playerId = ?', [moneyEarned, playerId]);
+            }
+        ).then(
+            results => {
+                var productName = "Stock " + name;
+                // Insert transition record
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (utc_time(), ?, ?, ?, ?)', [productName, moneyEarned, amount, playerId]);
             }
         ).then(
             results => {
