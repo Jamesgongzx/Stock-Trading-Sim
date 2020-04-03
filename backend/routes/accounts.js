@@ -81,9 +81,23 @@ router.post("/signin", (req, res) => {
             results => {
                 if (results.length > 0) {
                     req.session.subscriptionType = results[0].subscriptionType;
+                    req.session.save();
+                    return res.status(200).send("Account signed in successfully");
+                } else {
+                    return database.query("SELECT subscriptionType FROM user WHERE accountId = ?", [accountId]);
                 }
-                req.session.save();
-                return res.status(200).send("Account signed in successfully");
+            })
+        .then(
+            results => {
+                if (results.length > 0) {
+                    req.session.adminId = results[0].adminId;
+                    req.session.save();
+                    return res.status(200).send("Account signed in successfully");
+                } else {
+                    response.code = 401;
+                    response.message = "Account is neither admin nor user!";
+                    throw new Error('Account is neither admin nor user!');
+                }
             })
         .catch(
             error => {
@@ -100,12 +114,42 @@ router.post("/signin", (req, res) => {
         )
 });
 
-router.get("/admin", (req, res) => {
-    let accountId = req.session.accountId;
-    return database.query('SELECT * FROM admin where accountId = ? ', [accountId])
+router.get("/:accountId/user", (req, res) => {
+    let accountId = req.params.accountId;
+    if (accountId != req.session.accountId) {
+        res.sendStatus(401);
+        return;
+    }
+    database.query('SELECT * FROM user where accountId = ? ', [accountId])
         .then(
             results => {
-                res.status(200).send(results);
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
+})
+
+router.get("/:accountId/admin", (req, res) => {
+    let accountId = req.params.accountId;
+    if (accountId != req.session.accountId) {
+        res.sendStatus(401);
+        return;
+    }
+    database.query('SELECT * FROM admin where accountId = ? ', [accountId])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
             },
             error => {
                 console.log(error);
