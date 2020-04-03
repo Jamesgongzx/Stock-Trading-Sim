@@ -6,8 +6,9 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     // Schema = Stock (name, currentPrice, 24hChange)
     // Example:
-    // var selections = ["name", "currentPrice"];
-    // var conditions = [{
+    // var projections = ["name", "currentPrice"];
+    // var nameCondition = "AMZN"
+    // var numericalConditions = [{
     //     fieldName: "currentPrice",
     //     isGreater: true,
     //     value: 100
@@ -17,26 +18,27 @@ router.get("/", async (req, res) => {
     //     value: 100
     // }];
 
-    var selections = req.body.selections;
-    var conditions = req.body.conditions;
+    var projections = req.body.projections;
+    var nameCondition = req.body.nameCondition;
+    var numericalConditions = req.body.numericalConditions;
 
-    var selectionString = "";
-    if (selections) {
-        selectionString = selections.join();
+    var projectionString = "";
+    if (projections) {
+        projectionString = projections.join();
     } else {
-        selectionString = "*";
+        projectionString = "*";
     }
 
     var whereStatement = "";
-    if (conditions) {
+    if (numericalConditions) {
         whereStatement.concat(" WHERE ");
-        if (conditions.length > 3) {
+        if (numericalConditions.length > 2) {
             res.sendStatus(500);
             return;
         }
-        for (var i = 0; i < conditions.length; i++) {
-            var condition = conditions[i];
-            if (["name", "currentPrice", "24hChange"].indexOf(condition.fieldName) < 0) {
+        for (var i = 0; i < numericalConditions.length; i++) {
+            var condition = numericalConditions[i];
+            if (["currentPrice", "24hChange"].indexOf(condition.fieldName) < 0) {
                 res.sendStatus(500);
                 return;
             }
@@ -60,8 +62,17 @@ router.get("/", async (req, res) => {
             }
         }
     }
+    if (nameCondition){
+        if (nameCondition.indexOf(' ') >= 0){
+            res.sendStatus(500);
+                return;
+        }
+        if (whereStatement.length > 0){
+            whereStatement.concat(", name=" + nameCondition);
+        }
+    }
 
-    database.query('SELECT ' + selectionString + ' FROM stock' + whereStatement, [])
+    database.query('SELECT ' + projectionString + ' FROM stock' + whereStatement, [])
         .then(
             results => {
                 if (results.length > 0) {
