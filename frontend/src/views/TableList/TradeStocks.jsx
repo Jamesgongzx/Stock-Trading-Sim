@@ -25,6 +25,9 @@ import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import {Redirect, Route, Switch} from "react-router";
 import routes from "../../routes";
+import ChartistGraph from "react-chartist";
+import {stockLineChart} from "../../variables/charts";
+var Chartist = require("chartist");
 
 const styles = {
     cardCategoryWhite: {
@@ -80,8 +83,37 @@ class TradeStocks extends React.Component{
                 name: true,
                 currentPrice: true,
                 "24hChange": true
+            },
+            stockgraph: null,
+            graph: {
+                labels: [],
+                series: [],
             }
         }
+    }
+
+    getSingleStockGraph = (stock) => {
+        return requestGET(`/stocks/${stock}/records`)
+            .then((res) => {
+                let data = res.data;
+                let graph = this.state.graph;
+                graph.labels = data.map((x) => x.dateTime).slice(-5);
+                graph.series = [data.map((x) => x.price).slice(-5)];
+                this.setState({
+                    stockgraph: stock,
+                    graph: graph,
+                })
+            })
+    }
+
+    viewGraphButton = (name) => {
+        return (
+            <Button variant="contained" color="success"
+                    onClick={() => {this.getSingleStockGraph(name)}}
+            >
+                View Graph
+            </Button>
+        )
     }
 
     getAllStocks = () => {
@@ -95,7 +127,12 @@ class TradeStocks extends React.Component{
                     let data = res.data;
                     this.setState({
                         columnNames: Object.keys(data[0]),
-                        values: data.map((x) => Object.values(x))
+                        values: data.map((x) => {
+                            let name = x.name;
+                            x = Object.values(x);
+                            //x.push(this.viewGraphButton(name));
+                            return x;
+                        })
                     })
                 }
             })
@@ -265,21 +302,47 @@ class TradeStocks extends React.Component{
                                 Search for a stock to trade:
                             </p>
                         </CardHeader>
-                        <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
-                            <OutlinedInput
-                                type="stock"
-                                name="stock"
-                                placeholder="Search for a stock..."
-                                value={this.state.stock}
-                                onChange={this.handleStockBarChange}
-                            />
-                            <Button className="submit" type="submit" size="md">
-                                Submit
-                            </Button>
-                        </form>
-
-                        {/*This section is for projection query*/}
-                        <CardBody>
+                        {this.state.stockgraph != null
+                            ?
+                            <CardHeader color="success">
+                                <ChartistGraph
+                                    className="ct-chart"
+                                    data={this.state.graph}
+                                    type="Line"
+                                    options={{
+                                        lineSmooth: Chartist.Interpolation.cardinal({
+                                        tension: 0
+                                    }),
+                                        low: Math.min(...this.state.graph.series[0]),
+                                        high: Math.max(...this.state.graph.series[0]), // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                                        chartPadding: {
+                                        top: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        left: 0
+                                    },
+                                        height: "500px",
+                                    }}
+                                    // responsiveOptions={stockLineChart.responsiveOptions}
+                                    listener={stockLineChart.animation}
+                                />
+                            </CardHeader>
+                            :
+                            //{/*This section is for projection query*/}
+                            <React.Fragment>
+                            <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
+                                <OutlinedInput
+                                    type="stock"
+                                    name="stock"
+                                    placeholder="Search for a stock..."
+                                    value={this.state.stock}
+                                    onChange={this.handleStockBarChange}
+                                />
+                                <Button className="submit" type="submit" size="md">
+                                    Submit
+                                </Button>
+                            </form>
+                            <CardBody>
                             {this.stockColumns}
                             {this.state.values.length <= 0 ?
                                 "No Stocks Found :("
@@ -290,7 +353,10 @@ class TradeStocks extends React.Component{
                                     tableData={this.state.values}
                                 />
                             }
-                        </CardBody>
+                            </CardBody>
+                            </React.Fragment>
+                        }
+
                     </Card>
                 </GridItem>
             </GridContainer>
