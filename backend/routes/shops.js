@@ -1,8 +1,7 @@
 const express = require("express");
 const database = require("../database");
 
-var utils = require("./utils");
-var countDecimals = utils.countDecimals;
+var { countDecimals, noExponents } = require("./utils");
 
 const router = express.Router();
 
@@ -11,7 +10,7 @@ router.get("/", (req, res) => {
     var loggedin = req.session.loggedin;
 
     if (!loggedin) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
 
@@ -58,7 +57,7 @@ router.get("/categories", (req, res) => {
                 res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -70,14 +69,10 @@ router.get("/:dayOfWeek/:category", async (req, res) => {
     database.query('SELECT * FROM shop WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category])
         .then(
             results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
+                res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -91,15 +86,11 @@ router.get("/:dayOfWeek/:category/items", async (req, res) => {
     database.query(query, [dayOfWeek, category])
         .then(
             results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
+                res.status(200).send(results);
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -119,19 +110,23 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
     var loggedin = req.session.loggedin;
 
     if (!loggedin) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
 
-    var numDecimals = countDecimals(Number(amount));
-    if (numDecimals > 5) {
-        res.status(400).send("Please enter a number with less than 5 decimal places");
+    var amountNumber = Number(amount);
+    if (amountNumber == 0 || !Number.isInteger(amountNumber) || amountNumber < 0){
+        res.status(400).send("Please enter a positive integer!");
+        return;
+    }
+    if (isNaN(amountNumber)) {
+        res.status(400).send("Please enter a number!");
         return;
     }
 
     if (subscriptionType) {
         if (category.includes("Premium") && subscriptionType != "Premium") {
-            res.sendStatus(403);
+            res.status(403).send("This shop is for premium only!");
             return;
         }
     }

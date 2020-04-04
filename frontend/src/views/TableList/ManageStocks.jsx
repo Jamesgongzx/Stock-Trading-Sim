@@ -145,7 +145,7 @@ class ManageStocks extends React.Component{
                 .catch((err) => {
                     helpers.Toast.fire({
                         icon: 'error',
-                        title: `Uh oh, something went wrong: ${err}`
+                        title: `${err.response.data}`
                     })
                 })
                 .then(() => {

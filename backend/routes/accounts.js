@@ -143,7 +143,7 @@ router.post("/signin", (req, res) => {
 router.get("/:accountId/user", (req, res) => {
     let accountId = req.params.accountId;
     if (accountId != req.session.accountId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query('SELECT * FROM user where accountId = ? ', [accountId])
@@ -152,12 +152,12 @@ router.get("/:accountId/user", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendStatus(204);
+                    res.status(404).send("User not found!");
                 }
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 })
@@ -165,7 +165,7 @@ router.get("/:accountId/user", (req, res) => {
 router.get("/:accountId/admin", (req, res) => {
     let accountId = req.params.accountId;
     if (accountId != req.session.accountId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query('SELECT * FROM admin where accountId = ? ', [accountId])
@@ -174,12 +174,12 @@ router.get("/:accountId/admin", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendStatus(204);
+                    res.status(404).send("Admin not found!");
                 }
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 })
@@ -198,7 +198,7 @@ router.get("/players", (req, res) => {
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -214,7 +214,7 @@ router.post("/update-profile", (req, res) => {
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 })
@@ -231,7 +231,7 @@ router.get("/players/:playerId", (req, res) => {
                 res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });

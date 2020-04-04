@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/tables", async (req, res) => {
     let adminId = req.session.adminId;
     if (!adminId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query("SELECT table_name FROM INFORMATION_SCHEMA.TABLES where table_schema = 'stocktradingsim' order by table_name", [])
@@ -15,8 +15,7 @@ router.get("/tables", async (req, res) => {
                 res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
-
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -25,7 +24,7 @@ router.get("/tables/:tableName", (req, res) => {
     let tableName = req.params.tableName;
     let adminId = req.session.adminId;
     if (!adminId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query(`SELECT * from ${tableName}`, [])
@@ -35,8 +34,7 @@ router.get("/tables/:tableName", (req, res) => {
             },
             error => {
                 console.log(error)
-                res.sendStatus(500);
-
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -45,7 +43,7 @@ router.get("/tables/:tableName/columns", (req, res) => {
     let tableName = req.params.tableName;
     let adminId = req.session.adminId;
     if (!adminId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query(`select column_name from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME= ? `, [tableName])
@@ -55,8 +53,7 @@ router.get("/tables/:tableName/columns", (req, res) => {
             },
             error => {
                 console.log(error)
-                res.sendStatus(500);
-
+                res.status(500).send("Internal Server Error!");
             }
         )
 });

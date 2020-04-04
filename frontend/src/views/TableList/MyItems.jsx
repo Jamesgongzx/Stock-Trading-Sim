@@ -106,15 +106,16 @@ class MyItems extends React.Component{
             .then((res) => {
                 helpers.Toast.fire({
                     icon: 'success',
-                    title: `Used ${res.data.amountUsed} of ${res.data.item}!`
+                    title: `${res.data}`
                 })
                 this.getMyItems();
                 this.props.handleGetAccountsInfo();
             })
             .catch((err) => {
+                console.log(err);
                 helpers.Toast.fire({
                     icon: 'warning',
-                    title: `Something went wrong: ${err}`
+                    title: `${err.response.data}`
                 })
             })
     }

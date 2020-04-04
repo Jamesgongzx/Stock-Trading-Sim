@@ -10,9 +10,9 @@ import Card from "../../components/Card/Card.js";
 import CardHeader from "../../components/Card/CardHeader.js";
 import CardBody from "../../components/Card/CardBody.js";
 import PropTypes from 'prop-types';
-import {requestGET, requestPOST} from "../../requests";
+import { requestGET, requestPOST } from "../../requests";
 import Dialog from "@material-ui/core/Dialog";
-import {OutlinedInput} from "@material-ui/core";
+import { OutlinedInput } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -23,10 +23,10 @@ import Swal from 'sweetalert2'
 import helpers from "../../utils.js"
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import {Redirect, Route, Switch} from "react-router";
+import { Redirect, Route, Switch } from "react-router";
 import routes from "../../routes";
 import ChartistGraph from "react-chartist";
-import {stockLineChart} from "../../variables/charts";
+import { stockLineChart } from "../../variables/charts";
 var Chartist = require("chartist");
 
 const styles = {
@@ -63,13 +63,13 @@ const styles = {
     red: {
         color: "#ac1a02"
     },
-    stocksearchform : {
+    stocksearchform: {
         margin: "20px",
         marginBottom: "0px"
     }
 };
 
-class TradeStocks extends React.Component{
+class TradeStocks extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -109,7 +109,7 @@ class TradeStocks extends React.Component{
     viewGraphButton = (name) => {
         return (
             <Button variant="contained" color="success"
-                    onClick={() => {this.getSingleStockGraph(name)}}
+                onClick={() => { this.getSingleStockGraph(name) }}
             >
                 View Graph
             </Button>
@@ -120,7 +120,7 @@ class TradeStocks extends React.Component{
         let tempCols = Object.entries(this.state.projectionColumns).filter((pair) => pair[1]);
         tempCols = tempCols.map((x) => x[0]);
         console.log(tempCols);
-        requestGET(`/stocks`, {projections: tempCols})
+        requestGET(`/stocks`, { projections: tempCols })
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -144,7 +144,7 @@ class TradeStocks extends React.Component{
 
     handleSearchSubmit = (event) => {
         event.preventDefault();
-        return requestGET(`/stocks/${this.state.stock}`, )
+        return requestGET(`/stocks/${this.state.stock}`)
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -161,9 +161,16 @@ class TradeStocks extends React.Component{
                     })
                     helpers.Toast.fire({
                         icon: 'warning',
-                        title: `Stock not found :(`
+                        title: `Stock not found!`
                     })
                 }
+            })
+            .catch((err) => {
+                console.log(err);
+                helpers.Toast.fire({
+                    icon: 'warning',
+                    title: `${err.response.data}`
+                })
             })
     }
 
@@ -193,7 +200,7 @@ class TradeStocks extends React.Component{
         console.log(event);
         event.preventDefault();
         if (this.state.transactionType === "buy") {
-            return requestPOST(`/stocks/${this.state.selectedStock}/purchase`, {amount: this.state.qtyShares})
+            return requestPOST(`/stocks/${this.state.selectedStock}/purchase`, { amount: this.state.qtyShares })
                 .then(() => {
                     helpers.Toast.fire({
                         icon: 'success',
@@ -204,11 +211,11 @@ class TradeStocks extends React.Component{
                 .catch((err) => {
                     helpers.Toast.fire({
                         icon: 'error',
-                        title: `Uh oh, something went wrong: ${err}`
+                        title: `${err.response.data}`
                     })
                 })
         } else if (this.state.transactionType === "sell") {
-            return requestPOST(`/stocks/${this.state.selectedStock}/sell`, {amount: this.state.qtyShares})
+            return requestPOST(`/stocks/${this.state.selectedStock}/sell`, { amount: this.state.qtyShares })
                 .then(() => {
                     helpers.Toast.fire({
                         icon: 'success',
@@ -219,7 +226,7 @@ class TradeStocks extends React.Component{
                 .catch((err) => {
                     helpers.Toast.fire({
                         icon: 'error',
-                        title: `Uh oh, something went wrong: ${err}`
+                        title: `${err.response.data}`
                     })
                 })
         }
@@ -230,7 +237,7 @@ class TradeStocks extends React.Component{
 
     render() {
         console.log(this.state)
-        const {classes} = this.props;
+        const { classes } = this.props;
         // this.projectedColumnNames = this.state.projectionColumns.filter((x) => this.state.projectionColumns[x]);
         this.stockColumns = (
             <React.Fragment>
@@ -241,7 +248,7 @@ class TradeStocks extends React.Component{
                             control={
                                 <Checkbox
                                     defaultChecked
-                                    onChange={(e) => {this.handleColumnChange(e)}}
+                                    onChange={(e) => { this.handleColumnChange(e) }}
                                     inputProps={{ 'aria-label': 'primary checkbox' }}
                                 />
                             }
@@ -258,108 +265,108 @@ class TradeStocks extends React.Component{
             <React.Fragment>
                 {this.state.selectedStock != null ?
                     <Dialog aria-labelledby="simple-dialog-title" onClose={this.handleCloseDialog}
-                            fullWidth={true}
-                            maxWidth={"sm"}
-                            open={() => this.state.selectedStock != null}>
+                        fullWidth={true}
+                        maxWidth={"sm"}
+                        open={() => this.state.selectedStock != null}>
                         <DialogTitle id="customized-dialog-title">
                             Stock Name: {this.state.selectedStock}
                         </DialogTitle>
                         <form onSubmit={this.handleTransactionSubmit}>
-                        <DialogContent dividers>
-                            <div>
-                                Please enter the number of stocks to trade:
+                            <DialogContent dividers>
+                                <div>
+                                    Please enter the number of stocks to trade:
                             </div>
-                            <OutlinedInput type="number" size="small"
-                                           endAdornment={<InputAdornment position="end">Shares</InputAdornment>}
-                                           InputProps={{ inputProps: { min: 0} }}
-                                           required
-                                           defaultValue={0}
-                                           value={this.state.qtyShares}
-                                           onChange={(e) => {this.setState({qtyShares: e.target.value})}}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                        <Button  type="submit" color="success" className={classes.green}
-                                 onClick={() => {this.setState({transactionType: "buy"})}}>
-                            Buy
+                                <OutlinedInput type="number" size="small"
+                                    endAdornment={<InputAdornment position="end">Shares</InputAdornment>}
+                                    InputProps={{ inputProps: { min: 0 } }}
+                                    required
+                                    defaultValue={0}
+                                    value={this.state.qtyShares}
+                                    onChange={(e) => { this.setState({ qtyShares: e.target.value }) }}
+                                />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button type="submit" color="success" className={classes.green}
+                                    onClick={() => { this.setState({ transactionType: "buy" }) }}>
+                                    Buy
                         </Button>
-                        <Button type="submit" color="danger" className={classes.red}
-                                onClick={() => {this.setState({transactionType: "sell"})}}>
-                            Sell
+                                <Button type="submit" color="danger" className={classes.red}
+                                    onClick={() => { this.setState({ transactionType: "sell" }) }}>
+                                    Sell
                         </Button>
-                        </DialogActions>
+                            </DialogActions>
                         </form>
                     </Dialog>
                     :
                     <React.Fragment></React.Fragment>
                 }
                 <GridContainer>
-                <GridItem xs={12} sm={12} md={12}>
-                    <Card>
-                        <CardHeader color="primary">
-                            <h4 className={classes.cardTitleWhite}>Trade Stocks</h4>
-                            <p className={classes.cardCategoryWhite}>
-                                Search for a stock to trade:
+                    <GridItem xs={12} sm={12} md={12}>
+                        <Card>
+                            <CardHeader color="primary">
+                                <h4 className={classes.cardTitleWhite}>Trade Stocks</h4>
+                                <p className={classes.cardCategoryWhite}>
+                                    Search for a stock to trade:
                             </p>
-                        </CardHeader>
-                        {this.state.stockgraph != null
-                            ?
-                            <CardHeader color="success">
-                                <ChartistGraph
-                                    className="ct-chart"
-                                    data={this.state.graph}
-                                    type="Line"
-                                    options={{
-                                        lineSmooth: Chartist.Interpolation.cardinal({
-                                        tension: 0
-                                    }),
-                                        low: Math.min(...this.state.graph.series[0]),
-                                        high: Math.max(...this.state.graph.series[0]), // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-                                        chartPadding: {
-                                        top: 0,
-                                        right: 0,
-                                        bottom: 0,
-                                        left: 0
-                                    },
-                                        height: "500px",
-                                    }}
-                                    // responsiveOptions={stockLineChart.responsiveOptions}
-                                    listener={stockLineChart.animation}
-                                />
                             </CardHeader>
-                            :
-                            //{/*This section is for projection query*/}
-                            <React.Fragment>
-                            <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
-                                <OutlinedInput
-                                    type="stock"
-                                    name="stock"
-                                    placeholder="Search for a stock..."
-                                    value={this.state.stock}
-                                    onChange={this.handleStockBarChange}
-                                />
-                                <Button className="submit" type="submit" size="md">
-                                    Submit
-                                </Button>
-                            </form>
-                            <CardBody>
-                            {this.stockColumns}
-                            {this.state.values.length <= 0 ?
-                                "No Stocks Found :("
+                            {this.state.stockgraph != null
+                                ?
+                                <CardHeader color="success">
+                                    <ChartistGraph
+                                        className="ct-chart"
+                                        data={this.state.graph}
+                                        type="Line"
+                                        options={{
+                                            lineSmooth: Chartist.Interpolation.cardinal({
+                                                tension: 0
+                                            }),
+                                            low: Math.min(...this.state.graph.series[0]),
+                                            high: Math.max(...this.state.graph.series[0]), // creative tim: we recommend you to set the high sa the biggest value + something for a better look
+                                            chartPadding: {
+                                                top: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                left: 0
+                                            },
+                                            height: "500px",
+                                        }}
+                                        // responsiveOptions={stockLineChart.responsiveOptions}
+                                        listener={stockLineChart.animation}
+                                    />
+                                </CardHeader>
                                 :
-                                <Table
-                                    tableHeaderColor="primary"
-                                    tableHead={this.state.columnNames}
-                                    tableData={this.state.values}
-                                />
+                                //{/*This section is for projection query*/}
+                                <React.Fragment>
+                                    <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
+                                        <OutlinedInput
+                                            type="stock"
+                                            name="stock"
+                                            placeholder="Search for a stock..."
+                                            value={this.state.stock}
+                                            onChange={this.handleStockBarChange}
+                                        />
+                                        <Button className="submit" type="submit" size="md">
+                                            Submit
+                                </Button>
+                                    </form>
+                                    <CardBody>
+                                        {this.stockColumns}
+                                        {this.state.values.length <= 0 ?
+                                            "No Stocks Found :("
+                                            :
+                                            <Table
+                                                tableHeaderColor="primary"
+                                                tableHead={this.state.columnNames}
+                                                tableData={this.state.values}
+                                            />
+                                        }
+                                    </CardBody>
+                                </React.Fragment>
                             }
-                            </CardBody>
-                            </React.Fragment>
-                        }
 
-                    </Card>
-                </GridItem>
-            </GridContainer>
+                        </Card>
+                    </GridItem>
+                </GridContainer>
             </React.Fragment>
         );
     }
