@@ -73,6 +73,7 @@ class MyItems extends React.Component{
         this.state = {
             columnNames : [],
             values: [],
+            firstRender: false,
         }
 
     }
@@ -131,19 +132,30 @@ class MyItems extends React.Component{
     )
 
     componentDidMount() {
-        this.getMyItems();
+        if (this.props.currentPlayer) {
+            this.getMyItems();
+        }
     }
 
+    firstRender = () => {
+        if (this.state.firstRender === false && this.props && this.props.currentPlayer) {
+            this.getMyItems();
+            this.setState({
+                firstRender: true,
+            })
+        }
+    }
 
     render() {
         const {classes} = this.props;
+        this.firstRender()
         return (
             <React.Fragment>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
                         <Card>
                             <CardHeader color="primary">
-                                <h4 className={classes.cardTitleWhite}>Items</h4>
+                                <h4 className={classes.cardTitleWhite}>My Items</h4>
                                 <p className={classes.cardCategoryWhite}>
                                 </p>
                             </CardHeader>

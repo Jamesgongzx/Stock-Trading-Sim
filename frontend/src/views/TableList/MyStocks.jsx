@@ -48,12 +48,12 @@ class MyStocks extends React.Component{
         this.state = {
             columnNames : [],
             values: [],
+            firstRender: false,
         }
     }
 
-    componentDidMount() {
-        console.log(this.props)
-        requestGET(`/players/${this.props.currentPlayer.playerId}/stocks`, )
+    getMyStocks = () => {
+        requestGET(`/players/${this.props.currentPlayer.playerId}/stocks`,)
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -66,8 +66,31 @@ class MyStocks extends React.Component{
             })
     }
 
+    componentDidMount() {
+        console.log(this.props)
+        if (this.props.currentPlayer) {
+            this.getMyStocks()
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.currentPlayer == null && this.props.currentPlayer != null) {
+            this.getMyStocks();
+        }
+    }
+
+    firstRender = () => {
+        if (this.state.firstRender === false && this.props && this.props.currentPlayer) {
+            this.getMyStocks();
+            this.setState({
+                firstRender: true,
+            })
+        }
+    }
+
     render() {
         const {classes} = this.props;
+        this.firstRender()
         return (
             <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>

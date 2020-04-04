@@ -33,6 +33,7 @@ class Admin extends React.Component {
             currentPlayer: null,
             admin: this.props.admin,
             stocks: 0,
+            doneLoading: false,
         }
 
     }
@@ -97,6 +98,16 @@ class Admin extends React.Component {
                         .then(() => Promise.resolve(player))
                 }
                 return Promise.resolve(null)
+            })
+            .then(() => {
+                this.setState({
+                    doneLoading: true
+                })
+            })
+            .catch(() => {
+                this.setState({
+                    doneLoading: true
+                })
             })
             // .then((player) => {
             //     if (player) {
@@ -170,6 +181,8 @@ class Admin extends React.Component {
             </Switch>
         );
         return (
+            <React.Fragment>
+            {this.state.doneLoading ?
             <div className={classes.wrapper}>
                 <Sidebar
                     routes={this.filteredRoutes}
@@ -196,6 +209,9 @@ class Admin extends React.Component {
                     )}
                 </div>
             </div>
+                    :<div></div>
+            }
+            </React.Fragment>
         );
     }
 }
