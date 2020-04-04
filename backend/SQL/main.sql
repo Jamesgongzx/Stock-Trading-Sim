@@ -81,9 +81,9 @@ CREATE TABLE stockRecordOwnership (
 CREATE TABLE transitionRecordOwnership (
     dateTime DATETIME DEFAULT now(),
   	productName CHAR(50),
+    balanceChange REAL NOT NULL,
+    quantity REAL NOT NULL,
   	playerId INT,
-    balanceChange INT NOT NULL,
-    quantity INT NOT NULL,
     PRIMARY KEY (playerId, productName, dateTime),
     FOREIGN KEY (playerId) REFERENCES playerOwnership (playerId)
     ON UPDATE CASCADE ON DELETE CASCADE

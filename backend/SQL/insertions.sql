@@ -118,3 +118,14 @@ INSERT INTO playerItemR VALUES
 (3, 'Power Gem', 1, false),
 (3, 'Infinity Gauntlet', 1, false),
 (4, 'Potato Farm', 4, false);
+
+INSERT INTO transitionRecordOwnership VALUES
+('1996-01-01 12:00:00', 'AMZN', -10, 2, 3),
+('1997-01-01 1:15:00', 'AMZN', 30, 3, 3),
+('1998-01-01 12:00:00', 'AMZN', -10, 2, 3),
+('1997-01-01 12:00:00', 'Banana', -10, 2, 3),
+('1996-01-01 1:15:00', 'FB', 300, 3, 3),
+('1996-01-01 12:00:00', 'Potato Farm', 200, 2, 3),
+('1996-01-01 12:00:00', 'Banana', -10, 2, 1),
+('1996-01-01 1:15:00', 'FB', 300, 3, 1),
+('1996-01-01 12:00:00', 'Potato Farm', 200, 2, 1);
