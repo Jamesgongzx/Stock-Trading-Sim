@@ -3,20 +3,6 @@ const database = require("../database");
 
 const router = express.Router();
 
-router.get("/player-items", (req, res) => {
-    let playerId = req.session.playerId;
-
-    database.query('SELECT * FROM playerItemR where playerId = ?', [playerId])
-        .then(
-            results => {
-                res.status(200).send(results);
-            },
-            error => {
-                res.sendStatus(500);
-            }
-        )
-})
-
 // itemName has to be encoded using encodeURIComponent()
 router.patch("/:itemName/use", async (req, res) => {
     var itemName = req.params.itemName;

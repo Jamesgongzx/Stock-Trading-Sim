@@ -80,29 +80,33 @@ router.post("/create", async (req, res) => {
 
 router.get("/:playerId/stocks", (req, res) => {
     var playerId = req.params.playerId;
-    if (playerId == req.session.playerId) {
-        database.query('SELECT * FROM playerStockR WHERE playerId = ?', [playerId])
-            .then(
-                results => {
-                    if (results.length > 0) {
-                        res.status(200).send(results);
-                    } else {
-                        res.sendStatus(204);
-                    }
-                },
-                error => {
-                    console.log(error);
-                    res.sendStatus(500);
-                }
-            )
-    } else {
+    if (playerId != req.session.playerId) {
         res.sendStatus(401);
+        return;
     }
+    database.query('SELECT stockName, amount FROM playerStockR WHERE playerId = ?', [playerId])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
 });
 
 router.get("/history", (req, res) => {
     let playerId = req.session.playerId;
-    return database.query('SELECT * FROM transitionRecordOwnership WHERE playerId = ? order by datetime desc', [playerId])
+    if (playerId != req.session.playerId) {
+        res.sendStatus(401);
+        return;
+    }
+    return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? order by datetime desc', [playerId])
         .then(
             results => {
                 if (results.length > 0) {
@@ -157,67 +161,45 @@ router.get("/overview", (req, res) => {
 // returns a aggregate of how many stocks an account has
 router.get("/:playerId/stocks/count", (req, res) => {
     let playerId = req.session.playerId;
-    console.log(playerId);
-    if (playerId == req.session.playerId) {
-        database.query("SELECT SUM(amount) AS total FROM playerStockR where playerId = ?", [playerId])
-            .then(
-                results => {
-                    if (results.length > 0) {
-                        res.status(200).send(results);
-                    } else {
-                        res.sendStatus(204);
-                    }
-                },
-                error => {
-                    console.log(error);
-                    res.sendStatus(500);
-                }
-            )
-    } else {
+    if (playerId != req.session.playerId) {
         res.sendStatus(401);
+        return;
     }
+    database.query("SELECT SUM(amount) AS total FROM playerStockR where playerId = ?", [playerId])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
 });
 
 router.get("/:playerId/items", (req, res) => {
     var playerId = req.params.playerId;
-    if (playerId == req.session.playerId) {
-        database.query('SELECT * FROM playerItemR WHERE playerId = ?', [playerId])
-            .then(
-                results => {
-                    if (results.length > 0) {
-                        res.status(200).send(results);
-                    } else {
-                        res.sendStatus(204);
-                    }
-                },
-                error => {
-                    res.sendStatus(500);
-                }
-            )
-    } else {
+    if (playerId != req.session.playerId) {
         res.sendStatus(401);
+        return;
     }
-});
-
-router.get("/:playerId/records", (req, res) => {
-    var playerId = req.params.playerId;
-    if (playerId == req.session.playerId) {
-        database.query('SELECT transitionID, dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ?', [playerId])
-            .then(
-                results => {
-                    if (results.length > 0) {
-                        res.status(200).send(results);
-                    } else {
-                        res.sendStatus(204);
-                    }
-                },
-                error => {
-                    res.sendStatus(500);
+    database.query('SELECT itemName, amount AS amountOwned, usedToday FROM playerItemR WHERE playerId = ?', [playerId])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
                 }
-            )
-    } else {
-        res.sendStatus(401);
-    }
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
 });
 
 module.exports = router;
