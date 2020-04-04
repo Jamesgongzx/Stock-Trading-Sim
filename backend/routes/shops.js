@@ -132,7 +132,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
     var moneyToSpend = null;
     var response = { code: null, message: null };
     let weekArray = [null,7,1,2,3,4,5,6]
-    database.query("SELECT DAYOFWEEK(CONVERT_TZ(NOW(), '+00:00', '-07:00')) as day", [])
+    database.query("SELECT DAYOFWEEK(NOW()) as day", [])
         .then(
             results => {
                 if (results.length > 0) {
@@ -203,7 +203,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
         ).then(
             results => {
                 // Insert transition record
-                return database.query('INSERT INTO transitionRecordOwnership VALUES (now(), ?, ?, ?, ?)', [itemName, -moneyToSpend, amount, playerId]);
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (DEFAULT, ?, ?, ?, ?)', [itemName, -moneyToSpend, amount, playerId]);
             }
         ).then(
             results => {

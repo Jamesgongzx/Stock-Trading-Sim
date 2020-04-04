@@ -6,6 +6,8 @@ class database {
             host: "localhost",
             user: "root",
             password: "",
+            timezone : "-07:00",
+            dateStrings : true,
             // database: "stocktradingsim",
             multipleStatements: true
         });

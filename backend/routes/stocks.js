@@ -212,7 +212,7 @@ router.post("/:name/purchase", (req, res) => {
             results => {
                 var productName = "Stock " + name;
                 // Insert transition record
-                return database.query('INSERT INTO transitionRecordOwnership VALUES (now(), ?, ?, ?, ?)', [productName, -moneyToSpend, amount, playerId]);
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (DEFAULT, ?, ?, ?, ?)', [productName, -moneyToSpend, amount, playerId]);
             }
         ).then(
             results => {
