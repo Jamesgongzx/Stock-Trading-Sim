@@ -14,11 +14,11 @@ router.get("/", (req, res) => {
 
     var serverDayOfWeek = null;
     var response = { code: null, message: null };
-    database.query('SELECT DAYOFWEEK(utc_time())', [])
+    database.query('SELECT DAYOFWEEK(now())', [])
         .then(
             results => {
                 if (results.length > 0) {
-                    serverDayOfWeek = results[0]['DAYOFWEEK(utc_time())'];
+                    serverDayOfWeek = results[0]['DAYOFWEEK(now())'];
                     if (subscriptionType == "None") {
                         return database.query("SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category NOT LIKE '%Premium%'", [serverDayOfWeek]);
                     } else {
@@ -200,7 +200,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
         ).then(
             results => {
                 // Insert transition record
-                return database.query('INSERT INTO transitionRecordOwnership VALUES (utc_time(), ?, ?, ?, ?)', [itemName, -moneyToSpend, amount, playerId]);
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (now(), ?, ?, ?, ?)', [itemName, -moneyToSpend, amount, playerId]);
             }
         ).then(
             results => {

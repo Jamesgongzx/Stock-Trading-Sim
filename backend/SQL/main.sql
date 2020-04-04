@@ -5,7 +5,8 @@ CREATE DATABASE IF NOT EXISTS stocktradingsim DEFAULT CHARACTER SET utf8mb4 COLL
 SET default_storage_engine=InnoDB;
 USE stocktradingsim;
 
-SET GLOBAL time_zone = '+00:00';
+SET GLOBAL time_zone = '-07:00';
+
 SET SQL_SAFE_UPDATES = 0;
 
 CREATE TABLE account (
@@ -13,7 +14,7 @@ CREATE TABLE account (
     email CHAR(50) NOT NULL,
     username CHAR(50) NOT NULL UNIQUE,
     password CHAR(50) NOT NULL,
-    registrationTime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP () ON UPDATE CURRENT_TIMESTAMP ()
+    registrationTime DATETIME NOT NULL DEFAULT now() ON UPDATE now()
 );
 
 CREATE TABLE admin (
@@ -78,7 +79,7 @@ CREATE TABLE stockRecordOwnership (
 );
 
 CREATE TABLE transitionRecordOwnership (
-    dateTime DATETIME,
+    dateTime DATETIME DEFAULT now(),
   	productName CHAR(50),
   	playerId INT,
     balanceChange INT NOT NULL,

@@ -133,8 +133,8 @@ router.get("/:name/company", (req, res) => {
 router.get("/:name/records", (req, res) => {
     var name = req.params.name;
     database.query("SELECT * FROM stockRecordOwnership WHERE name = ? " +
-        "AND DAY(dateTime) <= DAY(utc_timestamp()) " +
-        "AND HOUR(dateTime) <= HOUR(utc_timestamp())", [name])
+        "AND DAY(dateTime) <= DAY(now()) " +
+        "AND HOUR(dateTime) <= HOUR(now())", [name])
         .then(
             results => {
                 res.status(200).send(results);
@@ -212,7 +212,7 @@ router.post("/:name/purchase", (req, res) => {
             results => {
                 var productName = "Stock " + name;
                 // Insert transition record
-                return database.query('INSERT INTO transitionRecordOwnership VALUES (utc_time(), ?, ?, ?, ?)', [productName, -moneyToSpend, amount, playerId]);
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (now(), ?, ?, ?, ?)', [productName, -moneyToSpend, amount, playerId]);
             }
         ).then(
             results => {
@@ -294,7 +294,7 @@ router.post("/:name/sell", (req, res) => {
             results => {
                 var productName = "Stock " + name;
                 // Insert transition record
-                return database.query('INSERT INTO transitionRecordOwnership VALUES (utc_time(), ?, ?, ?, ?)', [productName, moneyEarned, amount, playerId]);
+                return database.query('INSERT INTO transitionRecordOwnership VALUES (now(), ?, ?, ?, ?)', [productName, moneyEarned, amount, playerId]);
             }
         ).then(
             results => {

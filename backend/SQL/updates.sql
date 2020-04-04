@@ -3,14 +3,14 @@ UPDATE stock
 			SELECT price
 			FROM stockRecordOwnership
 			WHERE stockRecordOwnership.name = stock.name
-			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time())
-			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time())),
+			AND DAY(stockRecordOwnership.dateTime) = DAY(now())
+			AND HOUR(stockRecordOwnership.dateTime) = HOUR(now())),
 			24hChange = currentPrice - (
 			SELECT price
 			FROM stockRecordOwnership
 			WHERE stockRecordOwnership.name = stock.name
-			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time()) - 1
-			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time()));
+			AND DAY(stockRecordOwnership.dateTime) = DAY(now()) - 1
+			AND HOUR(stockRecordOwnership.dateTime) = HOUR(now()));
 
 CREATE EVENT updateitemUsageEvent
     ON SCHEDULE EVERY 1 DAY STARTS '2020-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE 
@@ -26,11 +26,11 @@ CREATE EVENT updateStockEvent
 			SELECT price
 			FROM stockRecordOwnership
 			WHERE stockRecordOwnership.name = stock.name
-			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time())
-			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time())),
+			AND DAY(stockRecordOwnership.dateTime) = DAY(now())
+			AND HOUR(stockRecordOwnership.dateTime) = HOUR(now())),
 			24hChange = currentPrice - (
 			SELECT price
 			FROM stockRecordOwnership
 			WHERE stockRecordOwnership.name = stock.name
-			AND DAY(stockRecordOwnership.dateTime) = DAY(utc_time()) - 1
-			AND HOUR(stockRecordOwnership.dateTime) = HOUR(utc_time()));
+			AND DAY(stockRecordOwnership.dateTime) = DAY(now()) - 1
+			AND HOUR(stockRecordOwnership.dateTime) = HOUR(now()));
