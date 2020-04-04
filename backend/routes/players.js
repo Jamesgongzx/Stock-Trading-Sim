@@ -80,8 +80,6 @@ router.post("/create", async (req, res) => {
 
 router.get("/:playerId/stocks", (req, res) => {
     var playerId = req.params.playerId;
-    console.log(req.params);
-    console.log(req.session);
     if (playerId == req.session.playerId) {
         database.query('SELECT * FROM playerStockR WHERE playerId = ?', [playerId])
             .then(
@@ -101,6 +99,24 @@ router.get("/:playerId/stocks", (req, res) => {
         res.sendStatus(401);
     }
 });
+
+router.get("/history", (req, res) => {
+    let playerId = req.session.playerId;
+    return database.query('SELECT * FROM transitionRecordOwnership WHERE playerId = ? order by datetime desc', [playerId])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.sendStatus(204);
+                }
+            },
+            error => {
+                console.log(error);
+                res.sendStatus(500);
+            }
+        )
+})
 
 router.get("/overview", (req, res) => {
     var adminId = req.session.adminId;
