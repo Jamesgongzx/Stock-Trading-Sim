@@ -131,17 +131,20 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
     var money = null;
     var moneyToSpend = null;
     var response = { code: null, message: null };
-    database.query('SELECT DAYOFWEEK(utc_time())', [])
+    let weekArray = [null,7,1,2,3,4,5,6]
+    database.query("SELECT DAYOFWEEK(CONVERT_TZ(NOW(), '+00:00', '-07:00')) as day", [])
         .then(
             results => {
                 if (results.length > 0) {
-                    serverDayOfWeek = results[0]['DAYOFWEEK(utc_time())'];
+                    serverDayOfWeek = results[0]['day'];
+                    serverDayOfWeek = weekArray[serverDayOfWeek];
+                    console.log(serverDayOfWeek);
                     if (serverDayOfWeek != dayOfWeek) {
                         response.code = 403;
                         response.message = "Shop not available today";
                         throw new Error("Shop not available today");
                     }
-                    database.query('SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category]);
+                    return database.query('SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category]);
                 } else {
                     response.code = 400;
                     throw new Error();
@@ -157,7 +160,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                         response.message = "Amount requested is greater than amount available";
                         throw new Error("Amount requested is greater than amount available");
                     }
-                    database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
+                    return database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
                 } else {
                     response.code = 400;
                     throw new Error();
@@ -173,7 +176,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                         response.code = 403;
                         throw new Error();
                     }
-                    database.query('SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
+                    return database.query('SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
                 } else {
                     response.code = 400;
                     throw new Error();
@@ -183,16 +186,16 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             results => {
                 // Update item amount or insert item
                 if (results.length > 0) {
-                    database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, itemName]);
+                    return database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, itemName]);
                 } else {
-                    database.query('INSERT INTO playerItemR VALUES (?, ?, ?, false)', [playerId, itemName, amount]);
+                    return database.query('INSERT INTO playerItemR VALUES (?, ?, ?, false)', [playerId, itemName, amount]);
                 }
             }
         ).then(
             results => {
                 // Update player money
                 return database.query('UPDATE PlayerOwnership SET money = money - ? WHERE playerId = ?', [moneyToSpend, playerId]);
-                res.sendStatus(200);
+                // res.sendStatus(200);
             }
         ).then(
             results => {
