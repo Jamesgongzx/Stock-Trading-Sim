@@ -27,6 +27,12 @@ import {Redirect, Route, Switch} from "react-router";
 import routes from "../../routes";
 import ChartistGraph from "react-chartist";
 import {stockLineChart} from "../../variables/charts";
+import CanvasJSReact from '../../assets/jss/canvasjs.react.js';
+import Temp from '../../views/Dashboard/temp'
+//var CanvasJSReact = require('./canvasjs.react');
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
 var Chartist = require("chartist");
 
 const styles = {
@@ -88,6 +94,7 @@ class TradeStocks extends React.Component{
             graph: {
                 labels: [],
                 series: [],
+                data: []
             }
         }
     }
@@ -99,6 +106,7 @@ class TradeStocks extends React.Component{
                 let graph = this.state.graph;
                 graph.labels = data.map((x) => x.dateTime).slice(-5);
                 graph.series = [data.map((x) => x.price).slice(-5)];
+                graph.data = data.map((x) => {return {x: new Date(x.dateTime), y: x.price}});
                 this.setState({
                     stockgraph: stock,
                     graph: graph,
@@ -130,7 +138,7 @@ class TradeStocks extends React.Component{
                         values: data.map((x) => {
                             let name = x.name;
                             x = Object.values(x);
-                            //x.push(this.viewGraphButton(name));
+                            x.push(this.viewGraphButton(name));
                             return x;
                         })
                     })
@@ -184,7 +192,8 @@ class TradeStocks extends React.Component{
 
     handleCloseDialog = () => {
         this.setState({
-            selectedStock: null
+            selectedStock: null,
+            stockgraph: null
         })
         // this.getAllStocks();
     }
@@ -254,6 +263,25 @@ class TradeStocks extends React.Component{
                 })}
             </React.Fragment>
         );
+
+        this.chartOptions = {
+            animationEnabled: true,
+            // title: {
+            //     text: `Stock Chart: ${this.state.stockgraph}`,
+            //     fontFamily: "Roboto"
+            // },
+            axisY:{
+                valueFormatString: "$##0.00",
+                minimum: Math.min(...this.state.graph.data.map((p) => p.y)) * 0.99,
+            },
+            data: [{
+                type: "area",
+                // xValueFormatString: "DD MMM",
+                yValueFormatString: "$##0.00",
+                dataPoints: this.state.graph.data
+            }]
+        }
+        console.log(this.chartOptions)
         return (
             <React.Fragment>
                 {this.state.selectedStock != null ?
@@ -304,45 +332,40 @@ class TradeStocks extends React.Component{
                         </CardHeader>
                         {this.state.stockgraph != null
                             ?
-                            <CardHeader color="success">
-                                <ChartistGraph
-                                    className="ct-chart"
-                                    data={this.state.graph}
-                                    type="Line"
-                                    options={{
-                                        lineSmooth: Chartist.Interpolation.cardinal({
-                                        tension: 0
-                                    }),
-                                        low: Math.min(...this.state.graph.series[0]),
-                                        high: Math.max(...this.state.graph.series[0]), // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-                                        chartPadding: {
-                                        top: 0,
-                                        right: 0,
-                                        bottom: 0,
-                                        left: 0
-                                    },
-                                        height: "500px",
+                            <Dialog aria-labelledby="simple-dialog-title" onClose={this.handleCloseDialog}
+                                    fullWidth={true}
+                                    maxWidth={"lg"}
+                                    // fullScreen={true}
+                                    open={() => this.state.stockgraph != null}
+                                    style={{
+                                        height: '80vh',
+                                        minHeight: '80vh',
+                                        maxHeight: '80vh',
                                     }}
-                                    // responsiveOptions={stockLineChart.responsiveOptions}
-                                    listener={stockLineChart.animation}
-                                />
-                            </CardHeader>
-                            :
-                            //{/*This section is for projection query*/}
-                            <React.Fragment>
-                            <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
-                                <OutlinedInput
-                                    type="stock"
-                                    name="stock"
-                                    placeholder="Search for a stock..."
-                                    value={this.state.stock}
-                                    onChange={this.handleStockBarChange}
-                                />
-                                <Button className="submit" type="submit" size="md">
-                                    Submit
-                                </Button>
-                            </form>
-                            <CardBody>
+                            >
+                                <Card>
+                                    <CardHeader color="primary" style={{marginBottom: "15px"}}>
+                                        <h3 className={classes.cardTitleWhite}>Stock Chart: {this.state.stockgraph}</h3>
+                                    </CardHeader>
+                                    <CanvasJSChart options={this.chartOptions}/>
+                                </Card>
+                            </Dialog>
+                            : <div></div>
+                        }
+
+                        <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
+                            <OutlinedInput
+                                type="stock"
+                                name="stock"
+                                placeholder="Search for a stock..."
+                                value={this.state.stock}
+                                onChange={this.handleStockBarChange}
+                            />
+                            <Button className="submit" type="submit" size="md">
+                                Submit
+                            </Button>
+                        </form>
+                        <CardBody>
                             {this.stockColumns}
                             {this.state.values.length <= 0 ?
                                 "No Stocks Found :("
@@ -353,9 +376,7 @@ class TradeStocks extends React.Component{
                                     tableData={this.state.values}
                                 />
                             }
-                            </CardBody>
-                            </React.Fragment>
-                        }
+                        </CardBody>
 
                     </Card>
                 </GridItem>
