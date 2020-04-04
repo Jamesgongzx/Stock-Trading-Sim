@@ -128,18 +128,18 @@ export default function AdminNavbarLinks({...props}) {
                             {/*</Switch>*/}
                             Profile
                           </MenuItem>
-                        <MenuItem
-                            onClick={handleClose}
-                            className={classes.dropdownItem}
-                        >
-                            Change User
-                        </MenuItem>
-                          <MenuItem
-                              onClick={handleClose}
-                              className={classes.dropdownItem}
-                          >
-                            Settings
-                          </MenuItem>
+                        {/*<MenuItem*/}
+                        {/*    onClick={handleClose}*/}
+                        {/*    className={classes.dropdownItem}*/}
+                        {/*>*/}
+                        {/*    Change User*/}
+                        {/*</MenuItem>*/}
+                        {/*  <MenuItem*/}
+                        {/*      onClick={handleClose}*/}
+                        {/*      className={classes.dropdownItem}*/}
+                        {/*  >*/}
+                        {/*    Settings*/}
+                        {/*  </MenuItem>*/}
                           <Divider light/>
                           <MenuItem
                               onClick={handleLogOut}

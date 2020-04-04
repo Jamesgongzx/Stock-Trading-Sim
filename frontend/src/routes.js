@@ -50,7 +50,7 @@ const dashboardRoutes = [
   {
     path: "/profile",
     name: "User Profile",
-    icon: Person,
+    icon: null,
     component: UserProfile,
     layout: "/user",
     type: "user"

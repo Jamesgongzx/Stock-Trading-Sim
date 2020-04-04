@@ -19,6 +19,12 @@ import UserProfile from "../../views/UserProfile/userprofile";
 import TableList from "../../views/TableList/TableList";
 import MyItems from "../../views/TableList/MyItems";
 import History from "../../views/TableList/History";
+import CardHeader from "../Card/CardHeader";
+import CardIcon from "../Card/CardIcon";
+import Balance from "@material-ui/core/SvgIcon/SvgIcon";
+import CardFooter from "../Card/CardFooter";
+import GridItem from "../Grid/GridItem";
+import Card from "@material-ui/core/Card";
 
 const useStyles = makeStyles(styles);
 
@@ -75,6 +81,23 @@ export default function Header(props, {...rest}) {
             {/*{makeBrand()}*/}
           </Button>
         </div>
+        {/*<div className={classes.padded} style={{left: 0, position: "absolute", marginLeft: "15px"}}>*/}
+        {/*  Current Money:*/}
+        {/*  {props.currentPlayer*/}
+        {/*      ? `\t$${props.currentPlayer.money}`*/}
+        {/*      : "\t$0"*/}
+        {/*  }*/}
+        {/*</div>*/}
+
+        <Card style={{left: 0, position: "absolute", margin: "10px", padding: "5px"}}>
+            {/*<p className={classes.cardCategory}>Current Money $</p>*/}
+            <p>
+              Current Money:
+              {props.currentPlayer
+                  ? `\t$${props.currentPlayer.money}`
+                  : "\t$0"
+              }</p>
+        </Card>
         {topBarComponents}
         {/*<div className={classes.padded}>*/}
         {/*  <Button variant="contained" color="primary">*/}
