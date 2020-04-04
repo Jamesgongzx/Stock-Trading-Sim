@@ -88,16 +88,6 @@ export default function Header(props, {...rest}) {
         {/*      : "\t$0"*/}
         {/*  }*/}
         {/*</div>*/}
-
-        <Card style={{left: 0, position: "absolute", margin: "10px", padding: "5px"}}>
-            {/*<p className={classes.cardCategory}>Current Money $</p>*/}
-            <p>
-              Current Money:
-              {props.currentPlayer
-                  ? `\t$${props.currentPlayer.money}`
-                  : "\t$0"
-              }</p>
-        </Card>
         {topBarComponents}
         {/*<div className={classes.padded}>*/}
         {/*  <Button variant="contained" color="primary">*/}

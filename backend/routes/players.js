@@ -134,7 +134,7 @@ router.get("/overview", (req, res) => {
     }
 
     database.query(`select ${projectionString} ` +
-        "from (select playerid, money, StockValuation, money + StockValuation as NetWorth " +
+        "from (select playerid, round(money, 2) as money, round(StockValuation, 2) as StockValuation, round(money + StockValuation, 2) as NetWorth " +
         "from (select po.playerId as playerId, money, case when StockValuation is null then 0 else StockValuation end as StockValuation  " +
         "from stocktradingsim.playerOwnership po left outer join (SELECT ps.playerId, sum(amount*currentprice) as StockValuation FROM stocktradingsim.playerStockR ps, stocktradingsim.stock s WHERE s.name = ps.stockName  " +
         "group by ps.playerId) p on p.playerId = po.playerId  " +

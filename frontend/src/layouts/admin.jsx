@@ -73,9 +73,11 @@ class Admin extends React.Component {
             .then((res) => {
                 console.log(res.data);
                 if(res.data.length > 0)   {
+                    let currentPlayer = res.data[0];
+                    currentPlayer.money = (Math.round(currentPlayer.money * 100) / 100).toFixed(2);
                     this.setState({
                         players: res.data,
-                        currentPlayer: res.data[0]
+                        currentPlayer: currentPlayer
                     })
                     return res.data[0]
                 }
