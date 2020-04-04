@@ -1,8 +1,7 @@
 const express = require("express");
 const database = require("../database");
 
-var utils = require("./utils");
-var countDecimals = utils.countDecimals;
+var { countDecimals, noExponents } = require("./utils");
 
 const router = express.Router();
 
@@ -37,21 +36,21 @@ router.get("/", async (req, res) => {
     if (numericalConditions) {
         whereStatement.concat(" WHERE ");
         if (numericalConditions.length > 2) {
-            res.sendStatus(500);
+            res.status(400).send("Bad request!");
             return;
         }
         for (var i = 0; i < numericalConditions.length; i++) {
             var condition = numericalConditions[i];
             if (["currentPrice", "24hChange"].indexOf(condition.fieldName) < 0) {
-                res.sendStatus(500);
+                res.status(400).send("Bad request!");
                 return;
             }
             if (typeof condition.isGreater !== "boolean") {
-                res.sendStatus(500);
+                res.status(400).send("Bad request!");
                 return;
             }
             if (isNaN(condition.value)) {
-                res.sendStatus(500);
+                res.status(400).send("Bad request!");
                 return;
             }
             var conditionString = "";
@@ -68,7 +67,7 @@ router.get("/", async (req, res) => {
     }
     if (nameCondition) {
         if (nameCondition.indexOf(' ') >= 0) {
-            res.sendStatus(500);
+            res.status(400).send("Bad request!");
             return;
         }
         if (whereStatement.length > 0) {
@@ -79,11 +78,7 @@ router.get("/", async (req, res) => {
     database.query('SELECT ' + projectionString + ' FROM stock' + whereStatement, [])
         .then(
             results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendstatus(200);
-                }
+                res.status(200).send(results);
             }
         )
 });
@@ -93,10 +88,14 @@ router.get("/:name", (req, res) => {
     database.query('SELECT * FROM stock where name = ?', [name])
         .then(
             results => {
-                res.status(200).send(results);
+                if (results.length > 0) {
+                    res.status(200).send(results);
+                } else {
+                    res.status(400).send("Stock not found!");
+                }
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -106,16 +105,20 @@ router.delete("/:name", (req, res) => {
     var name = req.params.name;
     var adminId = req.session.adminId;
     if (!adminId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query('DELETE FROM stock WHERE name = ?', [name])
         .then(
             results => {
-                res.sendStatus(200);
+                if (results.length > 0) {
+                    res.status(200).send("Stock deleted!");
+                } else {
+                    res.status(400).send("Stock not found!");
+                }
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -128,7 +131,7 @@ router.get("/:name/company", (req, res) => {
                 res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -143,7 +146,7 @@ router.get("/:name/records", (req, res) => {
                 res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -156,13 +159,22 @@ router.post("/:name/purchase", (req, res) => {
     var playerId = req.session.playerId;
     var loggedin = req.session.loggedin;
     if (!loggedin) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
 
-    var numDecimals = countDecimals(Number(amount));
-    if (numDecimals > 5){
-        res.status(400).send("Please enter a number with less than 5 decimal places");
+    var amountNumber = Number(amount);
+    if (amountNumber == 0 || amountNumber < 0){
+        res.status(400).send("Please enter a positive number!");
+        return;
+    }
+    if (isNaN(amountNumber)) {
+        res.status(400).send("Please enter a number!");
+        return;
+    }
+    var numDecimals = countDecimals(Number(noExponents(amount)));
+    if (numDecimals > 5) {
+        res.status(400).send("Please enter a number with less than 5 decimal places!");
         return;
     }
 
@@ -252,13 +264,22 @@ router.post("/:name/sell", (req, res) => {
     var playerId = req.session.playerId;
     var loggedin = req.session.loggedin;
     if (!loggedin) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
 
-    var numDecimals = countDecimals(Number(amount));
-    if (numDecimals > 5){
-        res.status(400).send("Please enter a number with less than 5 decimal places");
+    var amountNumber = Number(amount);
+    if (amountNumber == 0 || amountNumber < 0){
+        res.status(400).send("Please enter a positive number!");
+        return;
+    }
+    if (isNaN(amountNumber)) {
+        res.status(400).send("Please enter a number!");
+        return;
+    }
+    var numDecimals = countDecimals(Number(noExponents(amount)));
+    if (numDecimals > 5) {
+        res.status(400).send("Please enter a number with less than 5 decimal places!");
         return;
     }
 

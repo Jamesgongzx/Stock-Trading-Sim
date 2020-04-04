@@ -61,7 +61,7 @@ class UserProfile extends React.Component {
             .catch((err) => {
                 helpers.Toast.fire({
                     icon: 'warning',
-                    title: `Something went wrong: ${err}`
+                    title: `${err.response.data}`
                 })
             })
     }

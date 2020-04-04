@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
     var projections = req.query.projections;
     var adminId = req.session.adminId;
     if (!adminId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
 
@@ -27,8 +27,7 @@ router.get("/", async (req, res) => {
                 res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
-
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -40,8 +39,7 @@ router.patch("/ranking", async (req, res) => {
                 return database.query('SELECT * FROM playerRanking ORDER BY ranking ASC', []);
             },
             error => {
-                res.sendStatus(500);
-
+                res.status(500).send("Internal Server Error!");
             }
         )
         .then(
@@ -49,8 +47,7 @@ router.patch("/ranking", async (req, res) => {
                 res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
-
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -81,7 +78,7 @@ router.post("/create", async (req, res) => {
 router.get("/:playerId/stocks", (req, res) => {
     var playerId = req.params.playerId;
     if (playerId != req.session.playerId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query('SELECT stockName, amount FROM playerStockR WHERE playerId = ?', [playerId])
@@ -90,12 +87,12 @@ router.get("/:playerId/stocks", (req, res) => {
                 if (results.length > 0) {
                     res.status(200).send(results);
                 } else {
-                    res.sendStatus(204);
+                    res.status(404).send("User not found!");
                 }
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -103,21 +100,17 @@ router.get("/:playerId/stocks", (req, res) => {
 router.get("/history", (req, res) => {
     let playerId = req.session.playerId;
     if (playerId != req.session.playerId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? order by datetime desc', [playerId])
         .then(
             results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
+                res.status(200).send(results);
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 })
@@ -126,7 +119,7 @@ router.get("/overview", (req, res) => {
     var adminId = req.session.adminId;
     var projections = req.query.projections;
     if (!adminId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
 
@@ -145,15 +138,12 @@ router.get("/overview", (req, res) => {
         "order by po.playerId) p) as p", [])
         .then(
             results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
+                res.status(200).send(results);
+
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -162,21 +152,17 @@ router.get("/overview", (req, res) => {
 router.get("/:playerId/stocks/count", (req, res) => {
     let playerId = req.session.playerId;
     if (playerId != req.session.playerId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query("SELECT SUM(amount) AS total FROM playerStockR where playerId = ?", [playerId])
         .then(
             results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
+                res.status(200).send(results);
             },
             error => {
                 console.log(error);
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });
@@ -184,20 +170,16 @@ router.get("/:playerId/stocks/count", (req, res) => {
 router.get("/:playerId/items", (req, res) => {
     var playerId = req.params.playerId;
     if (playerId != req.session.playerId) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
     database.query('SELECT itemName, amount AS amountOwned, usedToday FROM playerItemR WHERE playerId = ?', [playerId])
         .then(
             results => {
-                if (results.length > 0) {
-                    res.status(200).send(results);
-                } else {
-                    res.sendStatus(204);
-                }
+                res.status(200).send(results);
             },
             error => {
-                res.sendStatus(500);
+                res.status(500).send("Internal Server Error!");
             }
         )
 });

@@ -118,7 +118,7 @@ class MarketPlace extends React.Component{
             .catch((err) => {
                 helpers.Toast.fire({
                     icon: 'warning',
-                    title: `Something went wrong: ${err}`
+                    title: `${err.response.data}`
                 })
             })
     }
@@ -156,10 +156,6 @@ class MarketPlace extends React.Component{
                             return x;
                         })
                     })
-                    helpers.Toast.fire({
-                        icon: 'success',
-                        title: `Items found for ${this.dayOfWeekObject[this.state.dayofWeek]}'s Market: ${this.state.category}!`
-                    })
                 }
                 else {
                     throw Error(`Items couldn't be found for ${this.dayOfWeekObject[this.state.dayofWeek]}'s Market: ${this.state.category}`)
@@ -168,7 +164,7 @@ class MarketPlace extends React.Component{
             .catch((err) => {
                 helpers.Toast.fire({
                     icon: 'warning',
-                    title: `Something went wrong: ${err}`
+                    title: `${err.response.data}`
                 })
             })
     }

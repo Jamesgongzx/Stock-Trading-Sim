@@ -12,12 +12,12 @@ router.patch("/:itemName/use", async (req, res) => {
     var loggedin = req.session.loggedin;
 
     if (!loggedin) {
-        res.sendStatus(401);
+        res.status(401).send("Player not authorized!");
         return;
     }
 
     if (!["Infinity Gauntlet", "Apple", "GPU", "Potato Farm"].includes(itemName)) {
-        return res.status(200).send("Nothing happened!");
+        return res.status(403).send("Item is not activatable!");
     }
 
     var amountOwned = 0;
@@ -42,8 +42,8 @@ router.patch("/:itemName/use", async (req, res) => {
 
                     if (amountOwned < amountToUse) {
                         response.code = 403;
-                        response.message = "Not enough amount owned to activate item!"
-                        throw new Error("Not enough amount owned to activate item!");
+                        response.message = "Not enough amount owned to use item!"
+                        throw new Error("Not enough amount owned to use item!");
                     }
 
                     console.log(`amountToUse ${amountToUse}`);
@@ -64,8 +64,8 @@ router.patch("/:itemName/use", async (req, res) => {
                     return database.query("SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?", [playerId, itemName]);
                 } else {
                     response.code = 403;
-                    response.message = "Item not owned"
-                    throw new Error("Item not owned");
+                    response.message = "Item not owned!"
+                    throw new Error("Item not owned!");
                 }
             }
         ).then(
@@ -114,7 +114,7 @@ router.patch("/:itemName/use", async (req, res) => {
             }
         ).then(
             results => {
-                res.status(200).send({item: itemName, amountUsed: amountToUse});
+                res.status(200).send("Used item!");
             }
         ).catch(
             error => {
@@ -125,9 +125,9 @@ router.patch("/:itemName/use", async (req, res) => {
                 console.log(error);
                 console.log("here1");
                 if (response.message) {
-                    return res.status(response.code).send(response.message);
+                    res.status(response.code).send(response.message);
                 } else {
-                    return res.sendStatus(response.code);
+                    res.status(response.code);
                 }
             }
         )
