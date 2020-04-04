@@ -1,6 +1,9 @@
 const express = require("express");
 const database = require("../database");
 
+var utils = require("./utils");
+var countDecimals = utils.countDecimals;
+
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -13,7 +16,7 @@ router.get("/", (req, res) => {
     }
 
     var serverDayOfWeek = null;
-    let weekArray = [null,7,1,2,3,4,5,6]
+    let weekArray = [null, 7, 1, 2, 3, 4, 5, 6]
     var response = { code: null, message: null };
     database.query('SELECT DAYOFWEEK(now()) as day', [])
         .then(
@@ -36,6 +39,7 @@ router.get("/", (req, res) => {
             error => {
                 if (!response.code) {
                     response.code = 500;
+                    response.message = "Internal Server Error";
                 }
                 console.log(error);
                 if (response.message) {
@@ -119,6 +123,12 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
         return;
     }
 
+    var numDecimals = countDecimals(Number(amount));
+    if (numDecimals > 5) {
+        res.status(400).send("Please enter a number with less than 5 decimal places");
+        return;
+    }
+
     if (subscriptionType) {
         if (category.includes("Premium") && subscriptionType != "Premium") {
             res.sendStatus(403);
@@ -132,26 +142,21 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
     var money = null;
     var moneyToSpend = null;
     var response = { code: null, message: null };
-    let weekArray = [null,7,1,2,3,4,5,6]
+    let weekArray = [null, 7, 1, 2, 3, 4, 5, 6]
     database.query("SELECT DAYOFWEEK(NOW()) as day", [])
         .then(
             results => {
-                if (results.length > 0) {
-                    serverDayOfWeek = results[0]['day'];
-                    serverDayOfWeek = weekArray[serverDayOfWeek];
-                    console.log(serverDayOfWeek);
-                    if (serverDayOfWeek != dayOfWeek) {
-                        response.code = 403;
-                        response.message = "Shop not available today";
-                        throw new Error("Shop not available today");
-                    }
-                    return database.query('SELECT cost, amount ' +
-                        'FROM item i NATURAL JOIN shop s NATURAL JOIN shopItemR sir ' +
-                        'WHERE s.dayOfWeek = ? AND s.category = ? and i.itemname = ?', [dayOfWeek, category, itemName]);
-                } else {
-                    response.code = 400;
-                    throw new Error();
+                serverDayOfWeek = results[0]['day'];
+                serverDayOfWeek = weekArray[serverDayOfWeek];
+                console.log(serverDayOfWeek);
+                if (serverDayOfWeek != dayOfWeek) {
+                    response.code = 403;
+                    response.message = "Shop not available today!";
+                    throw new Error("Shop not available today!");
                 }
+                return database.query('SELECT cost, amount ' +
+                    'FROM item i NATURAL JOIN shop s NATURAL JOIN shopItemR sir ' +
+                    'WHERE s.dayOfWeek = ? AND s.category = ? and i.itemname = ?', [dayOfWeek, category, itemName]);
             }
         ).then(
             results => {
@@ -160,13 +165,14 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                     amountAvailable = results[0].amount;
                     if (amount > amountAvailable) {
                         response.code = 403;
-                        response.message = "Amount requested is greater than amount available";
-                        throw new Error("Amount requested is greater than amount available");
+                        response.message = "Amount requested is greater than amount available!";
+                        throw new Error("Amount requested is greater than amount available!");
                     }
                     return database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
                 } else {
                     response.code = 400;
-                    throw new Error();
+                    response.message = "Item not found in shop!";
+                    throw new Error("Item not found in shop!");
                 }
             }
         ).then(
@@ -177,12 +183,14 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                     var canPurchase = money >= moneyToSpend;
                     if (!canPurchase) {
                         response.code = 403;
-                        throw new Error();
+                        response.message = "Not enough money to purchase item!";
+                        throw new Error("Not enough money to purchase item!");
                     }
                     return database.query('SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
                 } else {
                     response.code = 400;
-                    throw new Error();
+                    response.message = "Player not found!";
+                    throw new Error("Player not found!");
                 }
             }
         ).then(
@@ -217,6 +225,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             error => {
                 if (!response.code) {
                     response.code = 500;
+                    response.message = "Internal Server Error";
                 }
                 console.log(error);
                 if (response.message) {

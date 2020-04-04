@@ -73,8 +73,8 @@ router.patch("/:itemName/use", async (req, res) => {
                 var usedToday = results[0].usedToday;
                 if (usedToday) {
                     response.code = 403;
-                    response.message = "Item already used today"
-                    throw new Error("Item already used today");
+                    response.message = "Item already used today!"
+                    throw new Error("Item already used today!");
                 }
 
                 if (itemName == "Infinity Gauntlet") {
@@ -120,6 +120,7 @@ router.patch("/:itemName/use", async (req, res) => {
             error => {
                 if (!response.code) {
                     response.code = 500;
+                    response.message = "Internal Server Error";
                 }
                 console.log(error);
                 console.log("here1");

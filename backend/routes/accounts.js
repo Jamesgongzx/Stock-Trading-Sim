@@ -46,6 +46,7 @@ router.post("/signup", async (req, res) => {
             error => {
                 if (!response.code) {
                     response.code = 500;
+                    response.message = "Internal Server Error";
                 }
                 console.log(error);
                 if (response.message) {
@@ -127,6 +128,7 @@ router.post("/signin", (req, res) => {
             error => {
                 if (!response.code) {
                     response.code = 500;
+                    response.message = "Internal Server Error";
                 }
                 console.log(error);
                 if (response.message) {
