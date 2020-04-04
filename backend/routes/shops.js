@@ -20,9 +20,9 @@ router.get("/", (req, res) => {
                 if (results.length > 0) {
                     serverDayOfWeek = results[0]['DAYOFWEEK(now())'];
                     if (subscriptionType == "None") {
-                        return database.query("SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category NOT LIKE '%Premium%'", [serverDayOfWeek]);
+                        return database.query("SELECT cost, amount FROM item NATURAL JOIN shop NATURAL JOIN shopItemR WHERE dayOfWeek = ? AND category NOT LIKE '%Premium%'", [serverDayOfWeek]);
                     } else {
-                        return database.query("SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ?", [serverDayOfWeek]);
+                        return database.query("SELECT cost, amount FROM item NATURAL JOIN shop NATURAL JOIN shopItemR WHERE dayOfWeek = ?", [serverDayOfWeek]);
                     }
                 }
             }
@@ -80,9 +80,8 @@ router.get("/:dayOfWeek/:category/items", async (req, res) => {
     var dayOfWeek = req.params.dayOfWeek;
     var category = req.params.category;
     let query = "SELECT i.itemName, cost, amount, description " +
-        "FROM item i, shop s, shopItemR sir " +
-        "WHERE s.dayOfWeek = ? AND s.category = ?  " +
-        "and i.itemname = sir.itemname and sir.dayofweek = s.dayofweek and sir.category = s.category";
+        "FROM item i NATURAL JOIN shop s NATURAL JOIN shopItemR sir " +
+        "WHERE s.dayOfWeek = ? AND s.category = ?";
     database.query(query, [dayOfWeek, category])
         .then(
             results => {
@@ -145,9 +144,8 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                         throw new Error("Shop not available today");
                     }
                     return database.query('SELECT cost, amount ' +
-                        'FROM item i, shop s, shopItemR sir ' +
-                        'WHERE s.dayOfWeek = ? AND s.category = ? ' +
-                        'and i.itemname = sir.itemname and sir.dayofweek = s.dayofweek and sir.category = s.category', [dayOfWeek, category]);
+                        'FROM item i NATURAL JOIN shop s NATURAL JOIN shopItemR sir ' +
+                        'WHERE s.dayOfWeek = ? AND s.category = ?', [dayOfWeek, category]);
                 } else {
                     response.code = 400;
                     throw new Error();

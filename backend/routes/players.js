@@ -186,7 +186,7 @@ router.get("/:playerId/items", (req, res) => {
 router.get("/:playerId/records", (req, res) => {
     var playerId = req.params.playerId;
     if (playerId == req.session.playerId) {
-        database.query('SELECT transitionID, dateTime, productName, quantity, balanceChange FROM transitionRecordOwnershipR1, transitionRecordOwnershipR2 WHERE playerId = ?', [playerId])
+        database.query('SELECT transitionID, dateTime, productName, quantity, balanceChange FROM transitionRecordOwnershipR1 NATURAL JOIN transitionRecordOwnershipR2 WHERE playerId = ?', [playerId])
             .then(
                 results => {
                     if (results.length > 0) {
