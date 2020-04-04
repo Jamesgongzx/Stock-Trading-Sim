@@ -127,12 +127,6 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
 
     var itemCost = null;
     var amountAvailable = null;
-
-    if (amount > amountAvailable) {
-        res.sendStatus(403);
-        return;
-    }
-
     var serverDayOfWeek = null
     var money = null;
     var moneyToSpend = null;
@@ -158,6 +152,11 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                 if (results.length > 0) {
                     itemCost = results[0].cost;
                     amountAvailable = results[0].amount;
+                    if (amount > amountAvailable) {
+                        response.code = 403;
+                        response.message = "Amount requested is greater than amount available";
+                        throw new Error("Amount requested is greater than amount available");
+                    }
                     database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
                 } else {
                     response.code = 400;
