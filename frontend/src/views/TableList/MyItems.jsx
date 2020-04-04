@@ -79,7 +79,7 @@ class MyItems extends React.Component{
 
 
     getMyItems = () => {
-        requestGET("/items/player-items")
+        requestGET(`/players/${this.props.currentPlayer.playerId}/items`)
             .then((res) => {
                 if (res.data.length > 0) {
                     let data = res.data;
