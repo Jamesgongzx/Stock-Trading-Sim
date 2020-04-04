@@ -63,6 +63,8 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
     itemName = decodeURIComponent(itemName);
     var dayOfWeek = req.params.dayOfWeek;
     var category = req.params.category;
+    console.log(req.params);
+    console.log(req.body);
 
     var amount = req.body.amount;
     var playerId = req.session.playerId;
