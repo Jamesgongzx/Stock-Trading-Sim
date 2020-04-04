@@ -187,7 +187,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             }
         ).then(
             results => {
-                // Update item amount or insert item
+                // Update playerItemR item amount or insert item
                 if (results.length > 0) {
                     return database.query('UPDATE playerItemR SET amount = amount + ? WHERE playerId = ? AND itemName = ?', [amount, playerId, itemName]);
                 } else {
@@ -196,9 +196,13 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
             }
         ).then(
             results => {
+                // Update shopItemR item amount
+                return database.query('UPDATE shopItemR SET amount = amount - ? WHERE dayOfWeek = ? AND category = ? AND itemName = ?', [amount, dayOfWeek, category, itemName]);
+            }
+        ).then(
+            results => {
                 // Update player money
                 return database.query('UPDATE PlayerOwnership SET money = money - ? WHERE playerId = ?', [moneyToSpend, playerId]);
-                // res.sendStatus(200);
             }
         ).then(
             results => {
