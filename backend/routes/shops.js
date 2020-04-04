@@ -13,12 +13,14 @@ router.get("/", (req, res) => {
     }
 
     var serverDayOfWeek = null;
+    let weekArray = [null,7,1,2,3,4,5,6]
     var response = { code: null, message: null };
-    database.query('SELECT DAYOFWEEK(now())', [])
+    database.query('SELECT DAYOFWEEK(now()) as day', [])
         .then(
             results => {
                 if (results.length > 0) {
-                    serverDayOfWeek = results[0]['DAYOFWEEK(now())'];
+                    serverDayOfWeek = results[0]['day'];
+                    serverDayOfWeek = weekArray[serverDayOfWeek];
                     if (subscriptionType == "None") {
                         return database.query("SELECT cost, amount FROM item NATURAL JOIN shop NATURAL JOIN shopItemR WHERE dayOfWeek = ? AND category NOT LIKE '%Premium%'", [serverDayOfWeek]);
                     } else {
