@@ -69,7 +69,6 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        console.log(this.props);
         const {classes} = this.props;
         let money = (this.props.currentPlayer) ? this.props.currentPlayer.money : 0;
         // let stocks = requestGET("/stocks/stock-count")

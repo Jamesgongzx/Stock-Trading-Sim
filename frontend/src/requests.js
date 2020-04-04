@@ -30,3 +30,11 @@ export const requestDEL = (route, data) => {
         {data: data, withCredentials: true}
     )
 }
+
+export const requestPATCH = (route, data) => {
+    return axios.patch(
+        URL+route,
+        {},
+        {data: data, withCredentials: true}
+    )
+}
