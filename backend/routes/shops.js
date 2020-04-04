@@ -146,8 +146,8 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                     }
                     return database.query('SELECT cost, amount ' +
                         'FROM item i, shop s, shopItemR sir ' +
-                        'WHERE s.dayOfWeek = ? AND s.category = ? ' +
-                        'and i.itemname = sir.itemname and sir.dayofweek = s.dayofweek and sir.category = s.category', [dayOfWeek, category]);
+                        'WHERE s.dayOfWeek = ? AND s.category = ? and i.itemname = ?' +
+                        'and i.itemname = sir.itemname and sir.dayofweek = s.dayofweek and sir.category = s.category', [dayOfWeek, category, itemName]);
                 } else {
                     response.code = 400;
                     throw new Error();
@@ -156,6 +156,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
         ).then(
             results => {
                 if (results.length > 0) {
+                    console.log(results);
                     itemCost = results[0].cost;
                     amountAvailable = results[0].amount;
                     if (amount > amountAvailable) {
@@ -172,8 +173,11 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
         ).then(
             results => {
                 if (results.length > 0) {
+                    console.log(results);
                     money = results[0].money;
                     moneyToSpend = itemCost * amount;
+                    console.log(money);
+                    console.log(moneyToSpend);
                     var canPurchase = money >= moneyToSpend;
                     if (!canPurchase) {
                         response.code = 403;
