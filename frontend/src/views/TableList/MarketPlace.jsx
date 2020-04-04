@@ -110,9 +110,7 @@ class MarketPlace extends React.Component{
                     icon: 'success',
                     title: `Bought ${this.state.qty} of ${name}!`
                 })
-                this.setState({
-                    qty: 0
-                })
+                this.props.handleGetAccountsInfo();
             })
             .catch((err) => {
                 helpers.Toast.fire({

@@ -144,7 +144,10 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                         response.message = "Shop not available today";
                         throw new Error("Shop not available today");
                     }
-                    return database.query('SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category = ?', [dayOfWeek, category]);
+                    return database.query('SELECT cost, amount ' +
+                        'FROM item i, shop s, shopItemR sir ' +
+                        'WHERE s.dayOfWeek = ? AND s.category = ? ' +
+                        'and i.itemname = sir.itemname and sir.dayofweek = s.dayofweek and sir.category = s.category', [dayOfWeek, category]);
                 } else {
                     response.code = 400;
                     throw new Error();
@@ -171,7 +174,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                 if (results.length > 0) {
                     money = results[0].money;
                     moneyToSpend = itemCost * amount;
-                    var canPurchase = moneyToSpend >= money;
+                    var canPurchase = money >= moneyToSpend;
                     if (!canPurchase) {
                         response.code = 403;
                         throw new Error();
