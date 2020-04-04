@@ -116,9 +116,9 @@ router.patch("/:itemName/use", async (req, res) => {
             // Update item count or delete item after use
             results => {
                 var amountAfterUse = amountOwned;
-                // if (itemName != "GPU" && itemName != "Potato Farm") {
+                 if (itemName != "GPU" && itemName != "Potato Farm") {
                 amountAfterUse = amountOwned - amountToUse;
-                // }
+                 }
 
                 if (amountAfterUse <= 0) {
                     return database.query('DELETE FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
