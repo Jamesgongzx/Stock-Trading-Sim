@@ -76,6 +76,7 @@ class MarketPlace extends React.Component{
             dayofWeek: null,
             categories: [],
             category: null,
+            qty: 0,
         }
 
         this.dayOfWeekObject = {
@@ -100,6 +101,46 @@ class MarketPlace extends React.Component{
             })
     }
 
+    buyItem = (name) => {
+        console.log(this.state)
+        requestPOST(`/shops/${this.state.dayofWeek}/${this.state.category}/items/${name}/purchase`, {amount: this.state.qty})
+            .then((res) => {
+                console.log(res)
+                helpers.Toast.fire({
+                    icon: 'success',
+                    title: `Bought ${this.state.qty} of ${name}!`
+                })
+                this.setState({
+                    qty: 0
+                })
+            })
+            .catch((err) => {
+                helpers.Toast.fire({
+                    icon: 'warning',
+                    title: `Something went wrong: ${err}`
+                })
+            })
+    }
+
+    purchaseFragment = (name) => (
+        <React.Fragment>
+            <OutlinedInput type="number" size="small"
+                           endAdornment={<InputAdornment position="end">QTY</InputAdornment>}
+                           InputProps={{ inputProps: { min: 0} }}
+                           required
+                           defaultValue={0}
+                // value={this.state.qty}
+                           onChange={(e) => {this.setState({qty: e.target.value})}}
+            />
+            <Button variant="contained"
+                    color="success"
+                    onClick={() => {this.buyItem(name)}}
+            >
+                Buy
+            </Button>
+        </React.Fragment>
+    )
+
     getShopRecords = () => {
         requestGET(`/shops/${this.state.dayofWeek}/${this.state.category}/items`)
             .then((res) => {
@@ -107,7 +148,12 @@ class MarketPlace extends React.Component{
                     let data = res.data;
                     this.setState({
                         columnNames: Object.keys(data[0]),
-                        values: data.map((x) => Object.values(x))
+                        values: data.map((x) => {
+                            let name = x.itemName;
+                            x = Object.values(x);
+                            x.push(this.purchaseFragment(name));
+                            return x;
+                        })
                     })
                     helpers.Toast.fire({
                         icon: 'success',
@@ -133,8 +179,6 @@ class MarketPlace extends React.Component{
 
     render() {
         const {classes} = this.props;
-        console.log(this.state)
-
         this.dayOfWeekFragment = (
             <FormControl style={{minWidth: 200}}>
                 <InputLabel htmlFor='selected-language'>Day of Week</InputLabel>

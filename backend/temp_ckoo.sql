@@ -84,7 +84,16 @@ INSERT INTO shop VALUES
 
 INSERT INTO shopItemR VALUES
 ('Potato Farm', 1, 'Supermarket:Regular', 10),
-('Potato Farm', 1, 'Supermarket:Premium', 100),
+('Infinity Gauntlet', 1, 'Supermarket:Regular', 2),
+('Time Gem', 1, 'Supermarket:Regular', 3),
+('Space Gem', 1, 'Supermarket:Regular', 4),
+('Soul Gem', 1, 'Supermarket:Regular', 2),
+('Reality Gem', 1, 'Supermarket:Regular', 1),
+('Power Gem', 1, 'Supermarket:Regular', 5),
+('Mind Gem', 1, 'Supermarket:Regular', 6),
+('Apple', 1, 'Supermarket:Regular', 10),
+('GPU', 1, 'Supermarket:Regular', 10),
+('Power Gem', 1, 'Supermarket:Premium', 100),
 ('Potato Farm', 3, 'Supermarket:Regular', 20),
 ('GPU', 7, 'Electronics:Regular', 10),
 ('GPU', 7, 'Electronics:Premium', 100);
