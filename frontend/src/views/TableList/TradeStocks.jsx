@@ -380,7 +380,7 @@ class TradeStocks extends React.Component {
                                         }
                                     </CardBody>
                                 </React.Fragment>
-                            }
+
 
                         </Card>
                     </GridItem>
