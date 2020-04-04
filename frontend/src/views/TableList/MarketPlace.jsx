@@ -112,6 +112,9 @@ class MarketPlace extends React.Component{
                 })
                 this.props.handleGetAccountsInfo();
             })
+            .then(() => {
+                this.getShopRecords();
+            })
             .catch((err) => {
                 helpers.Toast.fire({
                     icon: 'warning',
