@@ -53,7 +53,7 @@ class MyStocks extends React.Component{
 
     componentDidMount() {
         console.log(this.props)
-        requestGET(`/players/${this.props.currentPlayer.playerId}/stocks`, )
+        requestGET(`/players/history`, )
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -73,9 +73,9 @@ class MyStocks extends React.Component{
                 <GridItem xs={12} sm={12} md={12}>
                     <Card>
                         <CardHeader color="primary">
-                            <h4 className={classes.cardTitleWhite}>My Transactions</h4>
+                            <h4 className={classes.cardTitleWhite}>My Stocks</h4>
                             <p className={classes.cardCategoryWhite}>
-                                Here is a list of all the stocks for this player.
+                                Here is a list of all the transactions for this player.
                             </p>
                         </CardHeader>
                         <CardBody>

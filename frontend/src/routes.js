@@ -35,6 +35,7 @@ import ManageStocks from "./views/TableList/ManageStocks";
 import ManageTables from "./views/TableList/ManageTables";
 import MarketPlace from "./views/TableList/MarketPlace";
 import MyItems from "./views/TableList/MyItems";
+import History from "./views/TableList/History";
 
 
 const dashboardRoutes = [
@@ -90,6 +91,14 @@ const dashboardRoutes = [
     name: "My Items",
     icon: null,
     component: MyItems,
+    layout: "/user",
+    type: "user"
+  },
+  {
+    path: "/history",
+    name: "History",
+    icon: null,
+    component: History,
     layout: "/user",
     type: "user"
   },

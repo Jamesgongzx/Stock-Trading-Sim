@@ -18,6 +18,7 @@ import DashboardPage from "../../views/Dashboard/dashboard";
 import UserProfile from "../../views/UserProfile/userprofile";
 import TableList from "../../views/TableList/TableList";
 import MyItems from "../../views/TableList/MyItems";
+import History from "../../views/TableList/History";
 
 const useStyles = makeStyles(styles);
 
@@ -37,7 +38,7 @@ const topBarArray = [
   {
     path: "/history",
     name: "History",
-    component: TableList,
+    component: History,
     layout: "/user"
   },
 ];
