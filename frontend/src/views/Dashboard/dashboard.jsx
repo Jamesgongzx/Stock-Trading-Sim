@@ -35,6 +35,9 @@ import {
 import styles from "../../assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import PropTypes from "prop-types";
 import {requestGET} from "../../requests";
+import MyStocks from "../TableList/MyStocks";
+import MyItems from "../TableList/MyItems";
+
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -81,20 +84,20 @@ class Dashboard extends React.Component {
         //     });
         return (
             <div>
+                {/*<GridContainer>*/}
+                {/*    <GridItem xs={12} sm={12} md={12}>*/}
+                {/*        <h1>Welcome my dude</h1>*/}
+                {/*    </GridItem>*/}
+                {/*</GridContainer>*/}
                 <GridContainer>
-                    {/*<GridItem xs={12} sm={6} md={3}>*/}
-                    {/*    <Card>*/}
-                    {/*        <CardHeader color="warning" stats icon>*/}
-                    {/*            <CardIcon color="warning">*/}
-                    {/*                <Icon>content_copy</Icon>*/}
-                    {/*            </CardIcon>*/}
-                    {/*            <p className={classes.cardCategory}>Used Space</p>*/}
-                    {/*            <h3 className={classes.cardTitle}>*/}
-                    {/*                49/50 <small>GB</small>*/}
-                    {/*            </h3>*/}
-                    {/*        </CardHeader>*/}
-                    {/*    </Card>*/}
-                    {/*</GridItem>*/}
+                    <GridItem xs={6} sm={6} md={6}>
+                        <MyItems {...this.state} {...this.props}/>
+                    </GridItem>
+                    <GridItem xs={6} sm={6} md={6}>
+                        <MyStocks {...this.state} {...this.props}/>
+                    </GridItem>
+                </GridContainer>
+                <GridContainer>
                     <GridItem xs={12} sm={6} md={3}>
                         <Card>
                             <CardHeader color="success" stats icon>
@@ -129,43 +132,6 @@ class Dashboard extends React.Component {
                             </CardFooter>
                         </Card>
                     </GridItem>
-                    {/*<GridItem xs={12} sm={6} md={3}>*/}
-                    {/*    <Card>*/}
-                    {/*        <CardHeader color="danger" stats icon>*/}
-                    {/*            <CardIcon color="danger">*/}
-                    {/*                <Icon>info_outline</Icon>*/}
-                    {/*            </CardIcon>*/}
-                    {/*            <p className={classes.cardCategory}>Fixed Issues</p>*/}
-                    {/*            <h3 className={classes.cardTitle}>75</h3>*/}
-                    {/*        </CardHeader>*/}
-                    {/*        <CardFooter stats>*/}
-                    {/*            <div className={classes.stats}>*/}
-                    {/*                <LocalOffer />*/}
-                    {/*                Tracked from Github*/}
-                    {/*            </div>*/}
-                    {/*        </CardFooter>*/}
-                    {/*    </Card>*/}
-                    {/*</GridItem>*/}
-                    {/*<GridItem xs={12} sm={6} md={3}>*/}
-                    {/*    <Card>*/}
-                    {/*        <CardHeader color="info" stats icon>*/}
-                    {/*            <CardIcon color="info">*/}
-                    {/*                <Accessibility />*/}
-                    {/*            </CardIcon>*/}
-                    {/*            <p className={classes.cardCategory}>Followers</p>*/}
-                    {/*            <h3 className={classes.cardTitle}>+245</h3>*/}
-                    {/*        </CardHeader>*/}
-                    {/*        <CardFooter stats>*/}
-                    {/*            <div className={classes.stats}>*/}
-                    {/*                <Update />*/}
-                    {/*                Just Updated*/}
-                    {/*            </div>*/}
-                    {/*        </CardFooter>*/}
-                    {/*    </Card>*/}
-                    {/*</GridItem>*/}
-                </GridContainer>
-                {/*<GridContainer>*/}
-                {/*    <GridItem xs={12} sm={12} md={4}>*/}
                 {/*        <Card chart>*/}
                 {/*            <CardHeader color="success">*/}
                 {/*                <ChartistGraph*/}
@@ -237,7 +203,7 @@ class Dashboard extends React.Component {
                 {/*            </CardFooter>*/}
                 {/*        </Card>*/}
                 {/*    </GridItem>*/}
-                {/*</GridContainer>*/}
+                </GridContainer>
             </div>
         );
     }
