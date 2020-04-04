@@ -354,7 +354,6 @@ class TradeStocks extends React.Component {
                                 </Dialog>
                                 : <div></div>
                             }
-                                //{/*This section is for projection query*/}
                                 <React.Fragment>
                                     <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
                                         <OutlinedInput
