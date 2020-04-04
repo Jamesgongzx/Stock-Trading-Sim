@@ -132,10 +132,7 @@ router.get("/:name/company", (req, res) => {
 
 router.get("/:name/records", (req, res) => {
     var name = req.params.name;
-    database.query("SELECT * FROM stockRecordOwnership WHERE name = ? " +
-        "AND DAY(dateTime) <= DAY(utc_timestamp()) " +
-        "AND HOUR(dateTime) <= HOUR(utc_timestamp()) " +
-        "AND MINUTE(dateTime) <= MINUTE(utc_timestamp())", [name])
+    database.query("SELECT * FROM stockRecordOwnership WHERE name = ?", [name])
         .then(
             results => {
                 res.status(200).send(results);
