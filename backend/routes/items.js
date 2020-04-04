@@ -96,13 +96,11 @@ router.patch("/:itemName/use", async (req, res) => {
                         "UPDATE playerOwnership " +
                         "SET money = money + ? " +
                         "WHERE playerId IN " +
-                        "(SELECT p.playerId AS FROM playerItemR as p " +
-                        "WHERE NOT EXISTS ( " +
-                        "( SELECT i.itemName FROM item as i " +
-                        "WHERE i.itemName LIKE '%Gem') " +
-                        "EXCEPT " +
-                        "(SELECT pi.itemName FROM playerItemR as pi " +
-                        "WHERE pi.playerid = p.playerid AND pi.amount >= 1 AND pi.itemName LIKE '%Gem')))", [moneyToEarn]
+                        "(SELECT distinct p.playerId " +
+                        "FROM playerItemR as p " +
+                        "WHERE NOT EXISTS " +
+                        "(SELECT distinct i.itemName FROM item i WHERE i.itemName LIKE '%Gem' and not exists " +
+                        "(SELECT pi.itemName FROM playerItemR pi WHERE pi.playerid = p.playerid AND pi.amount >= 1 AND pi.itemName LIKE '%Gem' and i.itemname = pi.itemname)))", [moneyToEarn]
                     );
                 } else if (itemName == "Apple") {
                     return database.query("UPDATE playerOwnership SET money = money + ? WHERE playerId = ?", [moneyToEarn, playerId]);
@@ -138,10 +136,11 @@ router.patch("/:itemName/use", async (req, res) => {
                     response.code = 500;
                 }
                 console.log(error);
+                console.log("here1");
                 if (response.message) {
                     return res.status(response.code).send(response.message);
                 } else {
-                    return res.status(response.code);
+                    return res.sendStatus(response.code);
                 }
             }
         )

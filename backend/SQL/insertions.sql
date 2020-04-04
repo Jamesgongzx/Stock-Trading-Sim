@@ -107,6 +107,7 @@ INSERT INTO shopItemR VALUES
 INSERT INTO playerItemR VALUES
 (1, 'GPU', 2, false),
 (1, 'Potato Farm', 1, false),
+(1, 'Infinity Gauntlet', 1, false),
 (2, 'Potato Farm', 2, false),
 (3, 'Potato Farm', 3, false),
 (3, 'GPU', 5, false),
