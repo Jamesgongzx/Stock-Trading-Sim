@@ -70,7 +70,7 @@ router.post("/create", async (req, res) => {
     database.query('INSERT INTO playerOwnership VALUES (NULL, ?, ?)', [money, accountId])
         .then(
             results => {
-                res.status(200).send("Account added successfully!");
+                res.status(200).send("Player added successfully!");
             },
             error => {
                 res.status(500).send("playerOwnership insertion failed.")

@@ -1,6 +1,9 @@
 const express = require("express");
 const database = require("../database");
 
+var utils = require("./utils");
+var countDecimals = utils.countDecimals;
+
 const router = express.Router();
 
 router.get("/", async (req, res) => {
@@ -157,6 +160,12 @@ router.post("/:name/purchase", (req, res) => {
         return;
     }
 
+    var numDecimals = countDecimals(Number(amount));
+    if (numDecimals > 5){
+        res.status(400).send("Please enter a number with less than 5 decimal places");
+        return;
+    }
+
     var money = null;
     var moneyToSpend = null;
     var response = { code: null, message: null };
@@ -172,7 +181,8 @@ router.post("/:name/purchase", (req, res) => {
                     return database.query('SELECT money FROM playerOwnership where playerId = ?', [playerId]);
                 } else {
                     response.code = 400;
-                    throw new Error();
+                    response.message = "Stock not found!";
+                    throw new Error("Stock not found!");
                 }
             }
         ).then(
@@ -183,14 +193,15 @@ router.post("/:name/purchase", (req, res) => {
                     console.log(money);
                     if (!canPurchase) {
                         response.code = 403;
-                        response.message = "Not enough money to purchase"
-                        throw new Error("Not enough money to purchase");
+                        response.message = "Not enough money to purchase!"
+                        throw new Error("Not enough money to purchase!");
                     }
                     // Check if stock is already owned by player
                     return database.query('SELECT * FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
                 } else {
                     response.code = 400;
-                    throw new Error();
+                    response.message = "Player not found";
+                    throw new Error("Player not found");
                 }
             }
         ).then(
@@ -206,7 +217,6 @@ router.post("/:name/purchase", (req, res) => {
             results => {
                 // Update player money
                 return database.query('UPDATE PlayerOwnership SET money = money - ? WHERE playerId = ?', [moneyToSpend, playerId]);
-                res.sendStatus(200);
             }
         ).then(
             results => {
@@ -222,6 +232,7 @@ router.post("/:name/purchase", (req, res) => {
             error => {
                 if (!response.code) {
                     response.code = 500;
+                    response.message = "Internal Server Error";
                 }
                 console.log(error);
                 if (response.message) {
@@ -245,6 +256,12 @@ router.post("/:name/sell", (req, res) => {
         return;
     }
 
+    var numDecimals = countDecimals(Number(amount));
+    if (numDecimals > 5){
+        res.status(400).send("Please enter a number with less than 5 decimal places");
+        return;
+    }
+
     var moneyEarned = null;
     var currentPrice = null;
     var amountOwned = null;
@@ -259,7 +276,8 @@ router.post("/:name/sell", (req, res) => {
                     return database.query('SELECT amount FROM playerStockR WHERE playerId = ? AND stockName = ?', [playerId, name]);
                 } else {
                     response.code = 400;
-                    throw new Error();
+                    response.message = "Stock not found!";
+                    throw new Error("Stock not found!");
                 }
             }
         ).then(
@@ -269,8 +287,8 @@ router.post("/:name/sell", (req, res) => {
                     var canSell = amountOwned >= amount;
                     if (!canSell) {
                         response.code = 403;
-                        response.message = "Not enough amount owned to sell"
-                        throw new Error("Not enough amount owned to sell");
+                        response.message = "Not enough amount owned to sell!"
+                        throw new Error("Not enough amount owned to sell!");
                     }
                     var amountAfterSell = amountOwned - amount;
                     // Update stock amount or delete stock
@@ -281,7 +299,8 @@ router.post("/:name/sell", (req, res) => {
                     }
                 } else {
                     response.code = 400;
-                    throw new Error();
+                    response.message = "Stock amount owned by player not found!";
+                    throw new Error("Stock amount owned by player not found!");
                 }
             }
         ).then(
@@ -304,6 +323,7 @@ router.post("/:name/sell", (req, res) => {
             error => {
                 if (!response.code) {
                     response.code = 500;
+                    response.message = "Internal Server Error";
                 }
                 console.log(error);
                 if (response.message) {
