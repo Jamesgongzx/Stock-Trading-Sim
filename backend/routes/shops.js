@@ -145,7 +145,7 @@ router.post("/:dayOfWeek/:category/items/:name/purchase", (req, res) => {
                     }
                     return database.query('SELECT cost, amount ' +
                         'FROM item i NATURAL JOIN shop s NATURAL JOIN shopItemR sir ' +
-                        'WHERE s.dayOfWeek = ? AND s.category = ?', [dayOfWeek, category]);
+                        'WHERE s.dayOfWeek = ? AND s.category = ? and i.itemname = ?', [dayOfWeek, category, itemName]);
                 } else {
                     response.code = 400;
                     throw new Error();
