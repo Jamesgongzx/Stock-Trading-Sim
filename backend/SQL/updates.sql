@@ -18,6 +18,12 @@ CREATE EVENT updateitemUsageEvent
 		UPDATE playerItemR
 		SET usedToday = false;
         
+CREATE EVENT updateItemAmountEvent
+    ON SCHEDULE EVERY 1 WEEK STARTS '2020-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE 
+    DO
+		UPDATE shopItemR
+		SET amountAvailable = weeklyAmount;
+        
 CREATE EVENT updateStockEvent
     ON SCHEDULE EVERY 1 HOUR STARTS '2020-01-01 00:00:00' ON COMPLETION PRESERVE ENABLE
 	DO

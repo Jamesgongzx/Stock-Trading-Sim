@@ -127,6 +127,7 @@ CREATE TABLE shopItemR (
     itemName CHAR(50),
     dayOfWeek INT,
     category CHAR(50),
+    weeklyAmount REAL NOT NULL,
     amount REAL NOT NULL,
     PRIMARY KEY (itemName , dayOfWeek , category),
     FOREIGN KEY (itemName)
