@@ -162,6 +162,7 @@ class TradeStocks extends React.Component{
                         icon: 'success',
                         title: `Successfully purchased ${this.state.qtyShares} shares of ${this.state.selectedStock}`
                     })
+                    this.props.handleGetAccountsInfo();
                 })
                 .catch((err) => {
                     helpers.Toast.fire({
@@ -176,6 +177,7 @@ class TradeStocks extends React.Component{
                         icon: 'success',
                         title: `Successfully sold ${this.state.qtyShares} shares of ${this.state.selectedStock}`
                     })
+                    this.props.handleGetAccountsInfo();
                 })
                 .catch((err) => {
                     helpers.Toast.fire({
