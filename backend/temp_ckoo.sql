@@ -2,17 +2,6 @@ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
 SET default_storage_engine=InnoDB;
 USE stocktradingsim;
 
-INSERT INTO playerOwnership VALUES
-(5, 10.0, 1),
-(6, 999999999999.99, 1),
-(7, 10000, 10),
-(8, 100000, 10);
-
-INSERT INTO stock VALUES
-('GOOGL', 50.24, 2.4),
-('HELLOWORLD', 60.50, -2.5);
-
-
 CREATE TABLE playerStockR (
     playerId INT,
     stockname CHAR(20),
@@ -22,14 +11,6 @@ CREATE TABLE playerStockR (
         REFERENCES stock (name)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-INSERT INTO playerStockR VALUES
-(3, 'GOOGL', 5),
-(3, 'AMZN', 20),
-(3, 'HELLOWORLD', 30),
-(1, 'GOOGL', 5),
-(1, 'AMZN', 20);
-
 
 CREATE TABLE item (
     itemName CHAR(50) primary key,
@@ -56,6 +37,58 @@ CREATE TABLE shopItemR (
     Foreign key (dayOfWeek, category) references shop(dayOfWeek, category)
     ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE playerItemR (
+    playerId INT,
+ 	itemName CHAR(50),
+  	amount INT,
+    usedToday BOOLEAN,
+  	Primary key (playerId, itemName),
+    Foreign key (playerId) references playerOwnership(playerId)
+    	ON UPDATE CASCADE ON DELETE CASCADE,
+    Foreign key (itemName) references item(itemName) ON UPDATE CASCADE
+   	ON DELETE CASCADE
+);
+
+CREATE TABLE transitionRecordOwnership (
+    dateTime DATETIME,
+    productName CHAR(50),
+    balanceChange REAL,
+    quantity REAL,
+    playerId INT,
+    PRIMARY KEY (playerId, productName, dateTime),
+    Foreign key (playerId) references playerOwnership(playerId)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+INSERT INTO transitionRecordOwnership VALUES
+('1996-01-01 12:00:00', 'AMZN', -10, 2, 3),
+('1997-01-01 1:15:00', 'AMZN', 30, 3, 3),
+('1998-01-01 12:00:00', 'AMZN', -10, 2, 3),
+('1997-01-01 12:00:00', 'Banana', -10, 2, 3),
+('1996-01-01 1:15:00', 'FB', 300, 3, 3),
+('1996-01-01 12:00:00', 'Potato Farm', 200, 2, 3),
+('1996-01-01 12:00:00', 'Banana', -10, 2, 1),
+('1996-01-01 1:15:00', 'FB', 300, 3, 1),
+('1996-01-01 12:00:00', 'Potato Farm', 200, 2, 1);
+
+INSERT INTO playerOwnership VALUES
+(5, 10.0, 1),
+(6, 999999999999.99, 1),
+(7, 10000, 10),
+(8, 100000, 10);
+
+INSERT INTO stock VALUES
+('GOOGL', 50.24, 2.4),
+('HELLOWORLD', 60.50, -2.5);
+
+INSERT INTO playerStockR VALUES
+(3, 'GOOGL', 5),
+(3, 'AMZN', 20),
+(3, 'HELLOWORLD', 30),
+(1, 'GOOGL', 5),
+(1, 'AMZN', 20);
+
 
 INSERT INTO item VALUES
 ('Infinity Gauntlet', 5000, 'Add 10000 money to players who owns all gems.', 'legendary'),
@@ -131,19 +164,6 @@ INSERT INTO shopItemR VALUES
 ('Apple', 5, 'Supermarket:Regular', 10),
 ('GPU', 7, 'Electronics:Regular', 10),
 ('GPU', 7, 'Electronics:Premium', 100);
-
-
-CREATE TABLE playerItemR (
-    playerID INT,
- 	itemName CHAR(50),
-  	amount INT,
-    usedToday BOOLEAN,
-  	Primary key (playerID, itemName),
-    Foreign key (playerID) references playerOwnership(playerID)
-    	ON UPDATE CASCADE ON DELETE CASCADE,
-    Foreign key (itemName) references item(itemName) ON UPDATE CASCADE
-   	ON DELETE CASCADE
-);
 
 INSERT INTO playerItemR VALUES
 (1, 'GPU', 2, FALSE),
