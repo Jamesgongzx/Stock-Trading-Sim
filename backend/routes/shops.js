@@ -3,6 +3,48 @@ const database = require("../database");
 
 const router = express.Router();
 
+router.get("/", (req, res) => {
+    var subscriptionType = req.session.subscriptionType;
+    var loggedin = req.session.loggedin;
+
+    if (!loggedin) {
+        res.sendStatus(401);
+        return;
+    }
+
+    var serverDayOfWeek = null;
+    var response = { code: null, message: null };
+    database.query('SELECT DAYOFWEEK(utc_time())', [])
+        .then(
+            results => {
+                if (results.length > 0) {
+                    serverDayOfWeek = results[0]['DAYOFWEEK(utc_time())'];
+                    if (subscriptionType == "None") {
+                        return database.query("SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ? AND category NOT LIKE '%Premium%'", [serverDayOfWeek]);
+                    } else {
+                        return database.query("SELECT cost, amount FROM item, shop, shopItemR WHERE dayOfWeek = ?", [serverDayOfWeek]);
+                    }
+                }
+            }
+        ).then(
+            results => {
+                res.status(200).send(results);
+            }
+        ).catch(
+            error => {
+                if (!response.code) {
+                    response.code = 500;
+                }
+                console.log(error);
+                if (response.message) {
+                    return res.status(response.code).send(response.message);
+                } else {
+                    return res.status(response.code);
+                }
+            }
+        )
+});
+
 router.get("/categories", (req, res) => {
     database.query("SELECT distinct category from shop order by category", [])
         .then(
