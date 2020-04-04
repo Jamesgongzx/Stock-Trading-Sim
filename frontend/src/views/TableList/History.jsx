@@ -73,7 +73,7 @@ class MyStocks extends React.Component{
                 <GridItem xs={12} sm={12} md={12}>
                     <Card>
                         <CardHeader color="primary">
-                            <h4 className={classes.cardTitleWhite}>My Stocks</h4>
+                            <h4 className={classes.cardTitleWhite}>My Transactions</h4>
                             <p className={classes.cardCategoryWhite}>
                                 Here is a list of all the transactions for this player.
                             </p>

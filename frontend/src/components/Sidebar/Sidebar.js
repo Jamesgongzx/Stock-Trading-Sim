@@ -2,6 +2,7 @@
 import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
+import AttachMoney  from "@material-ui/icons/AttachMoney"
 import { NavLink } from "react-router-dom";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,6 +21,7 @@ const useStyles = makeStyles(styles);
 
 export default function Sidebar(props) {
   const classes = useStyles();
+  let money = (props.currentPlayer) ? props.currentPlayer.money : 0
   // verifies if routeName is the one active (in browser input)
   function activeRoute(routeName) {
     return window.location.href.indexOf(routeName) > -1 ? true : false;
@@ -27,6 +29,27 @@ export default function Sidebar(props) {
   const { color, logo, image, logoText, routes } = props;
   var links = (
     <List className={classes.list}>
+        <ListItem button className={classes.itemLink}>
+            <AttachMoney
+                className={classNames(classes.itemIcon, classes.whiteFont, {
+                    [classes.itemIconRTL]: props.rtlActive
+                })}
+                style={{marginTop: "10px"}}
+            />
+            <React.Fragment>
+            <ListItemText
+                primary={`Player Balance: \t`}
+                className={classNames(classes.itemText, classes.whiteFont, )}
+                disableTypography={true}
+            />
+            <ListItemText
+                secondary={`$${money}`}
+                className={classNames(classes.itemText, classes.whiteFont)}
+                style={{marginLeft: "2.5rem", marginTop: "-5px"}}
+                disableTypography={true}
+            />
+            </React.Fragment>
+        </ListItem>
       {routes.map((prop, key) => {
         var activePro = " ";
         var listItemClasses;
@@ -100,6 +123,30 @@ export default function Sidebar(props) {
           {/*{brand}*/}
           <div className={classes.sidebarWrapper}>
              <AdminNavbarLinks {...props} />
+              <ListItem button >
+                  {/*{typeof prop.icon === "string" ? (*/}
+                  {/*    <Icon*/}
+                  {/*        className={classNames(classes.itemIcon, whiteFontClasses, {*/}
+                  {/*            [classes.itemIconRTL]: props.rtlActive*/}
+                  {/*        })}*/}
+                  {/*    >*/}
+                  {/*        {prop.icon}*/}
+                  {/*    </Icon>*/}
+                  {/*) : (*/}
+                  {/*    <prop.icon*/}
+                  {/*        className={classNames(classes.itemIcon, whiteFontClasses, {*/}
+                  {/*            [classes.itemIconRTL]: props.rtlActive*/}
+                  {/*        })}*/}
+                  {/*    />*/}
+                  {/*)}*/}
+                  {/*<ListItemText*/}
+                  {/*    // primary={props.rtlActive ? prop.rtlName : prop.name}*/}
+                  {/*    // className={classNames(classes.itemText, whiteFontClasses, {*/}
+                  {/*    //     [classes.itemTextRTL]: props.rtlActive*/}
+                  {/*    // })}*/}
+                  {/*    disableTypography={true}*/}
+                  {/*/>*/}
+              </ListItem>
             {links}
           </div>
           {image !== undefined ? (
@@ -122,7 +169,9 @@ export default function Sidebar(props) {
           }}
         >
           {/*{brand}*/}
-          <div className={classes.sidebarWrapper}>{links}</div>
+          <div className={classes.sidebarWrapper}>
+              {links}
+          </div>
           {image !== undefined ? (
             <div
               className={classes.background}
