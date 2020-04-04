@@ -34,13 +34,21 @@ export default function Sidebar(props) {
                 className={classNames(classes.itemIcon, classes.whiteFont, {
                     [classes.itemIconRTL]: props.rtlActive
                 })}
+                style={{marginTop: "10px"}}
             />
+            <React.Fragment>
             <ListItemText
-                primary={`Account Balance: \n\t$` + money}
+                primary={`Player Balance: \t`}
                 className={classNames(classes.itemText, classes.whiteFont, )}
                 disableTypography={true}
-                style={{right: 0, position: "relative"}}
             />
+            <ListItemText
+                secondary={`$${money}`}
+                className={classNames(classes.itemText, classes.whiteFont)}
+                style={{marginLeft: "2.5rem", marginTop: "-5px"}}
+                disableTypography={true}
+            />
+            </React.Fragment>
         </ListItem>
       {routes.map((prop, key) => {
         var activePro = " ";
