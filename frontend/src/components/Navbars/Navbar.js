@@ -17,6 +17,7 @@ import styles from "../../assets/jss/material-dashboard-react/components/headerS
 import DashboardPage from "../../views/Dashboard/dashboard";
 import UserProfile from "../../views/UserProfile/userprofile";
 import TableList from "../../views/TableList/TableList";
+import MyItems from "../../views/TableList/MyItems";
 
 const useStyles = makeStyles(styles);
 
@@ -30,7 +31,7 @@ const topBarArray = [
   {
     path: "/items",
     name: "My Items",
-    component: UserProfile,
+    component: MyItems,
     layout: "/user"
   },
   {

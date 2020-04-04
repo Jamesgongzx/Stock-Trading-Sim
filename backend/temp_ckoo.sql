@@ -97,3 +97,32 @@ INSERT INTO shopItemR VALUES
 ('Potato Farm', 3, 'Supermarket:Regular', 20),
 ('GPU', 7, 'Electronics:Regular', 10),
 ('GPU', 7, 'Electronics:Premium', 100);
+
+
+CREATE TABLE playerItemR (
+    playerID INT,
+ 	itemName CHAR(50),
+  	amount INT,
+    usedToday BOOLEAN,
+  	Primary key (playerID, itemName),
+    Foreign key (playerID) references playerOwnership(playerID)
+    	ON UPDATE CASCADE ON DELETE CASCADE,
+    Foreign key (itemName) references item(itemName) ON UPDATE CASCADE
+   	ON DELETE CASCADE
+);
+
+INSERT INTO playerItemR VALUES
+(1, 'GPU', 2, FALSE),
+(1, 'Potato Farm', 1, FALSE),
+(2, 'Potato Farm', 2, FALSE),
+(3, 'Potato Farm', 3, FALSE),
+(3, 'GPU', 5, FALSE),
+(3, 'Time Gem', 1, FALSE),
+(3, 'Space Gem', 1, FALSE),
+(3, 'Soul Gem', 1, FALSE),
+(3, 'Reality Gem', 1, FALSE),
+(3, 'Mind Gem', 1, FALSE),
+(3, 'Apple', 1, FALSE),
+(3, 'Power Gem', 1, FALSE),
+(3, 'Infinity Gauntlet', 1, FALSE),
+(4, 'Potato Farm', 4, FALSE);

@@ -3,6 +3,20 @@ const database = require("../database");
 
 const router = express.Router();
 
+router.get("/player-items", (req, res) => {
+    let playerId = req.session.playerId;
+
+    database.query('SELECT * FROM playerItemR where playerId = ?', [playerId])
+        .then(
+            results => {
+                res.status(200).send(results);
+            },
+            error => {
+                res.sendStatus(500);
+            }
+        )
+})
+
 // itemName has to be encoded using encodeURIComponent()
 router.patch("/:itemName/use", async (req, res) => {
     var itemName = req.params.itemName;
@@ -23,12 +37,13 @@ router.patch("/:itemName/use", async (req, res) => {
     var amountOwned = 0;
     var amountToUse = 0;
     var moneyToEarn = 0;
-    var response = { code: null, message: null };
+    var response = { code: null, message: null, data: null };
     // Get item amountOwned by player
-    database.query('SELECT * FROM playerItemR where playerId = ? AND itemName = ?', [playerId, itemName])
+    return database.query('SELECT * FROM playerItemR where playerId = ? AND itemName = ?', [playerId, itemName])
         .then(
             // Use item
             results => {
+                console.log(results);
                 if (results.length > 0) {
 
                     amountOwned = results[0].amount;
@@ -45,6 +60,8 @@ router.patch("/:itemName/use", async (req, res) => {
                         throw new Error("Not enough amount owned to activate item!");
                     }
 
+                    console.log(`amountToUse ${amountToUse}`);
+
                     moneyToEarn = 0;
                     if (itemName == "Infinity Gauntlet") {
                         moneyToEarn = 10000;
@@ -55,6 +72,7 @@ router.patch("/:itemName/use", async (req, res) => {
                     } else if (itemName == "Potato Farm") {
                         moneyToEarn = 5 * amountToUse;
                     }
+                    console.log(`MoneytoEarn ${moneyToEarn}`);
 
                     // Check if usedToday
                     return database.query("SELECT * FROM playerItemR WHERE playerId = ? AND itemName = ?", [playerId, itemName]);
@@ -100,9 +118,9 @@ router.patch("/:itemName/use", async (req, res) => {
             // Update item count or delete item after use
             results => {
                 var amountAfterUse = amountOwned;
-                if (itemName != "GPU" && itemName != "Potato Farm") {
-                    amountAfterUse = amountOwned - amountToUse;
-                }
+                // if (itemName != "GPU" && itemName != "Potato Farm") {
+                amountAfterUse = amountOwned - amountToUse;
+                // }
 
                 if (amountAfterUse <= 0) {
                     return database.query('DELETE FROM playerItemR WHERE playerId = ? AND itemName = ?', [playerId, itemName]);
@@ -112,7 +130,7 @@ router.patch("/:itemName/use", async (req, res) => {
             }
         ).then(
             results => {
-                res.sendStatus(200);
+                res.status(200).send({item: itemName, amountUsed: amountToUse});
             }
         ).catch(
             error => {

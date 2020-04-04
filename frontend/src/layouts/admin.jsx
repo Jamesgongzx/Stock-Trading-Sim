@@ -156,7 +156,7 @@ class Admin extends React.Component {
                                 // component={prop.component}
                                 render={() => {
                                     let Element = prop.component;
-                                    return <Element {...this.props} {...this.state}/>;
+                                    return <Element {...this.props} {...this.state} handleGetAccountsInfo={this.handleGetAccountsInfo}/>;
                                 }}
                                 key={key}
                             />
@@ -175,14 +175,14 @@ class Admin extends React.Component {
                     image={this.image}
                     handleDrawerToggle={this.handleDrawerToggle}
                     open={this.state.mobileOpen}
-                    color={this.color}
+                    color={this.color} handleGetAccountsInfo={this.handleGetAccountsInfo}
                     {...this.props} {...this.state}
                 />
                 <div className={classes.mainPanel} ref={this.mainPanel}>
                     <Navbar
                         routes={this.filteredRoutes}
                         handleDrawerToggle={this.handleDrawerToggle}
-                        {...this.props} {...this.state}
+                        {...this.props} {...this.state} handleGetAccountsInfo={this.handleGetAccountsInfo}
                     />
                     {/* On the /maps route we want the map to be on full screen - this is not possible if the content and conatiner classes are present because they have some paddings which would make the map smaller */}
                     {this.getRoute() ? (

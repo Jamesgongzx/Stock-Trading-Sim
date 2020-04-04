@@ -34,6 +34,7 @@ import ManagePlayers from "./views/TableList/ManagePlayers";
 import ManageStocks from "./views/TableList/ManageStocks";
 import ManageTables from "./views/TableList/ManageTables";
 import MarketPlace from "./views/TableList/MarketPlace";
+import MyItems from "./views/TableList/MyItems";
 
 
 const dashboardRoutes = [
@@ -81,6 +82,14 @@ const dashboardRoutes = [
     name: "My Stocks",
     icon: null,
     component: MyStocks,
+    layout: "/user",
+    type: "user"
+  },
+  {
+    path: "/items",
+    name: "My Items",
+    icon: null,
+    component: MyItems,
     layout: "/user",
     type: "user"
   },
