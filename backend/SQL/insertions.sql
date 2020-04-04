@@ -103,6 +103,7 @@ INSERT INTO shopItemR VALUES
 ('Power Gem', 1, 'Blackmarket:Premium', 1),
 ('Mind Gem', 1, 'Blackmarket:Premium', 1);
 
+
 INSERT INTO playerItemR VALUES
 (1, 'GPU', 2, false),
 (1, 'Potato Farm', 1, false),
@@ -129,3 +130,64 @@ INSERT INTO transitionRecordOwnership VALUES
 ('1996-01-01 12:00:00', 'Banana', -10, 2, 1),
 ('1996-01-01 1:15:00', 'FB', 300, 3, 1),
 ('1996-01-01 12:00:00', 'Potato Farm', 200, 2, 1);
+
+INSERT INTO shop VALUES
+(1, 'Weapons:Regular', 'Armory'),
+(1, 'Weapons:Premium', 'Armory(Premium)'),
+(1, 'Supermarket:Premium', 'Supermarket'),
+(3, 'Supermarket:Premium', 'Supermarket'),
+(7, 'Electronics:Regular', 'Electronics'),
+(7, 'Electronics:Premium', 'Electronics(Premium)'),
+(2, 'Supermarket:Premium', 'Supermarket'),
+
+(1, 'Supermarket:Regular', 'Supermarket'),
+(2, 'Supermarket:Regular', 'Supermarket'),
+(3, 'Supermarket:Regular', 'Supermarket'),
+(4, 'Supermarket:Regular', 'Supermarket'),
+(5, 'Supermarket:Regular', 'Supermarket'),
+(6, 'Supermarket:Regular', 'Supermarket'),
+(7, 'Supermarket:Regular', 'Supermarket');
+
+INSERT INTO shopItemR VALUES
+('Potato Farm', 1, 'Supermarket:Regular', 10),
+('Infinity Gauntlet', 1, 'Supermarket:Regular', 2),
+('Time Gem', 1, 'Supermarket:Regular', 3),
+('Space Gem', 1, 'Supermarket:Regular', 4),
+('Soul Gem', 1, 'Supermarket:Regular', 2),
+('Reality Gem', 1, 'Supermarket:Regular', 1),
+('Power Gem', 1, 'Supermarket:Regular', 5),
+('Mind Gem', 1, 'Supermarket:Regular', 6),
+('Apple', 1, 'Supermarket:Regular', 10),
+('GPU', 1, 'Supermarket:Regular', 10),
+('Power Gem', 2, 'Supermarket:Premium', 100),
+('Potato Farm', 2, 'Supermarket:Regular', 10),
+('Infinity Gauntlet', 2, 'Supermarket:Regular', 2),
+('Time Gem', 2, 'Supermarket:Regular', 3),
+('Space Gem', 2, 'Supermarket:Regular', 4),
+('Soul Gem', 2, 'Supermarket:Regular', 2),
+('Reality Gem', 2, 'Supermarket:Regular', 1),
+('Power Gem', 2, 'Supermarket:Regular', 5),
+('Mind Gem', 2, 'Supermarket:Regular', 6),
+('Apple', 2, 'Supermarket:Regular', 10),
+('GPU', 2, 'Supermarket:Regular', 10),
+('Potato Farm', 3, 'Supermarket:Regular', 10),
+('Infinity Gauntlet', 3, 'Supermarket:Regular', 2),
+('Time Gem', 3, 'Supermarket:Regular', 3),
+('Space Gem', 3, 'Supermarket:Regular', 4),
+('Soul Gem', 3, 'Supermarket:Regular', 2),
+('Reality Gem', 3, 'Supermarket:Regular', 1),
+('Power Gem', 3, 'Supermarket:Regular', 5),
+('Mind Gem', 3, 'Supermarket:Regular', 6),
+('Apple', 3, 'Supermarket:Regular', 10),
+('GPU', 3, 'Supermarket:Regular', 10),
+('Potato Farm', 5, 'Supermarket:Regular', 10),
+('Infinity Gauntlet', 5, 'Supermarket:Regular', 2),
+('Time Gem', 5, 'Supermarket:Regular', 3),
+('Space Gem', 5, 'Supermarket:Regular', 4),
+('Soul Gem', 5, 'Supermarket:Regular', 2),
+('Reality Gem', 5, 'Supermarket:Regular', 1),
+('Power Gem', 5, 'Supermarket:Regular', 5),
+('Mind Gem', 5, 'Supermarket:Regular', 6),
+('Apple', 5, 'Supermarket:Regular', 10),
+('GPU', 7, 'Electronics:Regular', 10),
+('GPU', 7, 'Electronics:Premium', 100);
