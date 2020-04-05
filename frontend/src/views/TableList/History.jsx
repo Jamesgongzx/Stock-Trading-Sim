@@ -13,6 +13,7 @@ import {requestGET} from "../../requests";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
+import helpers from "../../utils";
 // import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = {
@@ -83,6 +84,12 @@ class MyStocks extends React.Component{
                         values: data.map((x) => Object.values(x))
                     })
                 }
+            })
+            .catch((err) => {
+                helpers.Toast.fire({
+                    icon: 'warning',
+                    title: `${err.response.data}`
+                })
             })
     }
 

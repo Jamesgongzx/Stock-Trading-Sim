@@ -102,8 +102,11 @@ router.get("/history", (req, res) => {
         return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
     }
 
-    var startDate = req.body.startDate;
-    var endDate = req.body.endDate;
+    console.log(req.query)
+    console.log(req.params)
+    console.log(req.body)
+    var startDate = req.query.startDate;
+    var endDate = req.query.endDate;
 
     if (!isDate(startDate) || !isDate(endDate)){
         res.status(400).send("Invalid dates!");
@@ -118,7 +121,10 @@ router.get("/history", (req, res) => {
         res.status(401).send("Player not authorized!");
         return;
     }
-    return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? AND dateTime >= ? AND dateTime <= ? order by datetime desc', [startDateTime, endDateTime, playerId])
+
+    console.log(startDateTime)
+    console.log(endDateTime)
+    return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? AND dateTime >= ? AND dateTime <= ? order by datetime desc', [playerId, startDateTime, endDateTime])
         .then(
             results => {
                 res.status(200).send(results);
