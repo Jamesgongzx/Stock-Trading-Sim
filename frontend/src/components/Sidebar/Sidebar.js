@@ -29,7 +29,7 @@ export default function Sidebar(props) {
   const { color, logo, image, logoText, routes } = props;
   var links = (
     <List className={classes.list}>
-        <ListItem button className={classes.itemLink}>
+        <ListItem className={classes.itemLink}>
             <AttachMoney
                 className={classNames(classes.itemIcon, classes.whiteFont, {
                     [classes.itemIconRTL]: props.rtlActive
