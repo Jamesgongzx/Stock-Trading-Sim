@@ -81,7 +81,22 @@ app.listen(port, () => {
             return executeSQL("SQL/insertions.sql");
         })
         .then(() => {
+            return executeSQL("SQL/stocks/AAPL.sql");
+        })
+        .then(() => {
             return executeSQL("SQL/stocks/AMZN.sql");
+        })
+        .then(() => {
+            return executeSQL("SQL/stocks/FB.sql");
+        })
+        .then(() => {
+            return executeSQL("SQL/stocks/GOOG.sql");
+        })
+        .then(() => {
+            return executeSQL("SQL/stocks/MSFT.sql");
+        })
+        .then(() => {
+            return executeSQL("SQL/stocks/SPY.sql");
         })
         .then(() => {
             return executeSQL("SQL/updates.sql");
