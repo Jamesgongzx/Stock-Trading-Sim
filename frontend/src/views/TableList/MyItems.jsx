@@ -10,9 +10,9 @@ import Card from "../../components/Card/Card.js";
 import CardHeader from "../../components/Card/CardHeader.js";
 import CardBody from "../../components/Card/CardBody.js";
 import PropTypes from 'prop-types';
-import {requestDEL, requestGET, requestPATCH, requestPOST} from "../../requests";
+import { requestDEL, requestGET, requestPATCH, requestPOST } from "../../requests";
 import Dialog from "@material-ui/core/Dialog";
-import {OutlinedInput} from "@material-ui/core";
+import { OutlinedInput } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -61,17 +61,17 @@ const styles = {
     red: {
         color: "#ac1a02"
     },
-    stocksearchform : {
+    stocksearchform: {
         margin: "20px",
         marginBottom: "0px"
     }
 };
 
-class MyItems extends React.Component{
+class MyItems extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            columnNames : [],
+            columnNames: [],
             values: [],
             firstRender: false,
         }
@@ -124,8 +124,8 @@ class MyItems extends React.Component{
     useItemFragment = (name) => (
         <React.Fragment>
             <Button variant="contained"
-                    color="success"
-                    onClick={() => {this.useItem(name)}}
+                color="success"
+                onClick={() => { this.useItem(name) }}
             >
                 Use Item
             </Button>
@@ -148,7 +148,7 @@ class MyItems extends React.Component{
     }
 
     render() {
-        const {classes} = this.props;
+        const { classes } = this.props;
         this.firstRender()
         return (
             <React.Fragment>

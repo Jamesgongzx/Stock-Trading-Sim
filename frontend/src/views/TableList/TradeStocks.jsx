@@ -101,7 +101,7 @@ class TradeStocks extends React.Component {
                 let graph = this.state.graph;
                 graph.labels = data.map((x) => x.dateTime).slice(-5);
                 graph.series = [data.map((x) => x.price).slice(-5)];
-                graph.data = data.map((x) => {return {x: new Date(x.dateTime), y: x.price}});
+                graph.data = data.map((x) => { return { x: new Date(x.dateTime), y: x.price } });
                 this.setState({
                     stockgraph: stock,
                     graph: graph,
@@ -272,7 +272,7 @@ class TradeStocks extends React.Component {
             //     text: `Stock Chart: ${this.state.stockgraph}`,
             //     fontFamily: "Roboto"
             // },
-            axisY:{
+            axisY: {
                 valueFormatString: "$##0.00",
                 minimum: Math.min(...this.state.graph.data.map((p) => p.y)) * 0.99,
             },
@@ -335,51 +335,51 @@ class TradeStocks extends React.Component {
                             {this.state.stockgraph != null
                                 ?
                                 <Dialog aria-labelledby="simple-dialog-title" onClose={this.handleCloseDialog}
-                                        fullWidth={true}
-                                        maxWidth={"lg"}
+                                    fullWidth={true}
+                                    maxWidth={"lg"}
                                     // fullScreen={true}
-                                        open={() => this.state.stockgraph != null}
-                                        style={{
-                                            height: '80vh',
-                                            minHeight: '80vh',
-                                            maxHeight: '80vh',
-                                        }}
+                                    open={() => this.state.stockgraph != null}
+                                    style={{
+                                        height: '80vh',
+                                        minHeight: '80vh',
+                                        maxHeight: '80vh',
+                                    }}
                                 >
                                     <Card>
-                                        <CardHeader color="primary" style={{marginBottom: "15px"}}>
+                                        <CardHeader color="primary" style={{ marginBottom: "15px" }}>
                                             <h3 className={classes.cardTitleWhite}>Stock Chart: {this.state.stockgraph}</h3>
                                         </CardHeader>
-                                        <CanvasJSChart options={this.chartOptions}/>
+                                        <CanvasJSChart options={this.chartOptions} />
                                     </Card>
                                 </Dialog>
                                 : <div></div>
                             }
-                                <React.Fragment>
-                                    <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
-                                        <OutlinedInput
-                                            type="stock"
-                                            name="stock"
-                                            placeholder="Search for a stock..."
-                                            value={this.state.stock}
-                                            onChange={this.handleStockBarChange}
-                                        />
-                                        <Button className="submit" type="submit" size="md">
-                                            Submit
+                            <React.Fragment>
+                                <form onSubmit={this.handleSearchSubmit} className={classes.stocksearchform}>
+                                    <OutlinedInput
+                                        type="stock"
+                                        name="stock"
+                                        placeholder="Search for a stock..."
+                                        value={this.state.stock}
+                                        onChange={this.handleStockBarChange}
+                                    />
+                                    <Button className="submit" type="submit" size="md">
+                                        Submit
                                 </Button>
-                                    </form>
-                                    <CardBody>
-                                        {this.stockColumns}
-                                        {this.state.values.length <= 0 ?
-                                            "No Stocks Found :("
-                                            :
-                                            <Table
-                                                tableHeaderColor="primary"
-                                                tableHead={this.state.columnNames}
-                                                tableData={this.state.values}
-                                            />
-                                        }
-                                    </CardBody>
-                                </React.Fragment>
+                                </form>
+                                <CardBody>
+                                    {this.stockColumns}
+                                    {this.state.values.length <= 0 ?
+                                        "No Stocks Found :("
+                                        :
+                                        <Table
+                                            tableHeaderColor="primary"
+                                            tableHead={this.state.columnNames}
+                                            tableData={this.state.values}
+                                        />
+                                    }
+                                </CardBody>
+                            </React.Fragment>
 
 
                         </Card>

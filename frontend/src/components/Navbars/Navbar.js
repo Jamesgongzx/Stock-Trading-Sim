@@ -29,114 +29,118 @@ import Card from "@material-ui/core/Card";
 const useStyles = makeStyles(styles);
 
 const topBarArray = [
-  {
-    path: "/stocks",
-    name: "My Stocks",
-    component: DashboardPage,
-    layout: "/user",
-  },
-  {
-    path: "/items",
-    name: "My Items",
-    component: MyItems,
-    layout: "/user",
-  },
-  {
-    path: "/history",
-    name: "History",
-    component: History,
-    layout: "/user",
-  },
+    {
+        path: "/stocks",
+        name: "My Stocks",
+        component: DashboardPage,
+        layout: "/user",
+    },
+    {
+        path: "/items",
+        name: "My Items",
+        component: MyItems,
+        layout: "/user",
+    },
+    {
+        path: "/history",
+        name: "History",
+        component: History,
+        layout: "/user",
+    },
 ];
 
 export default function Header(props, { ...rest }) {
-  const classes = useStyles();
-  const topBarComponents = (
-    <React.Fragment>
-      {topBarArray.map((item, key) => {
-        return (
-          <div className={classes.padded}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                props.history.push(item.layout + item.path);
-              }}
-            >
-              {item.name}
-            </Button>
-          </div>
-        );
-      })}
-    </React.Fragment>
-  );
+    const classes = useStyles();
+    const topBarComponents = (
+        <React.Fragment>
+            {topBarArray.map((item, key) => {
+                return (
+                    <div className={classes.padded}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => {
+                                props.history.push(item.layout + item.path);
+                            }}
+                        >
+                            {item.name}
+                        </Button>
+                    </div>
+                );
+            })}
+        </React.Fragment>
+    );
 
-  const { color } = props;
-  const appBarClasses = classNames({
-    [" " + classes[color]]: color,
-  });
-  // console.log(props);
-  return (
-    <AppBar className={classes.appBar + appBarClasses}>
-      <Toolbar className={classes.container}>
-        <div className={classes.flex}>
-          {/* Here we create navbar brand, based on route name */}
-          <Button color="transparent" href="#" className={classes.title}>
-            {/*{makeBrand()}*/}
-          </Button>
-        </div>
-        {/*<div className={classes.padded} style={{left: 0, position: "absolute", marginLeft: "15px"}}>*/}
-        {/*  Current Money:*/}
-        {/*  {props.currentPlayer*/}
-        {/*      ? `\t$${props.currentPlayer.money}`*/}
-        {/*      : "\t$0"*/}
-        {/*  }*/}
-        {/*</div>*/}
-        {topBarComponents}
-        {/*<div className={classes.padded}>*/}
-        {/*  <Button variant="contained" color="primary">*/}
-        {/*    My Stocks*/}
-        {/*  </Button>*/}
-        {/*</div>*/}
-        {/*<div className={classes.padded}>*/}
-        {/*  <Button variant="contained" color="primary">*/}
-        {/*    My Items*/}
-        {/*  </Button>*/}
-        {/*</div>*/}
-        {/*<div className={classes.padded}>*/}
-        {/*  <Button variant="contained" color="primary">*/}
-        {/*    History*/}
-        {/*  </Button>*/}
-        {/*</div>*/}
-        {/*<div className={classes.padded}>*/}
-        {/*  <Button variant="contained" color="primary">*/}
-        {/*    Current Money*/}
-        {/*  </Button>*/}
-        {/*</div>*/}
-        {/*<div className={classes.padded}>*/}
-        {/*  <Button variant="contained" color="primary">*/}
-        {/*    Change Player (TBD)*/}
-        {/*  </Button>*/}
-        {/*</div>*/}
-        <Hidden smDown implementation="css">
-          <AdminNavbarLinks {...props} />
-        </Hidden>
-        <Hidden mdUp implementation="css">
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={props.handleDrawerToggle}
-          >
-            <Menu />
-          </IconButton>
-        </Hidden>
-      </Toolbar>
-    </AppBar>
-  );
+    const { color } = props;
+    const appBarClasses = classNames({
+        [" " + classes[color]]: color,
+    });
+    // console.log(props);
+    return (
+        <AppBar className={classes.appBar + appBarClasses}>
+            <Toolbar className={classes.container}>
+                <div className={classes.flex}>
+                    {/* Here we create navbar brand, based on route name */}
+                    <Button
+                        color="transparent"
+                        href="#"
+                        className={classes.title}
+                    >
+                        {/*{makeBrand()}*/}
+                    </Button>
+                </div>
+                {/*<div className={classes.padded} style={{left: 0, position: "absolute", marginLeft: "15px"}}>*/}
+                {/*  Current Money:*/}
+                {/*  {props.currentPlayer*/}
+                {/*      ? `\t$${props.currentPlayer.money}`*/}
+                {/*      : "\t$0"*/}
+                {/*  }*/}
+                {/*</div>*/}
+                {topBarComponents}
+                {/*<div className={classes.padded}>*/}
+                {/*  <Button variant="contained" color="primary">*/}
+                {/*    My Stocks*/}
+                {/*  </Button>*/}
+                {/*</div>*/}
+                {/*<div className={classes.padded}>*/}
+                {/*  <Button variant="contained" color="primary">*/}
+                {/*    My Items*/}
+                {/*  </Button>*/}
+                {/*</div>*/}
+                {/*<div className={classes.padded}>*/}
+                {/*  <Button variant="contained" color="primary">*/}
+                {/*    History*/}
+                {/*  </Button>*/}
+                {/*</div>*/}
+                {/*<div className={classes.padded}>*/}
+                {/*  <Button variant="contained" color="primary">*/}
+                {/*    Current Money*/}
+                {/*  </Button>*/}
+                {/*</div>*/}
+                {/*<div className={classes.padded}>*/}
+                {/*  <Button variant="contained" color="primary">*/}
+                {/*    Change Player (TBD)*/}
+                {/*  </Button>*/}
+                {/*</div>*/}
+                <Hidden smDown implementation="css">
+                    <AdminNavbarLinks {...props} />
+                </Hidden>
+                <Hidden mdUp implementation="css">
+                    <IconButton
+                        color="inherit"
+                        aria-label="open drawer"
+                        onClick={props.handleDrawerToggle}
+                    >
+                        <Menu />
+                    </IconButton>
+                </Hidden>
+            </Toolbar>
+        </AppBar>
+    );
 }
 
 Header.propTypes = {
-  color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"]),
-  handleDrawerToggle: PropTypes.func,
-  routes: PropTypes.arrayOf(PropTypes.object),
+    color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"]),
+    handleDrawerToggle: PropTypes.func,
+    routes: PropTypes.arrayOf(PropTypes.object),
 };

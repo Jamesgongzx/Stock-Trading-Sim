@@ -1,8 +1,6 @@
 const express = require("express");
 const database = require("../database");
 
-var { countDecimals, noExponents } = require("./utils");
-
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -24,9 +22,9 @@ router.get("/", (req, res) => {
                     serverDayOfWeek = results[0]['day'];
                     serverDayOfWeek = weekArray[serverDayOfWeek];
                     if (subscriptionType == "None") {
-                        return database.query("SELECT cost, amount FROM item NATURAL JOIN shop NATURAL JOIN shopItemR WHERE dayOfWeek = ? AND category NOT LIKE '%Premium%'", [serverDayOfWeek]);
+                        return database.query("SELECT * FROM shop WHERE dayOfWeek = ? AND category NOT LIKE '%Premium%'", [serverDayOfWeek]);
                     } else {
-                        return database.query("SELECT cost, amount FROM item NATURAL JOIN shop NATURAL JOIN shopItemR WHERE dayOfWeek = ?", [serverDayOfWeek]);
+                        return database.query("SELECT * FROM shop WHERE dayOfWeek = ?", [serverDayOfWeek]);
                     }
                 }
             }

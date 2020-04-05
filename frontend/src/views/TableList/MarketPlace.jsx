@@ -1,6 +1,6 @@
 import React from "react";
 // @material-ui/core components
-import Input from '@material-ui/core/Input';
+import Input from "@material-ui/core/Input";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 // core components
 import GridItem from "../../components/Grid/GridItem.js";
@@ -9,18 +9,18 @@ import Table from "../../components/Table/Table.js";
 import Card from "../../components/Card/Card.js";
 import CardHeader from "../../components/Card/CardHeader.js";
 import CardBody from "../../components/Card/CardBody.js";
-import PropTypes from 'prop-types';
-import {requestDEL, requestGET, requestPOST} from "../../requests";
+import PropTypes from "prop-types";
+import { requestDEL, requestGET, requestPOST } from "../../requests";
 import Dialog from "@material-ui/core/Dialog";
-import {OutlinedInput} from "@material-ui/core";
+import { OutlinedInput } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import InputAdornment from "@material-ui/core/InputAdornment";
 // import withStyles from "@material-ui/core/styles/withStyles";
-import Swal from 'sweetalert2'
-import helpers from "../../utils.js"
+import Swal from "sweetalert2";
+import helpers from "../../utils.js";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Select from "@material-ui/core/Select/Select";
@@ -34,11 +34,11 @@ const styles = {
             margin: "0",
             fontSize: "14px",
             marginTop: "0",
-            marginBottom: "0"
+            marginBottom: "0",
         },
         "& a,& a:hover,& a:focus": {
-            color: "#FFFFFF"
-        }
+            color: "#FFFFFF",
+        },
     },
     cardTitleWhite: {
         color: "#FFFFFF",
@@ -52,32 +52,34 @@ const styles = {
             color: "#777",
             fontSize: "65%",
             fontWeight: "400",
-            lineHeight: "1"
-        }
+            lineHeight: "1",
+        },
     },
     green: {
         color: "#259200",
     },
     red: {
-        color: "#ac1a02"
+        color: "#ac1a02",
     },
-    stocksearchform : {
+    stocksearchform: {
         margin: "20px",
-        marginBottom: "0px"
-    }
+        marginBottom: "0px",
+    },
 };
 
-class MarketPlace extends React.Component{
+class MarketPlace extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            columnNames : [],
-            values: [],
+            shopColumnNames: [],
+            shopValues: [],
             dayofWeek: null,
-            categories: [],
             category: null,
+            itemColumnNames: [],
+            itemValues: [],
+            shopName: null,
             qty: 0,
-        }
+        };
 
         this.dayOfWeekObject = {
             1: "Monday",
@@ -87,29 +89,90 @@ class MarketPlace extends React.Component{
             5: "Friday",
             6: "Saturday",
             7: "Sunday",
-        }
+        };
     }
 
-
-    getShopCategories = () => {
-        requestGET("/shops/categories")
-            .then((res) => {
-                console.log(res.data.map((x) => Object.values(x)));
+    getAvailableShops = () => {
+        requestGET("/shops/").then((res) => {
+            if (res.data.length > 0) {
+                let data = res.data;
                 this.setState({
-                    categories: res.data.map((x) => Object.values(x)[0])
-                })
+                    shopColumnNames: ["Shop Name"],
+                    shopValues: data.map((x) => {
+                        let category = x.category;
+                        this.state.dayofWeek = x.dayOfWeek;
+                        this.state.shopName = x.shopName;
+                        x = Object.values(x);
+                        x.push(this.enterShopFragment(category));
+                        x.shift();
+                        x.shift();
+                        return x;
+                    }),
+                });
+            } else {
+                this.setState({
+                    shopColumnNames: [],
+                    shopValues: [],
+                });
+            }
+        });
+    };
+
+    enterShop = (category) => {
+        this.state.category = category;
+        requestGET(`/shops/${this.state.dayofWeek}/${category}/items`)
+            .then((res) => {
+                if (res.data.length > 0) {
+                    let data = res.data;
+                    this.setState({
+                        itemColumnNames: Object.keys(data[0]),
+                        itemValues: data.map((x) => {
+                            let name = x.itemName;
+                            x = Object.values(x);
+                            x.push(this.purchaseFragment(name));
+                            return x;
+                        })
+                    });
+                } else {
+                    throw Error(
+                        `Items couldn't be found for ${
+                        this.dayOfWeekObject[this.state.dayofWeek]
+                        }'s Market: ${category}`
+                    );
+                }
             })
-    }
+            .catch((err) => {
+                helpers.Toast.fire({
+                    icon: "warning",
+                    title: `${err.response.data}`,
+                });
+            });
+    };
+
+    enterShopFragment = (category) => (
+        <React.Fragment>
+            <Button
+                variant="contained"
+                color="success"
+                onClick={() => {
+                    this.enterShop(category);
+                }}
+            >
+                Enter Shop
+            </Button>
+        </React.Fragment>
+    );
 
     buyItem = (name) => {
-        console.log(this.state)
-        requestPOST(`/shops/${this.state.dayofWeek}/${this.state.category}/items/${name}/purchase`, {amount: this.state.qty})
+        requestPOST(
+            `/shops/${this.state.dayofWeek}/${this.state.category}/items/${name}/purchase`,
+            { amount: this.state.qty }
+        )
             .then((res) => {
-                console.log(res)
                 helpers.Toast.fire({
-                    icon: 'success',
-                    title: `Bought ${this.state.qty} of ${name}!`
-                })
+                    icon: "success",
+                    title: `Bought ${this.state.qty} of ${name}!`,
+                });
                 this.props.handleGetAccountsInfo();
             })
             .then(() => {
@@ -117,107 +180,49 @@ class MarketPlace extends React.Component{
             })
             .catch((err) => {
                 helpers.Toast.fire({
-                    icon: 'warning',
-                    title: `${err.response.data}`
-                })
-            })
-    }
+                    icon: "warning",
+                    title: `${err.response.data}`,
+                });
+            });
+    };
 
     purchaseFragment = (name) => (
         <React.Fragment>
-            <OutlinedInput type="number" size="small"
-                           endAdornment={<InputAdornment position="end">QTY</InputAdornment>}
-                           InputProps={{ inputProps: { min: 0} }}
-                           required
-                           defaultValue={0}
-                // value={this.state.qty}
-                           onChange={(e) => {this.setState({qty: e.target.value})}}
-            />
-            <Button variant="contained"
-                    color="success"
-                    onClick={() => {this.buyItem(name)}}
-            >
-                Buy
-            </Button>
-        </React.Fragment>
-    )
+            <div class="form-inline">
+                <OutlinedInput
+                    type="number"
+                    size="small"
+                    endAdornment={
+                        <InputAdornment position="end">QTY</InputAdornment>
+                    }
+                    InputProps={{ inputProps: { min: 0 } }}
+                    required
+                    defaultValue={0}
+                    // value={this.state.qty}
+                    onChange={(e) => {
+                        this.setState({ qty: e.target.value });
+                    }}
+                />
 
-    getShopRecords = () => {
-        requestGET(`/shops/${this.state.dayofWeek}/${this.state.category}/items`)
-            .then((res) => {
-                if (res.data.length > 0) {
-                    let data = res.data;
-                    this.setState({
-                        columnNames: Object.keys(data[0]),
-                        values: data.map((x) => {
-                            let name = x.itemName;
-                            x = Object.values(x);
-                            x.push(this.purchaseFragment(name));
-                            return x;
-                        })
-                    })
-                }
-                else {
-                    throw Error(`Items couldn't be found for ${this.dayOfWeekObject[this.state.dayofWeek]}'s Market: ${this.state.category}`)
-                }
-            })
-            .catch((err) => {
-                helpers.Toast.fire({
-                    icon: 'warning',
-                    title: `${err.response.data}`
-                })
-            })
-    }
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => {
+                        this.buyItem(name);
+                    }}
+                >
+                    Buy
+                </Button>
+            </div>
+        </React.Fragment>
+    );
 
     componentDidMount() {
-        this.getShopCategories();
+        this.getAvailableShops();
     }
 
-
     render() {
-        const {classes} = this.props;
-        this.dayOfWeekFragment = (
-            <FormControl style={{minWidth: 200}}>
-                <InputLabel htmlFor='selected-language'>Day of Week</InputLabel>
-            <Select
-                name="table"
-                value={this.state.dayofWeek}
-                onChange={(e) => {this.setState({dayofWeek: e.target.value})}}
-                displayEmpty
-                className="test2"
-            >
-                <option value="Day of Week" disabled selected>Day Of Week</option>
-                {Object.entries(this.dayOfWeekObject).map((x) => {
-                    return(
-                        <option value={x[0]}>{x[1]}</option>
-                    )
-                })
-                }
-            </Select>
-            </FormControl>
-        )
-
-        this.categoryFragment = (
-            <FormControl style={{minWidth: 200}}>
-                <InputLabel htmlFor='selected-language'>Category</InputLabel>
-                <Select
-                    name="table"
-                    value={this.state.category}
-                    onChange={(e) => {this.setState({category: e.target.value})}}
-                    displayEmpty
-                    className="test2"
-                >
-                    <option value="Category" disabled selected>Category</option>
-                    {this.state.categories.map((x) => {
-                        return(
-                            <option value={x}>{x}</option>
-                        )
-                    })
-                    }
-                </Select>
-            </FormControl>
-        )
-
+        const { classes } = this.props;
         return (
             <React.Fragment>
                 <GridContainer>
@@ -229,18 +234,26 @@ class MarketPlace extends React.Component{
                                 </p>
                             </CardHeader>
                             <CardBody>
-                                {this.dayOfWeekFragment}
-                                {this.categoryFragment}
-                                <Button variant="contained" color="primary" style={{margin: "2px"}}
-                                        onClick={() => {
-                                            this.getShopRecords();
-                                        }}
-                                >
-                                    Search</Button>
                                 <Table
                                     tableHeaderColor="primary"
-                                    tableHead={this.state.columnNames}
-                                    tableData={this.state.values}
+                                    tableHead={this.state.shopColumnNames}
+                                    tableData={this.state.shopValues}
+                                />
+                            </CardBody>
+                        </Card>
+                        <Card>
+                            <CardHeader color="primary">
+                                <h4 className={classes.cardTitleWhite}>Items</h4>
+                                <p className={classes.cardCategoryWhite}>
+                                </p>
+                            </CardHeader>
+                            <CardBody>
+                                <Table
+                                    fixedHeader={false}
+                                    style={{ width: "auto", tableLayout: "auto" }}
+                                    tableHeaderColor="primary"
+                                    tableHead={this.state.itemColumnNames}
+                                    tableData={this.state.itemValues}
                                 />
                             </CardBody>
                         </Card>
