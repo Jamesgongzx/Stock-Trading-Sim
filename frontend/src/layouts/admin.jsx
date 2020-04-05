@@ -19,6 +19,7 @@ import bgImage from "../assets/img/sidebar-2.jpg";
 import logo from "../assets/img/reactlogo.png";
 import {requestGET} from "../requests";
 import PropTypes from "prop-types";
+import * as Swal from "sweetalert2";
 
 class Admin extends React.Component {
     constructor(props) {
@@ -36,6 +37,12 @@ class Admin extends React.Component {
             doneLoading: false,
         }
 
+        this.swalLoad = Swal.fire({
+            title: "Loading Profile...",
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            }
+        })
     }
 
     getRoute = () => {
@@ -103,11 +110,13 @@ class Admin extends React.Component {
                 this.setState({
                     doneLoading: true
                 })
+                Swal.close()
             })
             .catch(() => {
                 this.setState({
                     doneLoading: true
                 })
+                Swal.close()
             })
             // .then((player) => {
             //     if (player) {
@@ -136,6 +145,12 @@ class Admin extends React.Component {
             // });
             document.body.style.overflow = "hidden";
         }
+        Swal.fire({
+            title: "Loading Profile...",
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            }
+        })
         window.addEventListener("resize", this.resizeFunction);
         this.handleGetAccountsInfo();
     }
