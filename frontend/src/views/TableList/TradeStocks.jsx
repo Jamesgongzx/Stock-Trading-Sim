@@ -101,7 +101,7 @@ class TradeStocks extends React.Component {
                 let graph = this.state.graph;
                 graph.labels = data.map((x) => x.dateTime).slice(-5);
                 graph.series = [data.map((x) => x.price).slice(-5)];
-                graph.data = data.map((x) => { return { x: new Date(x.dateTime), y: x.price } });
+                graph.data = data.map((x) => { return { x: new Date(x.dateTime), y: x.price , toolTipContent: `${x.dateTime}: {y}`} });
                 this.setState({
                     stockgraph: stock,
                     graph: graph,
@@ -272,6 +272,7 @@ class TradeStocks extends React.Component {
             //     text: `Stock Chart: ${this.state.stockgraph}`,
             //     fontFamily: "Roboto"
             // },
+            zoomEnabled: true,
             axisY: {
                 valueFormatString: "$##0.00",
                 minimum: Math.min(...this.state.graph.data.map((p) => p.y)) * 0.99,

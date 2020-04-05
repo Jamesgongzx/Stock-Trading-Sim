@@ -138,9 +138,7 @@ router.get("/:name/company", (req, res) => {
 
 router.get("/:name/records", (req, res) => {
     var name = req.params.name;
-    database.query("SELECT * FROM stockRecordOwnership WHERE name = ? " +
-        "AND DAY(dateTime) <= DAY(now()) " +
-        "AND HOUR(dateTime) <= HOUR(now()) order by datetime asc", [name])
+    database.query("SELECT * FROM stockRecordOwnership WHERE name = ?  and dateTime <= now() order by datetime asc", [name])
         .then(
             results => {
                 res.status(200).send(results);
