@@ -153,8 +153,8 @@ INSERT INTO transitionRecordOwnership VALUES
 
 INSERT INTO transitionRecordOwnershipAlt VALUES
 (1, '2000-01-01 12:00:00', 'Stock AMZN', 1),
-(1, '2000-01-01 11:00:00', 'Stock AMZN', 2),
-(1, '2000-01-01 15:00:00', 'Apple', 3),
+(1, '2001-01-01 11:00:00', 'Stock AMZN', 2),
+(1, '2010-01-01 15:00:00', 'Apple', 3),
 (2, '2000-01-01 19:00:00', 'Potato Farm', 4),
 (3, '2000-01-01 13:15:00', 'Stock AMZN', 5),
 (3, '2000-01-01 14:00:00', 'Stock AMZN', 6),
