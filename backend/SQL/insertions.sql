@@ -52,6 +52,14 @@ INSERT INTO item VALUES
 ('Potato Farm', 100, '[Activatable once per day] Increase money by 5 per amount owned.', 'Uncommon'),
 ('GPU', 1000, '[Activatable once per day] Farm bitcoin. Increase money by 75 per amount owned.', 'Rare');
 
+INSERT INTO itemRarity VALUES
+('Common', 'Gray', 0.7),
+('Uncommon', 'Green', 0.3),
+('Rare', 'Blue', 0.1),
+('epic', 'Purple', 0.05),
+('legendary', 'Orange', 0.01);
+
+
 INSERT INTO shop VALUES
 (2, 'Superstore:Regular', 'Superstore'),
 (2, 'Superstore:Premium', 'Superstore(Premium)'),
@@ -109,7 +117,6 @@ INSERT INTO shopItemR VALUES
 ('Reality Gem', 1, 'Blackmarket:Premium', 1, 1),
 ('Power Gem', 1, 'Blackmarket:Premium', 1, 1),
 ('Mind Gem', 1, 'Blackmarket:Premium', 1, 1);
-
 
 INSERT INTO playerItemR VALUES
 (1, 'GPU', 2, false),

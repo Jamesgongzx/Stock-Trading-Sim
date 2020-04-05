@@ -118,8 +118,9 @@ CREATE TABLE item (
 
 CREATE TABLE itemRarity (
     rarity CHAR(20) primary key,
-    color CHAR(20),
-    chance REAL
+    color CHAR(30),
+    chance REAL,
+    CHECK (chance>=0 AND chance<=1)
 );
 
 CREATE TABLE shopItemR (
@@ -159,3 +160,5 @@ CREATE TABLE playerStockR (
         REFERENCES stock (name)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+
