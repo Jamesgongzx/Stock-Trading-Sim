@@ -9,7 +9,7 @@ import Card from "../../components/Card/Card.js";
 import CardHeader from "../../components/Card/CardHeader.js";
 import CardBody from "../../components/Card/CardBody.js";
 import PropTypes from 'prop-types';
-import {requestGET} from "../../requests";
+import { requestGET } from "../../requests";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
@@ -46,11 +46,11 @@ const styles = {
     }
 };
 
-class MyStocks extends React.Component{
+class MyStocks extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            columnNames : [],
+            columnNames: [],
             values: [],
             startDate: null,
             endDate: null,
@@ -59,7 +59,7 @@ class MyStocks extends React.Component{
 
     componentDidMount() {
         console.log(this.props)
-        requestGET(`/players/history`, )
+        requestGET(`/players/history`)
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -68,13 +68,24 @@ class MyStocks extends React.Component{
                         columnNames: Object.keys(data[0]),
                         values: data.map((x) => Object.values(x))
                     })
+                } else {
+                    this.setState({
+                        columnNames: [],
+                        values: []
+                    })
                 }
+            })
+            .catch((err) => {
+                helpers.Toast.fire({
+                    icon: 'warning',
+                    title: `${err.response.data}`
+                })
             })
     }
 
     handleDateSubmit = () => {
         console.log(this.state)
-        requestGET(`/players/history`, {startDate: this.state.startDate, endDate: this.state.endDate})
+        requestGET(`/players/history`, { startDate: this.state.startDate, endDate: this.state.endDate })
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -83,7 +94,13 @@ class MyStocks extends React.Component{
                         columnNames: Object.keys(data[0]),
                         values: data.map((x) => Object.values(x))
                     })
+                } else {
+                    this.setState({
+                        columnNames: [],
+                        values: []
+                    })
                 }
+                console.log(this.state);
             })
             .catch((err) => {
                 helpers.Toast.fire({
@@ -112,7 +129,7 @@ class MyStocks extends React.Component{
     }
 
     render() {
-        const {classes} = this.props;
+        const { classes } = this.props;
         return (
             <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
@@ -126,8 +143,8 @@ class MyStocks extends React.Component{
                         <CardBody>
                             {this.datePicker("Start Date", "startDate")}
                             {this.datePicker("End Date", "endDate")}
-                            <Button  type="submit" color="success" className={classes.green}
-                                     onClick={() => {this.handleDateSubmit()}}>
+                            <Button type="submit" color="success" className={classes.green}
+                                onClick={() => { this.handleDateSubmit() }}>
                                 Confirm
                             </Button>
                             <Table

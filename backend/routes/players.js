@@ -98,20 +98,9 @@ router.get("/:playerId/stocks", (req, res) => {
 });
 
 router.get("/history", (req, res) => {
-    var isDate = function(date) {
-        return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
-    }
-
-    var startDate = req.query.startDate;
-    var endDate = req.query.endDate;
-
-    if (!isDate(startDate) || !isDate(endDate)){
-        res.status(400).send("Invalid dates!");
-        return;
-    }
-
-    var startDateTime = startDate.concat(" 00:00:00");
-    var endDateTime = endDate.concat(" 00:00:00");
+    var isDate = function (date) {
+        return new Date(date) !== "Invalid Date" && !isNaN(new Date(date));
+    };
 
     let playerId = req.session.playerId;
     if (playerId != req.session.playerId) {
@@ -119,17 +108,51 @@ router.get("/history", (req, res) => {
         return;
     }
 
-    return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? AND dateTime >= ? AND dateTime <= ? order by datetime desc', [playerId, startDateTime, endDateTime])
-        .then(
-            results => {
-                res.status(200).send(results);
-            },
-            error => {
-                console.log(error);
-                res.status(500).send("Internal Server Error!");
-            }
-        )
-})
+    var startDate = req.query.startDate;
+    var endDate = req.query.endDate;
+
+    console.log(req.params);
+
+    console.log("1");
+
+    var startDateCondition = "";
+    var endDateCondition = "";
+    var startDateTime = "";
+    var endDateTime = "";
+    if (req.query.startDate && req.query.endDate) {
+        if (!isDate(startDate) || !isDate(endDate)) {
+            res.status(400).send("Invalid dates!");
+            return;
+        } else {
+            console.log("dates are valid");
+            startDateTime = "'" + startDate + " 00:00:00'";
+            endDateTime = "'" + endDate + " 00:00:00'";
+            startDateCondition = "AND dateTime >= ";
+            endDateCondition = " AND dateTime <= ";
+        }
+    }
+
+    console.log("SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? " +
+        startDateCondition + startDateTime +
+        endDateCondition + endDateTime +
+        " order by dateTime desc");
+
+    database.query(
+        "SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? " +
+        startDateCondition + startDateTime +
+        endDateCondition + endDateTime +
+        " order by dateTime desc",
+        [playerId]
+    ).then(
+        (results) => {
+            res.status(200).send(results);
+        },
+        (error) => {
+            console.log(error);
+            res.status(500).send("Internal Server Error!");
+        }
+    );
+});
 
 router.get("/overview", (req, res) => {
     var adminId = req.session.adminId;
