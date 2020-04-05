@@ -33,43 +33,47 @@ const topBarArray = [
     path: "/stocks",
     name: "My Stocks",
     component: DashboardPage,
-    layout: "/user"
+    layout: "/user",
   },
   {
     path: "/items",
     name: "My Items",
     component: MyItems,
-    layout: "/user"
+    layout: "/user",
   },
   {
     path: "/history",
     name: "History",
     component: History,
-    layout: "/user"
+    layout: "/user",
   },
 ];
 
-export default function Header(props, {...rest}) {
+export default function Header(props, { ...rest }) {
   const classes = useStyles();
   const topBarComponents = (
-      <React.Fragment>
-        {topBarArray.map((item, key) => {
-          return (
-              <div className={classes.padded}>
-                <Button variant="contained" color="primary" onClick={
-                  () => {props.history.push(item.layout+item.path)}
-                }>
-                  {item.name}
-                </Button>
-              </div>
-          )
-        })}
-      </React.Fragment>
-  )
+    <React.Fragment>
+      {topBarArray.map((item, key) => {
+        return (
+          <div className={classes.padded}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                props.history.push(item.layout + item.path);
+              }}
+            >
+              {item.name}
+            </Button>
+          </div>
+        );
+      })}
+    </React.Fragment>
+  );
 
   const { color } = props;
   const appBarClasses = classNames({
-    [" " + classes[color]]: color
+    [" " + classes[color]]: color,
   });
   // console.log(props);
   return (
@@ -115,7 +119,7 @@ export default function Header(props, {...rest}) {
         {/*  </Button>*/}
         {/*</div>*/}
         <Hidden smDown implementation="css">
-         <AdminNavbarLinks {...props}/>
+          <AdminNavbarLinks {...props} />
         </Hidden>
         <Hidden mdUp implementation="css">
           <IconButton
@@ -134,5 +138,5 @@ export default function Header(props, {...rest}) {
 Header.propTypes = {
   color: PropTypes.oneOf(["primary", "info", "success", "warning", "danger"]),
   handleDrawerToggle: PropTypes.func,
-  routes: PropTypes.arrayOf(PropTypes.object)
+  routes: PropTypes.arrayOf(PropTypes.object),
 };
