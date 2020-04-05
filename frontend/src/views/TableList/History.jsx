@@ -10,6 +10,9 @@ import CardHeader from "../../components/Card/CardHeader.js";
 import CardBody from "../../components/Card/CardBody.js";
 import PropTypes from 'prop-types';
 import {requestGET} from "../../requests";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import DialogActions from "@material-ui/core/DialogActions/DialogActions";
 // import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = {
@@ -48,6 +51,8 @@ class MyStocks extends React.Component{
         this.state = {
             columnNames : [],
             values: [],
+            startDate: null,
+            endDate: null,
         }
     }
 
@@ -66,6 +71,39 @@ class MyStocks extends React.Component{
             })
     }
 
+    handleDateSubmit = () => {
+        console.log(this.state)
+        requestGET(`/players/history`, {startDate: this.state.startDate, endDate: this.state.endDate})
+            .then((res) => {
+                console.log(res);
+                if (res.data.length > 0) {
+                    let data = res.data;
+                    this.setState({
+                        columnNames: Object.keys(data[0]),
+                        values: data.map((x) => Object.values(x))
+                    })
+                }
+            })
+    }
+
+    datePicker = (label, state) => {
+        return (
+            <TextField
+                label={label}
+                type="date"
+                defaultValue={new Date()}
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                onChange={(e) => {
+                    let tempState = this.state;
+                    tempState[state] = e.target.value;
+                    this.setState(tempState)
+                }}
+            />
+        )
+    }
+
     render() {
         const {classes} = this.props;
         return (
@@ -79,6 +117,12 @@ class MyStocks extends React.Component{
                             </p>
                         </CardHeader>
                         <CardBody>
+                            {this.datePicker("Start Date", "startDate")}
+                            {this.datePicker("End Date", "endDate")}
+                            <Button  type="submit" color="success" className={classes.green}
+                                     onClick={() => {this.handleDateSubmit()}}>
+                                Confirm
+                            </Button>
                             <Table
                                 tableHeaderColor="primary"
                                 tableHead={this.state.columnNames}
