@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
         )
 });
 
-router.patch("/ranking", async (req, res) => {
+router.get("/ranking", async (req, res) => {
     database.query('SET @r=0; UPDATE playerRanking SET ranking= (@r:= @r+1) ORDER BY money DESC;', [])
         .then(
             results => {

@@ -130,10 +130,10 @@ class Admin extends React.Component {
 
     componentDidMount() {
         if (navigator.platform.indexOf("Win") > -1) {
-            this.ps = new PerfectScrollbar(this.mainPanel.current, {
-                suppressScrollX: true,
-                suppressScrollY: false
-            });
+            // this.ps = new PerfectScrollbar(this.mainPanel.current, {
+            //     suppressScrollX: true,
+            //     suppressScrollY: false
+            // });
             document.body.style.overflow = "hidden";
         }
         window.addEventListener("resize", this.resizeFunction);
