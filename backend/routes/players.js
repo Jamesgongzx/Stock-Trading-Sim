@@ -102,9 +102,6 @@ router.get("/history", (req, res) => {
         return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
     }
 
-    console.log(req.query)
-    console.log(req.params)
-    console.log(req.body)
     var startDate = req.query.startDate;
     var endDate = req.query.endDate;
 
@@ -122,8 +119,6 @@ router.get("/history", (req, res) => {
         return;
     }
 
-    console.log(startDateTime)
-    console.log(endDateTime)
     return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? AND dateTime >= ? AND dateTime <= ? order by datetime desc', [playerId, startDateTime, endDateTime])
         .then(
             results => {
