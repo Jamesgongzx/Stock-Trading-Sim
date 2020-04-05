@@ -77,7 +77,7 @@ class Admin extends React.Component {
     };
 
     handleGetAccountsInfo = () => {
-        requestGET("/accounts/players")
+        return requestGET("/accounts/players")
             .then((res) => {
                 console.log(res.data);
                 if(res.data.length > 0)   {
@@ -110,13 +110,11 @@ class Admin extends React.Component {
                 this.setState({
                     doneLoading: true
                 })
-                Swal.close()
             })
             .catch(() => {
                 this.setState({
                     doneLoading: true
                 })
-                Swal.close()
             })
             // .then((player) => {
             //     if (player) {
@@ -152,7 +150,12 @@ class Admin extends React.Component {
             }
         })
         window.addEventListener("resize", this.resizeFunction);
-        this.handleGetAccountsInfo();
+        this.handleGetAccountsInfo().then(() => {
+            Swal.close();
+        }).catch(() => {
+            Swal.close();
+        })
+
     }
 
     componentWillUnmount() {
