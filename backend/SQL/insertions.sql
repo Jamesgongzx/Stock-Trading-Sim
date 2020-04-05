@@ -142,8 +142,8 @@ INSERT INTO playerItemR VALUES
 
 INSERT INTO transitionRecordOwnership VALUES
 ('2000-01-01 12:00:00', 'Stock AMZN', -10, 2, 1),
-('2000-01-01 11:00:00', 'Stock AMZN', -25, 5, 1),
-('2000-01-01 15:00:00', 'Apple', -10, 2, 1),
+('2001-01-01 11:00:00', 'Stock AMZN', -25, 5, 1),
+('2010-01-01 15:00:00', 'Apple', -10, 2, 1),
 ('2000-01-01 19:00:00', 'Potato Farm', -500, 5, 2),
 ('2000-01-01 13:15:00', 'Stock AMZN', -10, 2, 3),
 ('2000-01-01 14:00:00', 'Stock AMZN', -15, 3, 3),
