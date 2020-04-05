@@ -33,6 +33,13 @@ INSERT INTO stock VALUES ('AAPL', 10, 10),
 ('MSFT', 10, 10),
 ('SPY', 10, 10);
 
+INSERT INTO company VALUES
+('Amazon', 'Jeff', 'US', 'AMZN'),
+('Google', 'Sundar', 'US', 'GOOG'),
+('Apple', 'Tim', 'US', 'AAPL'),
+('Facebook', 'Mark', 'US', 'FB'),
+('Microsoft', 'Bill', 'US', 'MSFT');
+
 INSERT INTO item VALUES
 ('Infinity Gauntlet', 5000, 'Add 10000 money to players who owns all gems.', 'legendary'),
 ('Time Gem', 2000, '[Not activatable] Total control over all aspects of time including time travel, stopping time, slowing down or speed up the flow of time and to accelerate or slow down ageing.', 'epic'),
@@ -131,6 +138,17 @@ INSERT INTO transitionRecordOwnership VALUES
 ('1996-01-01 12:00:00', 'Banana', -10, 2, 1),
 ('1996-01-01 1:15:00', 'FB', 300, 3, 1),
 ('1996-01-01 12:00:00', 'Potato Farm', 200, 2, 1);
+
+INSERT INTO transitionRecordOwnershipAlt VALUES
+(3, '1996-01-01 12:00:00', 'AMZN', 1),
+(3, '1997-01-01 1:15:00', 'AMZN', 2),
+(3, '1998-01-01 12:00:00', 'AMZN', 3),
+(3, '1997-01-01 12:00:00', 'Banana', 4),
+(3, '1996-01-01 1:15:00', 'FB', 5),
+(3, '1996-01-01 12:00:00', 'Potato Farm', 6),
+(1, '1996-01-01 12:00:00', 'Banana', 7),
+(1, '1996-01-01 1:15:00', 'FB', 8),
+(1, '1996-01-01 12:00:00', 'Potato Farm', 9);
 
 INSERT INTO shop VALUES
 (1, 'Weapons:Regular', 'Armory'),
