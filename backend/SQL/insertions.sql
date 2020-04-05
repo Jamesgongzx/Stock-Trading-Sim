@@ -48,7 +48,7 @@ INSERT INTO item VALUES
 ('Reality Gem', 2000, '[Not activatable] Locally or universally alters the natural laws of the universe to the wielders will.', 'epic'),
 ('Power Gem', 2000, '[Not activatable] Controls all of the power in the universe. It can be used to augment or inhibit any force.', 'epic'),
 ('Mind Gem', 2000, '[Not activatable] Taps the user into the universal consciousness, allowing for unlimited manipulation of psionic powers including telepathy and telekinesis.', 'epic'),
-('Apple', 1, 'Something happens when you collect 100 apples.', 'Common'),
+('Apple', 1, '[Activatable when you have 100] Something happens when you collect 100 apples.', 'Common'),
 ('Potato Farm', 100, '[Activatable once per day] Increase money by 5 per amount owned.', 'Uncommon'),
 ('GPU', 1000, '[Activatable once per day] Farm bitcoin. Increase money by 75 per amount owned.', 'Rare');
 

@@ -125,6 +125,7 @@ class MyItems extends React.Component {
         <React.Fragment>
             <Button variant="contained"
                 color="success"
+                fullWidth = {true}
                 onClick={() => { this.useItem(name) }}
             >
                 Use Item

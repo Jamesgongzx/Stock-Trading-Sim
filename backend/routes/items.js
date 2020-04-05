@@ -71,7 +71,7 @@ router.patch("/:itemName/use", async (req, res) => {
         ).then(
             results => {
                 var usedToday = results[0].usedToday;
-                if (usedToday) {
+                if (usedToday && (itemName == "GPU" || itemName == "Potato Farm")) {
                     response.code = 403;
                     response.message = "Item already used today!"
                     throw new Error("Item already used today!");

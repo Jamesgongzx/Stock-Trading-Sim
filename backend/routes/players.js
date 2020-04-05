@@ -202,7 +202,7 @@ router.get("/:playerId/items", (req, res) => {
         res.status(401).send("Player not authorized!");
         return;
     }
-    database.query('SELECT itemName, amount AS amountOwned, usedToday FROM playerItemR WHERE playerId = ?', [playerId])
+    database.query('SELECT itemName, description, amount AS amountOwned FROM playerItemR NATURAL JOIN item WHERE playerId = ?', [playerId])
         .then(
             results => {
                 res.status(200).send(results);
