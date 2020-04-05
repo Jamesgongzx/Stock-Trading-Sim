@@ -61,7 +61,6 @@ class MyStocks extends React.Component {
         console.log(this.props)
         requestGET(`/players/history`)
             .then((res) => {
-                console.log(res);
                 if (res.data.length > 0) {
                     let data = res.data;
                     this.setState({
@@ -87,7 +86,6 @@ class MyStocks extends React.Component {
         console.log(this.state)
         requestGET(`/players/history`, { startDate: this.state.startDate, endDate: this.state.endDate })
             .then((res) => {
-                console.log(res);
                 if (res.data.length > 0) {
                     let data = res.data;
                     this.setState({
@@ -100,7 +98,6 @@ class MyStocks extends React.Component {
                         values: []
                     })
                 }
-                console.log(this.state);
             })
             .catch((err) => {
                 helpers.Toast.fire({

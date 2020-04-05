@@ -111,10 +111,6 @@ router.get("/history", (req, res) => {
     var startDate = req.query.startDate;
     var endDate = req.query.endDate;
 
-    console.log(req.params);
-
-    console.log("1");
-
     var startDateCondition = "";
     var endDateCondition = "";
     var startDateTime = "";
@@ -124,18 +120,12 @@ router.get("/history", (req, res) => {
             res.status(400).send("Invalid dates!");
             return;
         } else {
-            console.log("dates are valid");
             startDateTime = "'" + startDate + " 00:00:00'";
             endDateTime = "'" + endDate + " 00:00:00'";
             startDateCondition = "AND dateTime >= ";
             endDateCondition = " AND dateTime <= ";
         }
     }
-
-    console.log("SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? " +
-        startDateCondition + startDateTime +
-        endDateCondition + endDateTime +
-        " order by dateTime desc");
 
     database.query(
         "SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? " +
