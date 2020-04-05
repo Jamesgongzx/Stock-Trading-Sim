@@ -138,7 +138,9 @@ router.get("/:name/company", (req, res) => {
 
 router.get("/:name/records", (req, res) => {
     var name = req.params.name;
-    database.query("SELECT * FROM stockRecordOwnership WHERE name = ?  and dateTime <= now() order by datetime asc", [name])
+    let date = new Date();
+    date.setMonth(2); // set to March = 2
+    database.query("SELECT * FROM stockRecordOwnership WHERE name = ?  and dateTime <= ? order by datetime asc", [name, date])
         .then(
             results => {
                 res.status(200).send(results);
