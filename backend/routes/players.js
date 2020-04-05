@@ -98,12 +98,27 @@ router.get("/:playerId/stocks", (req, res) => {
 });
 
 router.get("/history", (req, res) => {
+    var isDate = function(date) {
+        return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+    }
+
+    var startDate = req.body.startDate;
+    var endDate = req.body.endDate;
+
+    if (!isDate(startDate) || !isDate(endDate)){
+        res.status(400).send("Invalid dates!");
+        return;
+    }
+
+    var startDateTime = startDate.concat(" 00:00:00");
+    var endDateTime = endDate.concat(" 00:00:00");
+
     let playerId = req.session.playerId;
     if (playerId != req.session.playerId) {
         res.status(401).send("Player not authorized!");
         return;
     }
-    return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? order by datetime desc', [playerId])
+    return database.query('SELECT dateTime, productName, quantity, balanceChange FROM transitionRecordOwnership WHERE playerId = ? AND dateTime >= ? AND dateTime <= ? order by datetime desc', [startDateTime, endDateTime, playerId])
         .then(
             results => {
                 res.status(200).send(results);
