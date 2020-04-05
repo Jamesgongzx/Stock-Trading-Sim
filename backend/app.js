@@ -84,6 +84,9 @@ app.listen(port, () => {
             let stocksList = ["AAPL", "AMZN", "FB", "GOOG", "MSFT", "SPY"];
             return Promise.all(stocksList.map((x) => executeSQL(`SQL/stocks/${x}.sql`)));
         })
+        .then(() => {
+            return executeSQL("SQL/updates.sql");
+        })
         .catch((err) => { });
     console.log(`Server is running on ${port}`);
 });
