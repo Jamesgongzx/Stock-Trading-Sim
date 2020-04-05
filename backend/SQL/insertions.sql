@@ -26,12 +26,12 @@ INSERT INTO playerRanking VALUES
 (3,10000,0),
 (4,100000,0);
 
-INSERT INTO stock VALUES ('AAPL', 10, 10),
-('AMZN', 10, 10),
-('FB', 10, 10),
-('GOOG', 50.24, 2.4),
-('MSFT', 10, 10),
-('SPY', 10, 10);
+INSERT INTO stock VALUES ('AAPL', 10000, 10000),
+('AMZN', 10000, 10000),
+('FB', 10000, 10000),
+('GOOG', 10000, 10000),
+('MSFT', 10000, 10000),
+('SPY', 10000, 10000);
 
 INSERT INTO company VALUES
 ('Amazon', 'Jeff', 'US', 'AMZN'),

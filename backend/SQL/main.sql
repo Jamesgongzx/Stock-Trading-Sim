@@ -116,12 +116,11 @@ CREATE TABLE item (
     rarity CHAR(20) NOT NULL
 );
 
--- CREATE TABLE itemColor (
---     rarity CHAR(20) primary key,
---     color CHAR(30),
---     Foreign key (rarity) references item
---     ON UPDATE CASCADE ON DELETE CASCADE
--- );
+CREATE TABLE itemRarity (
+    rarity CHAR(20) primary key,
+    color CHAR(20),
+    chance REAL
+);
 
 CREATE TABLE shopItemR (
     itemName CHAR(50),
