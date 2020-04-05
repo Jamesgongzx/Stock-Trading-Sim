@@ -93,8 +93,7 @@ CREATE TABLE transitionRecordOwnershipAlt (
     playerId INT,
     dateTime DATETIME DEFAULT now(),
     productName CHAR(50),
-    transitionID INT,
-    PRIMARY KEY (playerId, transitionID, dateTime),
+    transitionID INT PRIMARY KEY,
     FOREIGN KEY (playerId) REFERENCES playerOwnership (playerId)
     ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (playerId, productName, dateTime) REFERENCES
@@ -160,5 +159,3 @@ CREATE TABLE playerStockR (
         REFERENCES stock (name)
         ON UPDATE CASCADE ON DELETE CASCADE
 );
-
-
