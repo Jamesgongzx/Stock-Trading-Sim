@@ -1,5 +1,5 @@
 {
-  "homepage": "http://localhost:3000/signin",
+  "homepage": "http://localhost:3000/user/dashboard",
   "name": "stock-trading-sim-frontend",
   "version": "1.0.0",
   "dependencies": {
