@@ -86,7 +86,7 @@ class ManageItems extends React.Component{
     }
 
     getItemsJoin = (joinOption) => {
-        requestGET(`/stocks`, {projections: joinOption})
+        requestGET(`/items`, {projections: joinOption})
             .then((res) => {
                 console.log(res);
                 if (res.data.length > 0) {
@@ -107,7 +107,7 @@ class ManageItems extends React.Component{
 
     render() {
         const {classes} = this.props;
-
+        console.log(this.state)
         return (
             <React.Fragment>
                 <GridContainer>
@@ -116,11 +116,11 @@ class ManageItems extends React.Component{
                             <CardHeader color="primary">
                                 <h4 className={classes.cardTitleWhite}>Manage Items</h4>
                                 <p className={classes.cardCategoryWhite}>
+                                    Select a view
                                 </p>
                             </CardHeader>
                             <CardBody>
                                 <FormControl component="fieldset">
-                                    <FormLabel component="legend">Items View</FormLabel>
                                     <RadioGroup aria-label="gender" name="gender1" value={this.state.joinOption}
                                                 onChange={(e) => {this.handleJoinOptionChange(e)}}>
                                         {Object.entries(this.joinOptions).map((x) => {

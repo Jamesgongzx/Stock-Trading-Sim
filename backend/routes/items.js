@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
     }
 
     database.query(
-        "SELECT * FROM item JOIN ? " + onCondition, [tableToJoin]
+        `SELECT * FROM item JOIN ${tableToJoin} ` + onCondition, []
     ).then(
         (results) => {
             res.status(200).send(results);
