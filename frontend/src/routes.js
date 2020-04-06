@@ -23,7 +23,7 @@ import Business from "@material-ui/icons/Business"
 import Group from "@material-ui/icons/Group"
 import TableChart from "@material-ui/icons/TableChart"
 import Store from "@material-ui/icons/Store"
-
+import LocalMall from "@material-ui/icons/LocalMall"
 
 import DashboardPage from "views/Dashboard/dashboard.jsx";
 import UserProfile from "views/UserProfile/userprofile.jsx";
@@ -36,6 +36,7 @@ import ManageTables from "./views/TableList/ManageTables";
 import MarketPlace from "./views/TableList/MarketPlace";
 import MyItems from "./views/TableList/MyItems";
 import History from "./views/TableList/History";
+import ManageItems from "./views/TableList/ManageItems";
 
 
 const dashboardRoutes = [
@@ -107,6 +108,14 @@ const dashboardRoutes = [
     name: "Manage Players (Admin)",
     icon: Group,
     component: ManagePlayers,
+    layout: "/user",
+    type: "admin"
+  },
+  {
+    path: "/items-management",
+    name: "Manage Items (Admin)",
+    icon: LocalMall,
+    component: ManageItems,
     layout: "/user",
     type: "admin"
   },
