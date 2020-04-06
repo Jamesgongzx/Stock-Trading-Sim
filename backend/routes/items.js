@@ -3,6 +3,38 @@ const database = require("../database");
 
 const router = express.Router();
 
+router.get("/", (req, res) => {
+    let adminId = req.session.adminId;
+    var tableToJoin = req.query.projections;
+    if (!adminId) {
+        res.status(401).send("Player not authorized!");
+        return;
+    }
+
+    if (!["itemRarity", "shopItemR", "playerItemR"].includes(tableToJoin)) {
+        return res.status(403).send("Table to join is invalid!");
+    }
+
+    var onCondition = ""
+    if (tableToJoin == "shopItemR" || tableToJoin == "playerItemR"){
+        onCondition = "ON item.itemName = " + tableToJoin + ".itemName";
+    } else if (tableToJoin == "itemRarity") {
+        onCondition = "ON item.rarity = itemRarity.rarity";
+    }
+
+    database.query(
+        "SELECT * FROM item JOIN ? " + onCondition, [tableToJoin]
+    ).then(
+        (results) => {
+            res.status(200).send(results);
+        },
+        (error) => {
+            console.log(error);
+            res.status(500).send("Internal Server Error!");
+        }
+    );
+});
+
 // itemName has to be encoded using encodeURIComponent()
 router.patch("/:itemName/use", async (req, res) => {
     var itemName = req.params.itemName;
