@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
     }
 
     if (!["itemRarity", "shopItemR", "playerItemR"].includes(tableToJoin)) {
-        return res.status(403).send("Item is not activatable!");
+        return res.status(403).send("Table To join is invalid!");
     }
 
     var onCondition = ""
