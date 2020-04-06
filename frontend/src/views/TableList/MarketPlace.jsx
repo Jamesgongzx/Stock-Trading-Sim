@@ -26,6 +26,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Select from "@material-ui/core/Select/Select";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 const styles = {
     cardCategoryWhite: {
@@ -119,12 +120,12 @@ class MarketPlace extends React.Component {
     };
 
     enterShop = (category) => {
-        this.state.category = category;
         requestGET(`/shops/${this.state.dayofWeek}/${category}/items`)
             .then((res) => {
                 if (res.data.length > 0) {
                     let data = res.data;
                     this.setState({
+                        category: category,
                         itemColumnNames: Object.keys(data[0]),
                         itemValues: data.map((x) => {
                             let name = x.itemName;
@@ -134,18 +135,23 @@ class MarketPlace extends React.Component {
                         })
                     });
                 } else {
-                    throw Error(
-                        `Items couldn't be found for ${
+                    let error = new Error()
+                    error.response = {};
+                    error.response.data = `Items couldn't be found for ${
                         this.dayOfWeekObject[this.state.dayofWeek]
-                        }'s Market: ${category}`
-                    );
+                    }'s Market: ${category}`;
+                    throw error;
                 }
             })
             .catch((err) => {
+                console.log(err)
                 helpers.Toast.fire({
                     icon: "warning",
                     title: `${err.response.data}`,
                 });
+                this.setState({
+                    category: null
+                })
             });
     };
 
@@ -228,36 +234,48 @@ class MarketPlace extends React.Component {
             <React.Fragment>
                 <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
-                        <Card>
-                            <CardHeader color="primary">
-                                <h4 className={classes.cardTitleWhite}>Shop</h4>
-                                <p className={classes.cardCategoryWhite}>
-                                </p>
-                            </CardHeader>
-                            <CardBody>
-                                <Table
-                                    tableHeaderColor="primary"
-                                    tableHead={this.state.shopColumnNames}
-                                    tableData={this.state.shopValues}
-                                />
-                            </CardBody>
-                        </Card>
-                        <Card>
-                            <CardHeader color="primary">
-                                <h4 className={classes.cardTitleWhite}>Items</h4>
-                                <p className={classes.cardCategoryWhite}>
-                                </p>
-                            </CardHeader>
-                            <CardBody>
-                                <Table
-                                    fixedHeader={false}
-                                    style={{ width: "auto", tableLayout: "auto" }}
-                                    tableHeaderColor="primary"
-                                    tableHead={this.state.itemColumnNames}
-                                    tableData={this.state.itemValues}
-                                />
-                            </CardBody>
-                        </Card>
+                        {this.state.category == null ?
+                            <Card>
+                                <CardHeader color="primary">
+                                    <h4 className={classes.cardTitleWhite}>Shop</h4>
+                                    <p className={classes.cardCategoryWhite}>
+                                    </p>
+                                </CardHeader>
+                                <CardBody>
+                                    <Table
+                                        tableHeaderColor="primary"
+                                        tableHead={this.state.shopColumnNames}
+                                        tableData={this.state.shopValues}
+                                    />
+                                </CardBody>
+                            </Card>
+                            :
+                            <Card>
+                                <CardHeader color="primary">
+                                    <h4 className={classes.cardTitleWhite}>Items</h4>
+                                    <p className={classes.cardCategoryWhite}>
+                                    </p>
+                                </CardHeader>
+                                <CardBody>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        className={classes.button}
+                                        startIcon={<ArrowBackIcon/>}
+                                        onClick={() => {this.setState({category: null})}}
+                                    >
+                                        Back to Shop Select
+                                    </Button>
+                                    <Table
+                                        fixedHeader={false}
+                                        style={{width: "auto", tableLayout: "auto"}}
+                                        tableHeaderColor="primary"
+                                        tableHead={this.state.itemColumnNames}
+                                        tableData={this.state.itemValues}
+                                    />
+                                </CardBody>
+                            </Card>
+                        }
                     </GridItem>
                 </GridContainer>
             </React.Fragment>
